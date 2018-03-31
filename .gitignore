@@ -30,3 +30,33 @@
 *.exe
 *.out
 *.app
+
+# Eclipse
+.metadata/
+bin/
+tmp/
+RemoteSystemsTempFiles/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# Eclipse External tool builders
+.externalToolBuilders/
+
+# Eclipse Locally stored "Eclipse launch configurations"
+*.launch
+
+# Eclipse CDT-specific (C/C++ Development Tooling)
+.cproject
+
+# Eclipse CDT- autotools 
+.autotools
+
+# Eclipse Code Recommenders
+.recommenders/
+
