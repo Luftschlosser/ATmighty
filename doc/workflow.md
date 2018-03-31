@@ -46,6 +46,10 @@ The following values are to be used to program an ArduinoMega2560-board directly
   * Choose your MCU-clock-frequency (in Hz, 16000000 in my case)
 * Under Window/Preferences/AVR/AVRDude
   * check "Use custom config file" and set path to the Arduino-IDE's avrdude.conf file. (found at `/home/user/.arduino15/packages/arduino/tools/avrdude/6.3.0-arduino9/etc/avrdude.conf` on my machine)
+* Under Project/Properties/C-C++Build/Settings: (make sure to adjust all build-configurations!)
+  * Under "Additional Tools in Toolchain"
+    * Check "Generate HEX file for Flash memory" and "Generate HEX file for EEPROM"
+    * Uncheck "AVRDude"
 
 If you want to develop software that is compatible with the Arduino-IDE as well, you additionally have to configure the following properties:
 * Under Project/Properties/C-C++Build/Settings: (make sure to adjust all build-configurations!)
@@ -86,8 +90,24 @@ rm ~/.p2/pool/plugins/gnu.io.rxtx.linux.x86_64_2.1.7.3_v20071015/os/linux/x86_64
 ```
 ln -s /usr/lib/jni/librxtxSerial.so ~/.p2/pool/plugins/gnu.io.rxtx.linux.x86_64_2.1.7.3_v20071015/os/linux/x86_64/librxtxSerial.so
 ```
+#### Usage
 
 The terminal can be opened in Eclipse under Window/ShowView/Other/Terminal/Terminal. When opening a new Terminal, use Mode "Serial" and set the Port to "/dev/ttyUSBn" (n = 0,1,2,...,n) - (may be different on other linux-machines).
+
+Beware! In order to program the board via it's Serial connection you must disconnect the serial terminal first or you will get a avrdude timeout error.
+
+### Using Static Libraries
+
+If you want to use a static AVR-library (like ATmighty) in your project, you have to configure the following properties for the project which uses the library:
+
+* Under Project/Properties/C-C++Build/Settings: (make sure to adjust all build-configurations!)
+  * Under "AVR Compiler" -> "Directories":
+    * Add the path to the library project folder to the "Include Paths (-I)". Example: `"${workspace_loc:/ATmighty}"`
+  * Under "AVR C++ Compiler" -> "Directories":
+    * Add the path to the library project folder to the "Include Paths (-I)". Example: `"${workspace_loc:/ATmighty}"`
+  * Under "AVR C++ Linker" -> "Libraries":
+    * Add the name of the library to the "Libraries (-l)". Example: `ATmighty`
+    * Add the path to the folder of the library-file (*.a) to the "Libraries Path (-L)": `"${workspace_loc:/ATmighty/Debug}"`
 
 ### Sources (additional instruction sites)
 
@@ -97,3 +117,4 @@ The terminal can be opened in Eclipse under Window/ShowView/Other/Terminal/Termi
 * Bug "Empty MCU-Type list": https://github.com/mnlipp/avr-eclipse-fork/issues/1
 * Using the serial terminal in eclipse: https://mcuoneclipse.com/2017/10/07/using-serial-terminal-and-com-support-in-eclipse-oxygen-and-neon/
 * Bugfix for rxtx-plugin: http://karibe.co.ke/2014/03/eclipse-terminal-plugin-serial-port-console-in-linux/
+* Using Static Libraries for AVR: https://electronics.stackexchange.com/questions/27325/how-do-i-create-a-static-library-for-the-avr-atmega328p
