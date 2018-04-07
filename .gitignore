@@ -51,9 +51,6 @@ local.properties
 # Eclipse Locally stored "Eclipse launch configurations"
 *.launch
 
-# Eclipse CDT-specific (C/C++ Development Tooling)
-.cproject
-
 # Eclipse CDT- autotools 
 .autotools
 
