@@ -8,7 +8,9 @@
 
 #include <avr/pgmspace.h>
 #include "ATmighty/Ressources/Periphery/Physical/PhysicalHardwareBase/PhysicalHardwareBase.h"
+#include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
 #include "ATmighty/Ressources/Periphery/Physical/Timer.h"
+#include "ATmighty/Ressources/Periphery/Physical/Usart.h"
 
 /*!
  * This class manages the exclusive direct access to the physical periphery of the atmega2560 µC.
@@ -23,7 +25,9 @@ class PhysicalHardwareManager
 															//(not really neccessary, but object has 1Byte size anyway)
 
 		//The instances of the physical hardware items
+		static PortA portA;
 		static Timer0 timer0;
+		static Usart0 usart0;
 
 
 	public:
@@ -69,13 +73,10 @@ class PhysicalHardwareManager
 		 */
 		void free(PhysicalHardwareBase **hardware);
 
-		/*
-		 * Frees an allocated Timer0.
-		 * \param timer0 A pointer to the pointer to the actual Timer0 object. This is necessary, as the function will set
-		 * the caller's reference to the Timer0 to nullptr after freeing the associated hardware item. This procedure will prevent the caller
-		 * from freeing Timer0 twice.
-		 */
+		//Overloaded derivates of free() for PhysicalHardwareBase-childs.
+		inline void free(PortA **portA) {/*add log-message*/free((PhysicalHardwareBase**)portA);}
 		inline void free(Timer0 **timer0) {/*add log-message*/free((PhysicalHardwareBase**)timer0);}
+		inline void free(Usart0 **usart0) {/*add log-message*/free((PhysicalHardwareBase**)usart0);}
 };
 
 
