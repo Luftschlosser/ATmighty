@@ -67,6 +67,13 @@ If you want to develop software that is compatible with the Arduino-IDE as well,
     * Turn off "char is unsigned" and "bitfields are unsigned"
     * Enable "don't use exceptions"
 
+#### Enabling C++11 Support
+
+Some of the ATmighty features require the use of the C++11 standard. The Gcc compiler must be told explicitly to use this version.
+* Under Project/Properties/C-C++Build/Settings: (make sure to adjust all build-configurations!)
+  * Under "AVR C++ Compiler" -> "Miscellaneous":
+    * Add `-std=c++11` to the "Other flags" field.
+
 ### Setting up Eclipse to have a serial terminal
 
 In order to communicate with the connected Arduino-board via USART (over USB) its nice to have a serial-terminal ready to use inside eclipse.
