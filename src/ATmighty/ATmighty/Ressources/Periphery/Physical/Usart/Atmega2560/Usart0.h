@@ -20,9 +20,6 @@ class Usart0 : private PhysicalHardwareBase
 		///Default Constructor
 		inline Usart0() : PhysicalHardwareBase() {}
 
-		///Default Destructor
-		inline ~Usart0() {}
-
 	public:
 		///Sets the value of the UDR0 register
 		inline void setUDR0(uint8_t value) {UDR0 = value;}

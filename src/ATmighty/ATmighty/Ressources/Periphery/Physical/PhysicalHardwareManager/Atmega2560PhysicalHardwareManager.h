@@ -63,7 +63,7 @@ class PhysicalHardwareManager
 		 * Positive numbers are to be used by other users. This value must not be 0. If ownerID==0 the value will be changed to -1.
 		 * \returns A pointer to the requested physical hardware-item or nullptr if the item is currently in use by another owner.
 		 */
-		template<class Hw> Hw* allocHardware(int8_t ownerID);
+		template<class Hw> Hw* alloc(int8_t ownerID);
 
 		/*
 		 * Frees an allocated physical hardware item.

@@ -20,9 +20,6 @@ class PortA : private PhysicalHardwareBase
 		///Default Constructor
 		inline PortA() : PhysicalHardwareBase() {}
 
-		///Default Destructor
-		inline ~PortA() {}
-
 	public:
 		///Sets the value of the PORTA register
 		inline void setPORTA(uint8_t value) {PORTA = value;}

@@ -20,9 +20,6 @@ class Timer0 : private PhysicalHardwareBase
 		///Default Constructor
 		inline Timer0() : PhysicalHardwareBase() {}
 
-		///Default Destructor
-		inline ~Timer0() {}
-
 	public:
 		///Sets the value of the TCCR0A register
 		inline void setTCCR0A(uint8_t value) {TCCR0A = value;}

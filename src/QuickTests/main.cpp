@@ -12,18 +12,36 @@
 #include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
 #include "ATmighty/Ressources/Periphery/Physical/Timer.h"
 #include "ATmighty/Ressources/Periphery/Physical/Usart.h"
+#include "ATmighty/DataStructures/IoQueue.h"
 
 uint8_t c = 0;
-uint8_t x = 0;
+
+template <bool debug>
+void test(const char* txt)
+{
+	if (debug)
+	{
+		while (*txt)
+		{
+			UDR0 = *txt;
+			txt++;
+			for (long i = 250000; i>0; i--){
+				asm ( "nop \n" );
+			}
+		}
+		return;
+	}
+}
 
 int main( void )
 {
 	unsigned long i = 0;
+	IoQueue<uint8_t, 100> queue;
 	PhysicalHardwareManager ph = PhysicalHardwareManager();
 
-	Timer0* timer = ph.allocHardware<Timer0>(1);
-	PortA* port = ph.allocHardware<PortA>(1);
-	Usart0* usb = ph.allocHardware<Usart0>(1);
+	Timer0* timer = ph.alloc<Timer0>(1);
+	PortA* port = ph.alloc<PortA>(1);
+	Usart0* usb = ph.alloc<Usart0>(1);
 
 
 	//Serial init
@@ -35,6 +53,8 @@ int main( void )
 	//Pin A1 setup
 	port->setDDRA(1);
 	port->setPORTA(1);
+
+	test<false>("Hallo Welt");
 
 	//Timer setup
 	timer->setTCCR0B(5);//set prescalar 1024

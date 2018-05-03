@@ -25,12 +25,12 @@ template<> inline int8_t PhysicalHardwareManager::getOwnerId<Usart0>() {return u
 
 
 //Allocate hardware functions
-template<class Hw> Hw* PhysicalHardwareManager::allocHardware(int8_t ownerID)		//General case
+template<class Hw> Hw* PhysicalHardwareManager::alloc(int8_t ownerID)		//General case
 {
 	//add log-message
 	return nullptr;
 }
-template<> PortA* PhysicalHardwareManager::allocHardware<PortA>(int8_t ownerID)		//PortA
+template<> PortA* PhysicalHardwareManager::alloc<PortA>(int8_t ownerID)		//PortA
 {
 	bool interruptFlag = (SREG & _BV(SREG_I)); //Save interrupt-flag
 
@@ -53,7 +53,7 @@ template<> PortA* PhysicalHardwareManager::allocHardware<PortA>(int8_t ownerID)	
 		return nullptr;
 	}
 }
-template<> Timer0* PhysicalHardwareManager::allocHardware<Timer0>(int8_t ownerID)	//Timer0
+template<> Timer0* PhysicalHardwareManager::alloc<Timer0>(int8_t ownerID)	//Timer0
 {
 	bool interruptFlag = (SREG & _BV(SREG_I)); //Save interrupt-flag
 
@@ -76,7 +76,7 @@ template<> Timer0* PhysicalHardwareManager::allocHardware<Timer0>(int8_t ownerID
 		return nullptr;
 	}
 }
-template<> Usart0* PhysicalHardwareManager::allocHardware<Usart0>(int8_t ownerID)	//Usart0
+template<> Usart0* PhysicalHardwareManager::alloc<Usart0>(int8_t ownerID)	//Usart0
 {
 	bool interruptFlag = (SREG & _BV(SREG_I)); //Save interrupt-flag
 
