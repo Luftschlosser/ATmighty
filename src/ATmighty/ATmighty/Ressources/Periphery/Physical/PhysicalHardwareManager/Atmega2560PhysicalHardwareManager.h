@@ -19,8 +19,8 @@ class PhysicalHardwareManager
 {
 	private:
 		//Counters to track the physical hardware usage:
-		static const uint8_t totalHardwareItems = 1;		//The total number of physical hardware items.
-		static volatile uint8_t allocatedHardwareItems;		//The total number of used (allocated) physical hardware items.
+		static const uint8_t TotalHardwareItems = 1;		//The total number of physical hardware items.
+		static volatile uint8_t AllocatedHardwareItems;		//The total number of used (allocated) physical hardware items.
 		int8_t instanceUsageRelation;						//Holds [#Allocations - #Frees] done by this PhysicalHardwareManager-instance.
 															//(not really neccessary, but object has 1Byte size anyway)
 
@@ -39,13 +39,13 @@ class PhysicalHardwareManager
 
 
 		///returns the total number of physical hardware item managed by this PhysicalHardwareManager
-		inline static uint8_t getTotalHardwareItems() {return totalHardwareItems;}
+		inline static uint8_t GetTotalHardwareItems() {return TotalHardwareItems;}
 
 		///returns the total number of free (currently unused) physical hardware items
-		inline static uint8_t getTotalFreeHardwareItems() {return (totalHardwareItems - allocatedHardwareItems);}
+		inline static uint8_t GetTotalFreeHardwareItems() {return (TotalHardwareItems - AllocatedHardwareItems);}
 
 		///returns the total number of used (currently allocated) physical hardware items
-		inline static uint8_t getTotalAllocatedHardwareItems() {return allocatedHardwareItems;}
+		inline static uint8_t GetTotalAllocatedHardwareItems() {return AllocatedHardwareItems;}
 
 		///return the number of allocations minus the number of frees done with this PhysicalHardwareManager-instance
 		inline int8_t getUsageRelation() {return instanceUsageRelation;}

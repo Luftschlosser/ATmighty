@@ -9,17 +9,21 @@
 
 #include <util/atomic.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include "ATmighty/Interfaces/Listener.h"
 
 /*!
  * This class represents an Array-based queue with fixed size (2-255).
  * It doesn't use dynamic memory allocation, but may loose data if Queue is full.
- * The type of the data-elements to be stored is declared by the first template argument.
- * The size of the queue is defined by the second template argument. (which must be an uint8_t integer >= 1)
- * The size of this IoQueue in RAM will be size*sizeof(T)+4 Bytes.
+ * The type of the data-elements to be stored is declared by the template argument.
+ * The size of this IoQueue in RAM will be size*sizeof(T)+7 Bytes.
  */
-template <class T, uint8_t size> class IoQueue
+template <class T> class IoQueue
 {
 	private:
+		//the number of elements which can be stored in this IoQueue
+		const uint8_t size;
+
 		//The Index of the next element to pop
 		uint8_t popIndex;
 
@@ -27,19 +31,25 @@ template <class T, uint8_t size> class IoQueue
 		uint8_t count;
 
 		//The Array which holds the actual data-elements
-		T queue[size];
+		T *queue;
 
-		//The optional pointer to a callback function which gets called when an new element is inserted into the empty IoQueue
-		void(*listener)(void);
+		//The Listener-object which gets triggered when an new element is inserted into the empty IoQueue
+		Listener *listener;
 
 
 	public:
 		/*!
 		 * Default Constructor.
-		 * The type of the data-elements to be stored in this IoQueue is declared by the first template argument.
-		 * The size of the queue is defined by the second template argument. (which must be an uint8_t integer > 1)
+		 * The type of the data-elements to be stored in this IoQueue is declared by the template argument.
+		 * \param size Defines the number of elements which can be stored in this IoQueue (Must be an uint8_t integer > 1)
 		 */
-		IoQueue() : popIndex(0), count(0), listener(0) {}
+		IoQueue(uint8_t size) : size(size > 0 ? size : 1), popIndex(0), count(0), listener(nullptr)
+		{
+			queue = (T*)malloc(this->size*sizeof(T));
+		}
+
+		///Default Destructor. Frees the dynamically allocated memory
+		inline ~IoQueue() {free(queue);}
 
 		///Returns true if count==0
 		inline bool isEmpty() {return !count;}
@@ -82,7 +92,7 @@ template <class T, uint8_t size> class IoQueue
 
 			if (callback && listener) //must call listener?
 			{
-				listener();
+				listener->trigger();
 			}
 
 			return sucess;
@@ -137,12 +147,16 @@ template <class T, uint8_t size> class IoQueue
 		///Empty the IoQueue. All currently stored elements will be lost.
 		inline void clear() {count = 0;}
 
-		///Sets a function-pointer which gets called when a new element is inserted into a empty IoQueue. This is useful to start a routine which empties the IoQueue
-		void setInitialPushListener(void (*listener)(void))
+		///Sets a Listener-object which gets triggered when a new element is inserted into a empty IoQueue.
+		void setInitialPushListener(Listener *listener)
 		{
 			ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
 			{
 				this->listener = listener;
+			}
+			if (count)
+			{
+				listener->trigger();
 			}
 		}
 };

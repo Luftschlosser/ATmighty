@@ -9,7 +9,7 @@
 
 
 //Initialization of static free-hardware-items counter, initially the total number of hardware items.
-volatile uint8_t PhysicalHardwareManager::allocatedHardwareItems = 0;
+volatile uint8_t PhysicalHardwareManager::AllocatedHardwareItems = 0;
 
 //Initialization of static hardware-item objects
 PortA PhysicalHardwareManager::portA;
@@ -41,7 +41,7 @@ template<> PortA* PhysicalHardwareManager::alloc<PortA>(int8_t ownerID)		//PortA
 	{
 		portA.allocate(ownerID);
 		if (interruptFlag) {sei();} //restore interrupt-flag
-		allocatedHardwareItems++;
+		AllocatedHardwareItems++;
 		instanceUsageRelation++;
 		//add log-message
 		return &portA;
@@ -64,7 +64,7 @@ template<> Timer0* PhysicalHardwareManager::alloc<Timer0>(int8_t ownerID)	//Time
 	{
 		timer0.allocate(ownerID);
 		if (interruptFlag) {sei();} //restore interrupt-flag
-		allocatedHardwareItems++;
+		AllocatedHardwareItems++;
 		instanceUsageRelation++;
 		//add log-message
 		return &timer0;
@@ -87,7 +87,7 @@ template<> Usart0* PhysicalHardwareManager::alloc<Usart0>(int8_t ownerID)	//Usar
 	{
 		usart0.allocate(ownerID);
 		if (interruptFlag) {sei();} //restore interrupt-flag
-		allocatedHardwareItems++;
+		AllocatedHardwareItems++;
 		instanceUsageRelation++;
 		//add log-message
 		return &usart0;
@@ -107,7 +107,7 @@ void PhysicalHardwareManager::free(PhysicalHardwareBase **hardware)
 	if (hardware != nullptr && (*hardware) != nullptr)
 	{
 		(*hardware)->free();
-		allocatedHardwareItems--;
+		AllocatedHardwareItems--;
 		instanceUsageRelation--;
 		(*hardware) = nullptr;
 	}

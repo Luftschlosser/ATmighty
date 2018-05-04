@@ -8,13 +8,25 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <stdlib.h>
 #include <ATmighty/Ressources/Periphery/Physical/PhysicalHardwareManager.h>
-#include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
-#include "ATmighty/Ressources/Periphery/Physical/Timer.h"
-#include "ATmighty/Ressources/Periphery/Physical/Usart.h"
 #include "ATmighty/DataStructures/IoQueue.h"
+#include "ATmighty/Utilities/Logs/MessageLog.h"
 
 uint8_t c = 0;
+MessageLog<LogLevel::Info> log(100);
+
+void * operator new(size_t n)
+{
+  void * const p = malloc(n);
+  // handle p == 0
+  return p;
+}
+
+void operator delete(void * p) // or delete(void *, std::size_t)
+{
+  free(p);
+}
 
 template <bool debug>
 void test(const char* txt)
@@ -36,19 +48,12 @@ void test(const char* txt)
 int main( void )
 {
 	unsigned long i = 0;
-	IoQueue<uint8_t, 100> queue;
-	PhysicalHardwareManager ph = PhysicalHardwareManager();
+
+	MessageLogWriter::Usart usbWriter;
+	PhysicalHardwareManager ph;
 
 	Timer0* timer = ph.alloc<Timer0>(1);
 	PortA* port = ph.alloc<PortA>(1);
-	Usart0* usb = ph.alloc<Usart0>(1);
-
-
-	//Serial init
-	usb->setUBRR0H(0x0F & (uint8_t)(103>>8));
-	usb->setUBRR0L((uint8_t)(103));
-	usb->setUCSR0C((0<<4)|(((1-1)&0x1)<<3)|(((8-5)&0x3)<<1));
-	usb->setUCSR0B(usb->getUCSR0B() | (1<<TXEN0));  //enable Transmit-Unit
 
 	//Pin A1 setup
 	port->setDDRA(1);
@@ -60,6 +65,12 @@ int main( void )
 	timer->setTCCR0B(5);//set prescalar 1024
 	timer->setTIMSK0(1);//enable overflow-interrupt
 	sei();
+
+	log.debug("Initedededed! :P");//log init complete
+	for (long i = 5000000; i>0; i--){
+		asm ( "nop \n" );
+	}
+	log.setWriter(usbWriter);
 
 	//mainloop
 	while(1){
@@ -73,10 +84,10 @@ int main( void )
 ISR(TIMER0_OVF_vect)
 {
 	c++;
-	if (c>=24)
+	if (c>=50)
 	{
 		c=0;
-		UDR0 = ('A' + sizeof(Timer0));
+		log.info("Schnurz-Piepe!");
 	}
 }
 
