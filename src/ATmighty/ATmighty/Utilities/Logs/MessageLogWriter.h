@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include "ATmighty/DataStructures/IoQueue.h"
 #include "ATmighty/Interfaces/Listener.h"
+#include "ATmighty/Ressources/Periphery/Physical/Usart.h"
 
 //temp
 #include <ATmighty/Ressources/Periphery/Physical/PhysicalHardwareManager.h>
@@ -58,15 +59,13 @@ namespace MessageLogWriter
 			///Constructor
 			Usart()
 			{
-				PhysicalHardwareManager hwm;
-				usart = hwm.alloc<Usart0>(100);
+				usart = PhysicalHardwareManager::Alloc<Usart0>(100);
 			}
 
 			///Destructor
 			~Usart()
 			{
-				PhysicalHardwareManager hwm;
-				hwm.free(&usart);
+				PhysicalHardwareManager::Free<Usart0>(&usart);
 			}
 
 			virtual void init(IoQueue<char>* logBuffer)

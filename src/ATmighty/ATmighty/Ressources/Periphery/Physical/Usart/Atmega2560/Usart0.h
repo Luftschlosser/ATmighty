@@ -14,11 +14,19 @@
 /// This class provides access to the Usart0-periphery of the atmega2560 µC.
 class Usart0 : private PhysicalHardwareBase
 {
-	friend class PhysicalHardwareManager;
+	friend Usart0* PhysicalHardwareManager::Alloc<Usart0>(int8_t id);
+	friend int8_t PhysicalHardwareManager::GetOwner<Usart0>();
+	friend void PhysicalHardwareManager::Free<Usart0>(Usart0 **hardware);
 
 	private:
 		///Default Constructor
 		inline Usart0() : PhysicalHardwareBase() {}
+
+		inline static Usart0& GetInstance()
+		{
+			static Usart0 instance;
+			return instance;
+		}
 
 	public:
 		///Sets the value of the UDR0 register

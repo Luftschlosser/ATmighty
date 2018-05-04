@@ -1,115 +1,84 @@
 /*!
- * This file implements the class \see PhysicalHardwareManager
+ * This file implements the namespace \see PhysicalHardwareManager
  */
 
-#include <avr/interrupt.h>
 #include "Atmega2560PhysicalHardwareManager.h"
+
 #include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
 #include "ATmighty/Ressources/Periphery/Physical/Timer.h"
+#include "ATmighty/Ressources/Periphery/Physical/Usart.h"
+
+#include <util/atomic.h>
 
 
-//Initialization of static free-hardware-items counter, initially the total number of hardware items.
-volatile uint8_t PhysicalHardwareManager::AllocatedHardwareItems = 0;
-
-//Initialization of static hardware-item objects
-PortA PhysicalHardwareManager::portA;
-Timer0 PhysicalHardwareManager::timer0;
-Usart0 PhysicalHardwareManager::usart0;
-
-
-//Get Owner-ID functions
-template<class Hw> inline int8_t PhysicalHardwareManager::getOwnerId() {return 0;} 						//General case
-template<> inline int8_t PhysicalHardwareManager::getOwnerId<PortA>() {return portA.getOwner();}		//PortA
-template<> inline int8_t PhysicalHardwareManager::getOwnerId<Timer0>() {return timer0.getOwner();}		//Timer0
-template<> inline int8_t PhysicalHardwareManager::getOwnerId<Usart0>() {return usart0.getOwner();}		//Usart0
-
-
-//Allocate hardware functions
-template<class Hw> Hw* PhysicalHardwareManager::alloc(int8_t ownerID)		//General case
+namespace PhysicalHardwareManager
 {
-	//add log-message
-	return nullptr;
-}
-template<> PortA* PhysicalHardwareManager::alloc<PortA>(int8_t ownerID)		//PortA
-{
-	bool interruptFlag = (SREG & _BV(SREG_I)); //Save interrupt-flag
+	//the total number of hardware-items managed by the PhysicalHardwareManager (update the value when adding new items!)
+	const uint8_t TotalItems = 3;
 
-	if (ownerID == 0) {ownerID = -1;} //validate ownerID
+	//the total number of currently allocated hardware items
+	uint8_t AllocatedItems = 0;
 
-	cli(); //clear interrupts (allocation must be atomic)
-	if (portA.isFree())
+
+	//Function-implementations:
+	uint8_t GetTotalHardwareItems()
 	{
-		portA.allocate(ownerID);
-		if (interruptFlag) {sei();} //restore interrupt-flag
-		AllocatedHardwareItems++;
-		instanceUsageRelation++;
+		return TotalItems;
+	}
+	uint8_t GetAllocatedHardwareItems()
+	{
+		return AllocatedItems;
+	}
+	template<class Hw> Hw* Alloc (int8_t id)
+	{
+		Hw& instance = Hw::GetInstance();
+		Hw* returnBuf;
+
+		if (id == 0) {id = -1;} //validate ownerID
+
+		ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+		{
+			if (instance.isFree())
+			{
+				instance.allocate(id);
+				AllocatedItems++;
+				returnBuf = &instance;
+			}
+			else
+			{
+				returnBuf = nullptr;
+			}
+		}
+
 		//add log-message
-		return &portA;
+		return returnBuf;
 	}
-	else
+	template<class Hw> int8_t GetOwner()
 	{
-		if (interruptFlag) {sei();} //restore interrupt-flag
-		//add log-message
-		return nullptr;
+		return Hw::GetInstance().getOwner();
 	}
-}
-template<> Timer0* PhysicalHardwareManager::alloc<Timer0>(int8_t ownerID)	//Timer0
-{
-	bool interruptFlag = (SREG & _BV(SREG_I)); //Save interrupt-flag
-
-	if (ownerID == 0) {ownerID = -1;} //validate ownerID
-
-	cli(); //clear interrupts (allocation must be atomic)
-	if (timer0.isFree())
+	template<class Hw> void Free(Hw **hardware)
 	{
-		timer0.allocate(ownerID);
-		if (interruptFlag) {sei();} //restore interrupt-flag
-		AllocatedHardwareItems++;
-		instanceUsageRelation++;
-		//add log-message
-		return &timer0;
+		if (hardware != nullptr && (*hardware) != nullptr)
+		{
+			(*hardware)->free();
+			AllocatedItems--;
+			(*hardware) = nullptr;
+		}
+		return;
 	}
-	else
-	{
-		if (interruptFlag) {sei();} //restore interrupt-flag
-		//add log-message
-		return nullptr;
-	}
-}
-template<> Usart0* PhysicalHardwareManager::alloc<Usart0>(int8_t ownerID)	//Usart0
-{
-	bool interruptFlag = (SREG & _BV(SREG_I)); //Save interrupt-flag
-
-	if (ownerID == 0) {ownerID = -1;} //validate ownerID
-
-	cli(); //clear interrupts (allocation must be atomic)
-	if (usart0.isFree())
-	{
-		usart0.allocate(ownerID);
-		if (interruptFlag) {sei();} //restore interrupt-flag
-		AllocatedHardwareItems++;
-		instanceUsageRelation++;
-		//add log-message
-		return &usart0;
-	}
-	else
-	{
-		if (interruptFlag) {sei();} //restore interrupt-flag
-		//add log-message
-		return nullptr;
-	}
-}
 
 
-//Free hardware function
-void PhysicalHardwareManager::free(PhysicalHardwareBase **hardware)
-{
-	if (hardware != nullptr && (*hardware) != nullptr)
-	{
-		(*hardware)->free();
-		AllocatedHardwareItems--;
-		instanceUsageRelation--;
-		(*hardware) = nullptr;
-	}
-	return;
+	//The explizitely instantiated versions of the template-functions (update the list when adding new types!)
+	template Timer0* Alloc<Timer0>(int8_t id);
+	template int8_t GetOwner<Timer0>();
+	template void Free<Timer0>(Timer0 **hardware);
+
+	template Usart0* Alloc<Usart0>(int8_t id);
+	template int8_t GetOwner<Usart0>();
+	template void Free<Usart0>(Usart0 **hardware);
+
+	template PortA* Alloc<PortA>(int8_t id);
+	template int8_t GetOwner<PortA>();
+	template void Free<PortA>(PortA **hardware);
 }

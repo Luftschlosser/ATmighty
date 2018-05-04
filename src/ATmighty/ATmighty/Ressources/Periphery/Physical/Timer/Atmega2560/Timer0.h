@@ -14,11 +14,19 @@
 /// This class provides access to the Timer0-periphery of the atmega2560 µC.
 class Timer0 : private PhysicalHardwareBase
 {
-	friend class PhysicalHardwareManager;
+	friend Timer0* PhysicalHardwareManager::Alloc<Timer0>(int8_t id);
+	friend int8_t PhysicalHardwareManager::GetOwner<Timer0>();
+	friend void PhysicalHardwareManager::Free<Timer0>(Timer0 **hardware);
 
 	private:
 		///Default Constructor
 		inline Timer0() : PhysicalHardwareBase() {}
+
+		inline static Timer0& GetInstance()
+		{
+			static Timer0 instance;
+			return instance;
+		}
 
 	public:
 		///Sets the value of the TCCR0A register

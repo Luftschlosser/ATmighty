@@ -6,78 +6,41 @@
 #define ATMIGHTY_RESSOURCES_PERIPHERY_PHYSICAL_PHYSICALHARDWAREMANAGER_ATMEGA2560PHYSICALHARDWAREMANAGER_H_
 
 
-#include <avr/pgmspace.h>
-#include "ATmighty/Ressources/Periphery/Physical/PhysicalHardwareBase/PhysicalHardwareBase.h"
-#include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
-#include "ATmighty/Ressources/Periphery/Physical/Timer.h"
-#include "ATmighty/Ressources/Periphery/Physical/Usart.h"
+#include <stdint.h>
 
-/*!
- * This class manages the exclusive direct access to the physical periphery of the atmega2560 µC.
- */
-class PhysicalHardwareManager
+
+///This namespace contains some functions to manage the exclusive access to the physical hardware wrapper-class-instances.
+namespace PhysicalHardwareManager
 {
-	private:
-		//Counters to track the physical hardware usage:
-		static const uint8_t TotalHardwareItems = 1;		//The total number of physical hardware items.
-		static volatile uint8_t AllocatedHardwareItems;		//The total number of used (allocated) physical hardware items.
-		int8_t instanceUsageRelation;						//Holds [#Allocations - #Frees] done by this PhysicalHardwareManager-instance.
-															//(not really neccessary, but object has 1Byte size anyway)
+	///Returns the number of currently allocated hardware-items
+	inline uint8_t GetAllocatedHardwareItems();
 
-		//The instances of the physical hardware items
-		static PortA portA;
-		static Timer0 timer0;
-		static Usart0 usart0;
+	///Returns the total number of available physical hardware-items
+	inline uint8_t GetTotalHardwareItems();
 
+	/*!
+	 * Allocate a specified physical hardware-item.
+	 * The desired hardware item is defined by the template argument, which must be one of the physical hardware wrapper-classes
+	 * \param id The OwnerId which requests this hardware allocation (must not be 0, use negative numbers for internal use by ATmighty)
+	 * \returns a pointer to the allocated hardware-item, or nullptr if the allocation failed
+	 */
+	template<class Hw> Hw* Alloc (int8_t id);
 
-	public:
-		///Default Constructor. Initializes a new PhysicalHardwareManager.
-		inline PhysicalHardwareManager() : instanceUsageRelation(0) {}
+	/*!
+	 * Request the OwnerId of a specified physical hardware-item.
+	 * The desired hardware item is defined by the template argument, which must be one of the physical hardware wrapper-classes
+	 * \returns The Id of the current owner of this hardware-item, or 0 if the hardware is free (currently unused)
+	 */
+	template<class Hw> int8_t GetOwner();
 
-		///Default Destructor
-		inline ~PhysicalHardwareManager() {if(instanceUsageRelation != 0){/*log-message (warning)*/ asm("nop");}}
-
-
-		///returns the total number of physical hardware item managed by this PhysicalHardwareManager
-		inline static uint8_t GetTotalHardwareItems() {return TotalHardwareItems;}
-
-		///returns the total number of free (currently unused) physical hardware items
-		inline static uint8_t GetTotalFreeHardwareItems() {return (TotalHardwareItems - AllocatedHardwareItems);}
-
-		///returns the total number of used (currently allocated) physical hardware items
-		inline static uint8_t GetTotalAllocatedHardwareItems() {return AllocatedHardwareItems;}
-
-		///return the number of allocations minus the number of frees done with this PhysicalHardwareManager-instance
-		inline int8_t getUsageRelation() {return instanceUsageRelation;}
-
-
-		/*
-		 * Gets the Owner-ID of the physical hardware item defined by the template class.
-		 * \returns the Owner-ID of the specified item, which is 0 if the item is currently unused.
-		 */
-		template<class Hw> inline int8_t getOwnerId();
-
-		/*
-		 * Allocates a physical hardware-item defined by the template class.
-		 * \param ownerID The ID of the user who requests the allocation. Negative numbers are reserved to be used by ATmighty only.
-		 * Positive numbers are to be used by other users. This value must not be 0. If ownerID==0 the value will be changed to -1.
-		 * \returns A pointer to the requested physical hardware-item or nullptr if the item is currently in use by another owner.
-		 */
-		template<class Hw> Hw* alloc(int8_t ownerID);
-
-		/*
-		 * Frees an allocated physical hardware item.
-		 * \param hardware A pointer to the pointer to the actual physical hardware item. This is necessary, as the function will set
-		 * the caller's reference to the item to nullptr after freeing the associated hardware item. This procedure will prevent the caller
-		 * from freeing the hardware twice.
-		 */
-		void free(PhysicalHardwareBase **hardware);
-
-		//Overloaded derivates of free() for PhysicalHardwareBase-childs.
-		inline void free(PortA **portA) {/*add log-message*/free((PhysicalHardwareBase**)portA);}
-		inline void free(Timer0 **timer0) {/*add log-message*/free((PhysicalHardwareBase**)timer0);}
-		inline void free(Usart0 **usart0) {/*add log-message*/free((PhysicalHardwareBase**)usart0);}
-};
+	/*!
+	 * Frees an allocated physical hardware-item.
+	 * The Type of the hardware-item to free must be defined by the template argument, which must be one of the physical hardware wrapper-classes
+	 * \param hardware A pointer to the pointer to the actual hardware-item. This is needed in order to set the callers reference to the hardware-item
+	 * to nullptr after a sucessfull free. This procedure is needed in order to prevent the caller from freeing a hardware-item twice.
+	 */
+	template<class Hw> void Free(Hw **hardware);
+}
 
 
 #endif /* ATMIGHTY_RESSOURCES_PERIPHERY_PHYSICAL_PHYSICALHARDWAREMANAGER_ATMEGA2560PHYSICALHARDWAREMANAGER_H_ */
