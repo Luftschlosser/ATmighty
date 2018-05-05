@@ -50,12 +50,56 @@ template<LogLevel OutputLevel = LogLevel::ATMIGHTY_MESSAGELOG_LEVEL> class Messa
 		void buffer(const char* msg, bool rom);
 		void buffer(uint8_t num);
 		void buffer(int8_t num);
+		void buffer(bool val);
 
 		//Buffers the init-character-sequence of a  message into the bufferQueue (depends on the Level of the Message specified by the template parameter)
 		template<LogLevel Level> void bufferMessageStart();
 
 		//Buffers the end-characters of a message into the bufferQueue
 		void bufferMessageEnd();
+
+
+		//logging-routines for each supported type: (variadic template approach)
+
+		//const char* type
+		template<typename... T> void logVariadic(bool rom, const char* firstArg, const T&... args)
+		{
+				buffer(firstArg, rom);
+				logVariadic(rom, args...);
+		}
+		//uint8_t type
+		template<typename... T> void logVariadic(bool rom, uint8_t firstArg, const T&... args)
+		{
+				buffer(firstArg);
+				logVariadic(rom, args...);
+		}
+
+		//int8_t type
+		template<typename... T> void logVariadic(bool rom, int8_t firstArg, const T&... args)
+		{
+				buffer(firstArg);
+				logVariadic(rom, args...);
+		}
+		//char type
+		template<typename... T> void logVariadic(bool rom, char firstArg, const T&... args)
+		{
+				buffer(firstArg);
+				logVariadic(rom, args...);
+		}
+		//bool type
+		template<typename... T> void logVariadic(bool rom, bool firstArg, const T&... args)
+		{
+				buffer(firstArg);
+				logVariadic(rom, args...);
+		}
+
+
+		//end of variadic template recursion -> ends log-message
+		void logVariadic(bool rom)
+		{
+			bufferMessageEnd();
+		}
+
 
 	public:
 		/*!
@@ -78,51 +122,19 @@ template<LogLevel OutputLevel = LogLevel::ATMIGHTY_MESSAGELOG_LEVEL> class Messa
 		void setWriter(MessageLogWriter::Base *writer);
 
 		/*!
-		 * Logs a normal constant string
-		 * \param msg A pointer to the beginning of the 0-terminated constant string
-		 * \param rom Determines wether the string is saved in Programspace (true) or in Ram (false, default)
+		 * Logs an arbitrary number of data-items of arbitrary types with a specified loglevel.
+		 * The loglevel is specified by the (first, others are redundant) template argument.
+		 * Usage example: 'messageLogObj.log<LogLevel::Error>(false, 8, " times ", 5, " is even: ", true);' -> will print: "E: 8 times 5 is even: True\r\n".
+		 * \param rom The first parameter of the parameter-list must always be a boolean which specifies wether
+		 * const char* -types (strings) are stored in Programspace (true) or in Ram (false).
+		 * All const char* -types in the argument list must be stored in the same memory, scrambling storage types is not possible!
 		 */
-		template<LogLevel InputLevel> void log(const char* msg, bool rom = false)
+		template<LogLevel InputLevel, typename Tfirst, typename... Tothers> void log(bool rom, const Tfirst& firstItem, const Tothers&... args)
 		{
 			if (OutputLevel >= InputLevel)
 			{
 				bufferMessageStart<InputLevel>();
-				buffer(msg, rom);
-				bufferMessageEnd();
-			}
-		}
-
-		/*!
-		 * Logs a normal constant string, followed by an uint8_t integer (represented decimal)
-		 * \param msg A pointer to the beginning of the 0-terminated constant string
-		 * \param rom Determines wether the string is saved in Programspace (true) or in Ram (false, default)
-		 * \param num The usigned integer to print after the msg
-		 */
-		template<LogLevel InputLevel> void log(const char* msg, uint8_t num, bool rom = false)
-		{
-			if (OutputLevel >= InputLevel)
-			{
-				bufferMessageStart<InputLevel>();
-				buffer(msg, rom);
-				buffer(num);
-				bufferMessageEnd();
-			}
-		}
-
-		/*!
-		 * Logs a normal constant string, followed by an int8_t integer (represented decimal)
-		 * \param msg A pointer to the beginning of the 0-terminated constant string
-		 * \param rom Determines wether the string is saved in Programspace (true) or in Ram (false, default)
-		 * \param num The signed integer to print after the msg
-		 */
-		template<LogLevel InputLevel> void log(const char* msg, int8_t num, bool rom = false)
-		{
-			if (OutputLevel >= InputLevel)
-			{
-				bufferMessageStart<InputLevel>();
-				buffer(msg, rom);
-				buffer(num);
-				bufferMessageEnd();
+				logVariadic(rom, firstItem, args...);
 			}
 		}
 

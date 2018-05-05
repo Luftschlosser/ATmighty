@@ -7,7 +7,7 @@
 
 
 ///Boolean switch to enable/disable logging within ATmighty
-#define ATMIGHTY_MESSAGELOG_ENABLE true
+#define ATMIGHTY_MESSAGELOG_ENABLE false
 
 ///Defines the LogLevel used within ATmighty. Possible values are [NoLog/Fatal/Error/Warning/Info/Debug]
 #define ATMIGHTY_MESSAGELOG_LEVEL Debug
@@ -32,6 +32,12 @@
 
 ///Defines the character-sequence which gets printed after each message.
 #define ATMIGHTY_MESSAGELOG_ENDSEQUENCE "\r\n"
+
+///Defines the character-sequence which represents the value of 'true'.
+#define ATMIGHTY_MESSAGELOG_SEQUENCE_TRUE "True"
+
+///Defines the character-sequence which represents the value of 'false'.
+#define ATMIGHTY_MESSAGELOG_SEQUENCE_FALSE "False"
 
 
 #endif /* CONFIG_MESSAGELOGCONFIG_H_ */

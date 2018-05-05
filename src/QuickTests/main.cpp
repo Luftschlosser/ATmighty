@@ -47,7 +47,7 @@ int main( void )
 
 	static const char test[] PROGMEM = "Programspace!!!";
 
-	MessageLog<>::DefaultInstance().log<LogLevel::Debug>(test, true);
+	MessageLog<>::DefaultInstance().log<LogLevel::Fatal>(false, '#', (uint8_t)1, " Test ", (int8_t)-57, " Hooray! ", true);
 
 	//Pin A1 setup
 	port->setDDRA(1);

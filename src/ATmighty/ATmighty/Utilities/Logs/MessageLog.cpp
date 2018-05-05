@@ -24,7 +24,35 @@ PGM_P const Phrases[] PROGMEM =
 		InfoBeginSequence,
 		DebugBeginSequence
 };
+const char TrueSequence[] PROGMEM = ATMIGHTY_MESSAGELOG_SEQUENCE_TRUE;
+const char FalseSequence[] PROGMEM = ATMIGHTY_MESSAGELOG_SEQUENCE_FALSE;
 
+
+//public method implementations:
+template<LogLevel OutputLevel> MessageLog<OutputLevel>::MessageLog(uint8_t bufferSize) : bufferQueue(bufferSize), writer(nullptr)
+{
+}
+
+template<LogLevel OutputLevel> MessageLog<OutputLevel>::~MessageLog()
+{
+	if (this->writer) //is there a previous MessageLogWriter in use?
+	{
+		this->writer->exit();
+	}
+}
+
+template<LogLevel OutputLevel> void MessageLog<OutputLevel>::setWriter(MessageLogWriter::Base *writer)
+{
+	if (OutputLevel > LogLevel::NoLog)
+	{
+		if (this->writer) //is there a previous MessageLogWriter in use?
+		{
+			this->writer->exit();
+		}
+		this->writer = writer;
+		writer->init(&bufferQueue);
+	}
+}
 
 
 //private method implementations:
@@ -86,6 +114,18 @@ template<LogLevel OutputLevel> void MessageLog<OutputLevel>::buffer(int8_t num)
 	buffer((uint8_t) num);
 }
 
+template<LogLevel OutputLevel> void MessageLog<OutputLevel>::buffer(bool var)
+{
+	if (var)
+	{
+		buffer(TrueSequence, true);
+	}
+	else
+	{
+		buffer(FalseSequence, true);
+	}
+}
+
 template<LogLevel OutputLevel> template<LogLevel Level> void MessageLog<OutputLevel>::bufferMessageStart()
 {
 	if (Level > LogLevel::NoLog)
@@ -97,33 +137,6 @@ template<LogLevel OutputLevel> template<LogLevel Level> void MessageLog<OutputLe
 template<LogLevel OutputLevel> void MessageLog<OutputLevel>::bufferMessageEnd()
 {
 	buffer((PGM_P)pgm_read_word(&(Phrases[0])), true);
-}
-
-
-//public method implementations:
-template<LogLevel OutputLevel> MessageLog<OutputLevel>::MessageLog(uint8_t bufferSize) : bufferQueue(bufferSize), writer(nullptr)
-{
-}
-
-template<LogLevel OutputLevel> MessageLog<OutputLevel>::~MessageLog()
-{
-	if (this->writer) //is there a previous MessageLogWriter in use?
-	{
-		this->writer->exit();
-	}
-}
-
-template<LogLevel OutputLevel> void MessageLog<OutputLevel>::setWriter(MessageLogWriter::Base *writer)
-{
-	if (OutputLevel > LogLevel::NoLog)
-	{
-		if (this->writer) //is there a previous MessageLogWriter in use?
-		{
-			this->writer->exit();
-		}
-		this->writer = writer;
-		writer->init(&bufferQueue);
-	}
 }
 
 
