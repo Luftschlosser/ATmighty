@@ -12,18 +12,16 @@
 #include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
 #include "ATmighty/Ressources/Periphery/Physical/Timer.h"
 #include "ATmighty/Ressources/Periphery/Physical/Usart.h"
-#include "ATmighty/DataStructures/IoQueue.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
+#include "ATmighty/Utilities/Logs/MessageLogWriter.h"
+
 
 uint8_t c = 0;
-//MessageLog<LogLevel::Info> log(100);
 
 void * operator new(size_t n)
 {
 	if (n == 0){n=1;}
-  void * const p = malloc(n);
-  // handle p == 0
-  return p;
+  return malloc(n);
 }
 
 void operator delete(void * p) // or delete(void *, std::size_t)
@@ -62,7 +60,7 @@ int main( void )
 	namespace hw = PhysicalHardwareManager;
 
 	unsigned long i = 0;
-	//MessageLogWriter::Usart usbWriter;
+	MessageLogWriter::Usart usbWriter;
 
 	Timer0* timer = hw::Alloc<Timer0>(1);
 	PortA* port = hw::Alloc<PortA>(1);
@@ -78,11 +76,10 @@ int main( void )
 	timer->setTIMSK0(1);//enable overflow-interrupt
 	sei();
 
-	//log.debug("Initedededed! :P");//log init complete
 	for (long i = 5000000; i>0; i--){
 		asm ( "nop \n" );
 	}
-	//log.setWriter(usbWriter);
+	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
 
 	//mainloop
 	while(1){
@@ -99,6 +96,5 @@ ISR(TIMER0_OVF_vect)
 	if (c>=50)
 	{
 		c=0;
-		//log.info("Schnurz-Piepe!");
 	}
 }

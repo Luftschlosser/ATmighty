@@ -10,7 +10,9 @@
 #include <util/atomic.h>
 #include <stdint.h>
 #include <stdlib.h>
+
 #include "ATmighty/Interfaces/Listener.h"
+
 
 /*!
  * This class represents an Array-based queue with fixed size (2-255).

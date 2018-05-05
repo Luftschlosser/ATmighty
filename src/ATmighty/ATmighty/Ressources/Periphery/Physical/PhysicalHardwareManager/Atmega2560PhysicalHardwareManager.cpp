@@ -4,11 +4,11 @@
 
 #include "Atmega2560PhysicalHardwareManager.h"
 
+#include <util/atomic.h>
 #include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
 #include "ATmighty/Ressources/Periphery/Physical/Timer.h"
 #include "ATmighty/Ressources/Periphery/Physical/Usart.h"
-
-#include <util/atomic.h>
+#include "ATmighty/Utilities/Logs/MessageLog.h"
 
 
 namespace PhysicalHardwareManager
@@ -50,7 +50,14 @@ namespace PhysicalHardwareManager
 			}
 		}
 
-		//add log-message
+		//Log message
+		#if ATMIGHTY_MESSAGELOG_ENABLE == true
+			if (returnBuf)
+				MessageLog<>::DefaultInstance().log<LogLevel::Info>("Hardware allocated by id ", id);
+			else
+				MessageLog<>::DefaultInstance().log<LogLevel::Warning>("Failed hardware allocation by id ", id);
+		#endif
+
 		return returnBuf;
 	}
 	template<class Hw> int8_t GetOwner()

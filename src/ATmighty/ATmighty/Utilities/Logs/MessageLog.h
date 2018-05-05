@@ -8,18 +8,14 @@
 
 
 #include <stdint.h>
-#include <stdlib.h>
 #include "ATmighty/DataStructures/IoQueue.h"
-#include "MessageLogWriter.h"
+#include "Config/MessageLogConfig.h"
 
 
-//define default value for Loglevel and BufferSize if not defined by user
-#ifndef ATMIGHTY_MESSAGELOG_LEVEL
-	#define ATMIGHTY_MESSAGELOG_LEVEL NoLog //NoLog by default
-#endif
-#ifndef ATMIGHTY_MESSAGELOG_BUFFERSIZE
-	#define ATMIGHTY_MESSAGELOG_BUFFERSIZE 64
-#endif
+namespace MessageLogWriter
+{
+	class Base;
+}
 
 
 /*
@@ -39,114 +35,63 @@ enum LogLevel : uint8_t {
  * This class represents a universal MessageLog system with changeable output. It Logs Messages as string.
  * The template parameter is of type enum LogLevel and specifies the LogLevel of this MessageLog system.
  */
-template<LogLevel Level> class MessageLog
+template<LogLevel OutputLevel = LogLevel::ATMIGHTY_MESSAGELOG_LEVEL> class MessageLog
 {
 	private:
 		//the buffer which holds the messages to write out
 		IoQueue<char> bufferQueue;
 
+		//The MessageLogWriter currently used to write out messages
+		MessageLogWriter::Base *writer;
+
 
 		//Buffer-functions automatically load datatypes into bufferQueue
-		inline void buffer(char c)
-		{
-			bufferQueue.push(c);
-		}
+		void buffer(char c);
+		void buffer(const char* msg);
+		void buffer(uint8_t num);
 
-		void buffer(const char* msg)
-		{
-			if (msg)
-			{
-				while(*msg != 0)
-				{
-					bufferQueue.push(*msg);
-					msg++;
-				}
-			}
-		}
+		//Buffers the init-character-sequence of a  message into the bufferQueue (depends on the Level of the Message specified by the template parameter)
+		template<LogLevel Level> void bufferMessageStart();
 
 		//Buffers the end-characters of a message into the bufferQueue
-		void bufferMessageEnd()
-		{
-			bufferQueue.push('\r');
-			bufferQueue.push('\n');
-		}
+		void bufferMessageEnd();
 
 	public:
 		/*!
-		 * Default Constructor
+		 * Constructor
 		 * \param bufferSize Specifies the size of the internal bufferQueue queue.
 		 */
-		MessageLog(uint8_t bufferSize) : bufferQueue(bufferSize) {}
+		MessageLog(uint8_t bufferSize);
 
 		///Sets a new MessageLogWriter
-		inline void setWriter(MessageLogWriter::Base& writer)
-		{
-			if (Level > LogLevel::NoLog)
-			{
-				writer.init(&bufferQueue);
-			}
-		}
+		void setWriter(MessageLogWriter::Base *writer);
 
-		///Logs an Fatal Error
-		void fatal(const char* msg)
+		///Log methods
+		template<LogLevel InputLevel> void log(const char* msg)
 		{
-			if (Level >= LogLevel::Fatal)
+			if (OutputLevel >= InputLevel)
 			{
-				buffer("F: ");
+				bufferMessageStart<InputLevel>();
 				buffer(msg);
 				bufferMessageEnd();
 			}
 		}
-
-		///Logs an Error
-		void error(const char* msg)
+		template<LogLevel InputLevel> void log(const char* msg, uint8_t num)
 		{
-			if (Level >= LogLevel::Error)
+			if (OutputLevel >= InputLevel)
 			{
-				buffer("E: ");
+				bufferMessageStart<InputLevel>();
 				buffer(msg);
-				bufferMessageEnd();
-			}
-		}
-
-		///Logs a Warning
-		void warn(const char* msg)
-		{
-			if (Level >= LogLevel::Warning)
-			{
-				buffer("W: ");
-				buffer(msg);
-				bufferMessageEnd();
-			}
-		}
-
-		///Logs an Info
-		void info(const char* msg)
-		{
-			if (Level >= LogLevel::Info)
-			{
-				buffer("I: ");
-				buffer(msg);
-				bufferMessageEnd();
-			}
-		}
-
-		///Logs an Debug Message
-		void debug(const char* msg)
-		{
-			if (Level >= LogLevel::Debug)
-			{
-				buffer("D: ");
-				buffer(msg);
+				buffer(num);
 				bufferMessageEnd();
 			}
 		}
 
 
 		///Returns an instance of the default MessageLog
-		inline static MessageLog& Instance()
+		inline static MessageLog<>& DefaultInstance()
 		{
-			static MessageLog<LogLevel::ATMIGHTY_MESSAGELOG_LEVEL> defaultInstance(ATMIGHTY_MESSAGELOG_BUFFERSIZE);
+			static MessageLog<> defaultInstance(ATMIGHTY_MESSAGELOG_BUFFERSIZE);
 			return defaultInstance;
 		}
 };
