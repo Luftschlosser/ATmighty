@@ -56,6 +56,9 @@ template <class T> class IoQueue
 		///Returns true if count==0
 		inline bool isEmpty() {return !count;}
 
+		///Returns true if count==size
+		inline bool isFull() {return count==size;}
+
 		///Returns count (the number of elements currently stored in this IoQueue)
 		inline uint8_t getSize() {return count;}
 

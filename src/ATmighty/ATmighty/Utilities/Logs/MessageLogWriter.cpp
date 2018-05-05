@@ -54,6 +54,8 @@ void Usart::exit()
 {
 	//Serial finish (implement later)
 
+	queue->setInitialPushListener(nullptr);
+
 	//free the used hardware
 	PhysicalHardwareManager::Free<Usart0>(&usart);
 }

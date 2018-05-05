@@ -47,8 +47,9 @@ template<LogLevel OutputLevel = LogLevel::ATMIGHTY_MESSAGELOG_LEVEL> class Messa
 
 		//Buffer-functions automatically load datatypes into bufferQueue
 		void buffer(char c);
-		void buffer(const char* msg);
+		void buffer(const char* msg, bool rom);
 		void buffer(uint8_t num);
+		void buffer(int8_t num);
 
 		//Buffers the init-character-sequence of a  message into the bufferQueue (depends on the Level of the Message specified by the template parameter)
 		template<LogLevel Level> void bufferMessageStart();
@@ -63,25 +64,63 @@ template<LogLevel OutputLevel = LogLevel::ATMIGHTY_MESSAGELOG_LEVEL> class Messa
 		 */
 		MessageLog(uint8_t bufferSize);
 
-		///Sets a new MessageLogWriter
+		/*!
+		 * Destructor
+		 * Disconnects the currently used MessageLogWriter
+		 */
+		~MessageLog();
+
+		/*!
+		 * Sets a new MessageLogWriter which shall write out everything which is logged into this MessageLog instance
+		 * MessageLog doesn't take any responsibility in freeing the MessageLogWriter-object when the writer is changed or MessageLog is deconstructed!
+		 * \param writer The writer object to set (derived from MessageLogWriter::Base)
+		 */
 		void setWriter(MessageLogWriter::Base *writer);
 
-		///Log methods
-		template<LogLevel InputLevel> void log(const char* msg)
+		/*!
+		 * Logs a normal constant string
+		 * \param msg A pointer to the beginning of the 0-terminated constant string
+		 * \param rom Determines wether the string is saved in Programspace (true) or in Ram (false, default)
+		 */
+		template<LogLevel InputLevel> void log(const char* msg, bool rom = false)
 		{
 			if (OutputLevel >= InputLevel)
 			{
 				bufferMessageStart<InputLevel>();
-				buffer(msg);
+				buffer(msg, rom);
 				bufferMessageEnd();
 			}
 		}
-		template<LogLevel InputLevel> void log(const char* msg, uint8_t num)
+
+		/*!
+		 * Logs a normal constant string, followed by an uint8_t integer (represented decimal)
+		 * \param msg A pointer to the beginning of the 0-terminated constant string
+		 * \param rom Determines wether the string is saved in Programspace (true) or in Ram (false, default)
+		 * \param num The usigned integer to print after the msg
+		 */
+		template<LogLevel InputLevel> void log(const char* msg, uint8_t num, bool rom = false)
 		{
 			if (OutputLevel >= InputLevel)
 			{
 				bufferMessageStart<InputLevel>();
-				buffer(msg);
+				buffer(msg, rom);
+				buffer(num);
+				bufferMessageEnd();
+			}
+		}
+
+		/*!
+		 * Logs a normal constant string, followed by an int8_t integer (represented decimal)
+		 * \param msg A pointer to the beginning of the 0-terminated constant string
+		 * \param rom Determines wether the string is saved in Programspace (true) or in Ram (false, default)
+		 * \param num The signed integer to print after the msg
+		 */
+		template<LogLevel InputLevel> void log(const char* msg, int8_t num, bool rom = false)
+		{
+			if (OutputLevel >= InputLevel)
+			{
+				bufferMessageStart<InputLevel>();
+				buffer(msg, rom);
 				buffer(num);
 				bufferMessageEnd();
 			}

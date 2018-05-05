@@ -4,7 +4,27 @@
 
 #include "MessageLog.h"
 
+#include <avr/pgmspace.h>
 #include "MessageLogWriter.h"
+
+
+//declare constant string sequences used to begin and end log-messages
+const char DebugBeginSequence[] PROGMEM = ATMIGHTY_MESSAGELOG_BEGINSEQUENCE_DEBUG;
+const char InfoBeginSequence[] PROGMEM = ATMIGHTY_MESSAGELOG_BEGINSEQUENCE_INFO;
+const char WarningBeginSequence[] PROGMEM = ATMIGHTY_MESSAGELOG_BEGINSEQUENCE_WARNING;
+const char ErrorBeginSequence[] PROGMEM = ATMIGHTY_MESSAGELOG_BEGINSEQUENCE_ERROR;
+const char FatalBeginSequence[] PROGMEM = ATMIGHTY_MESSAGELOG_BEGINSEQUENCE_FATAL;
+const char EndSequence[] PROGMEM = ATMIGHTY_MESSAGELOG_ENDSEQUENCE;
+PGM_P const Phrases[] PROGMEM =
+{
+		EndSequence,
+		FatalBeginSequence,
+		ErrorBeginSequence,
+		WarningBeginSequence,
+		InfoBeginSequence,
+		DebugBeginSequence
+};
+
 
 
 //private method implementations:
@@ -13,61 +33,84 @@ template<LogLevel OutputLevel> void MessageLog<OutputLevel>::buffer(char c)
 	bufferQueue.push(c);
 }
 
-template<LogLevel OutputLevel> void MessageLog<OutputLevel>::buffer(const char* msg)
+template<LogLevel OutputLevel> void MessageLog<OutputLevel>::buffer(const char* msg, bool rom)
 {
 	if (msg)
 	{
-		while(*msg != 0)
+		if (rom) //programspace
 		{
-			bufferQueue.push(*msg);
-			msg++;
+			char buf = pgm_read_byte(msg);
+			while (buf)
+			{
+				bufferQueue.push(buf);
+				msg++;
+				buf = pgm_read_byte(msg);
+			}
+		}
+		else //normal
+		{
+			while(*msg != 0)
+			{
+				bufferQueue.push(*msg);
+				msg++;
+			}
 		}
 	}
 }
 
 template<LogLevel OutputLevel> void MessageLog<OutputLevel>::buffer(uint8_t num)
 {
-	bufferQueue.push('0' + (num/100));
+	uint8_t buf = num/100;
+
+	if (buf > 0)
+	{
+		bufferQueue.push('0' + buf);
+	}
 	num %= 100;
-	bufferQueue.push('0' + (num/10));
+	buf += num/10;
+	if (buf > 0)
+	{
+		bufferQueue.push('0' + (num/10));
+	}
 	num %= 10;
 	bufferQueue.push('0' + num);
 }
 
+template<LogLevel OutputLevel> void MessageLog<OutputLevel>::buffer(int8_t num)
+{
+	if (num < 0)
+	{
+		bufferQueue.push('-');
+		num = -num;
+	}
+	buffer((uint8_t) num);
+}
+
 template<LogLevel OutputLevel> template<LogLevel Level> void MessageLog<OutputLevel>::bufferMessageStart()
 {
-	if (Level >= LogLevel::Debug)
+	if (Level > LogLevel::NoLog)
 	{
-		buffer("D: ");
-	}
-	else if (Level == LogLevel::Info)
-	{
-		buffer("I: ");
-	}
-	else if (Level == LogLevel::Warning)
-	{
-		buffer("W: ");
-	}
-	else if (Level == LogLevel::Error)
-	{
-		buffer("E: ");
-	}
-	else if (Level == LogLevel::Fatal)
-	{
-		buffer("F: ");
+		buffer((PGM_P)pgm_read_word(&(Phrases[Level])), true);
 	}
 }
 
 template<LogLevel OutputLevel> void MessageLog<OutputLevel>::bufferMessageEnd()
 {
-	bufferQueue.push('\r');
-	bufferQueue.push('\n');
+	buffer((PGM_P)pgm_read_word(&(Phrases[0])), true);
 }
 
 
 //public method implementations:
 template<LogLevel OutputLevel> MessageLog<OutputLevel>::MessageLog(uint8_t bufferSize) : bufferQueue(bufferSize), writer(nullptr)
 {
+}
+
+template<LogLevel OutputLevel> MessageLog<OutputLevel>::~MessageLog()
+{
+	if (this->writer) //is there a previous MessageLogWriter in use?
+	{
+		this->writer->exit();
+	}
 }
 
 template<LogLevel OutputLevel> void MessageLog<OutputLevel>::setWriter(MessageLogWriter::Base *writer)

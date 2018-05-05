@@ -13,7 +13,25 @@
 #define ATMIGHTY_MESSAGELOG_LEVEL Debug
 
 ///Defines the size of the buffer-queue used by the ATmighty MessageLog-system in Bytes [1-255]
-#define ATMIGHTY_MESSAGELOG_BUFFERSIZE 128
+#define ATMIGHTY_MESSAGELOG_BUFFERSIZE 127
+
+///Defines the character-sequence which gets printed before a debug-message.
+#define ATMIGHTY_MESSAGELOG_BEGINSEQUENCE_DEBUG "D: "
+
+///Defines the character-sequence which gets printed before a info-message.
+#define ATMIGHTY_MESSAGELOG_BEGINSEQUENCE_INFO "I: "
+
+///Defines the character-sequence which gets printed before a warning-message.
+#define ATMIGHTY_MESSAGELOG_BEGINSEQUENCE_WARNING "W: "
+
+///Defines the character-sequence which gets printed before a error-message.
+#define ATMIGHTY_MESSAGELOG_BEGINSEQUENCE_ERROR "E: "
+
+///Defines the character-sequence which gets printed before a fatal-message.
+#define ATMIGHTY_MESSAGELOG_BEGINSEQUENCE_FATAL "F: "
+
+///Defines the character-sequence which gets printed after each message.
+#define ATMIGHTY_MESSAGELOG_ENDSEQUENCE "\r\n"
 
 
 #endif /* CONFIG_MESSAGELOGCONFIG_H_ */

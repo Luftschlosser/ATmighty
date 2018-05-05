@@ -25,10 +25,12 @@ namespace PhysicalHardwareManager
 	{
 		return TotalItems;
 	}
+
 	uint8_t GetAllocatedHardwareItems()
 	{
 		return AllocatedItems;
 	}
+
 	template<class Hw> Hw* Alloc (int8_t id)
 	{
 		Hw& instance = Hw::GetInstance();
@@ -52,26 +54,40 @@ namespace PhysicalHardwareManager
 
 		//Log message
 		#if ATMIGHTY_MESSAGELOG_ENABLE == true
-			if (returnBuf)
-				MessageLog<>::DefaultInstance().log<LogLevel::Info>("Hardware allocated by id ", id);
-			else
-				MessageLog<>::DefaultInstance().log<LogLevel::Warning>("Failed hardware allocation by id ", id);
+		if (returnBuf)
+			MessageLog<>::DefaultInstance().log<LogLevel::Info>("Physical HW allocated by id ", id);
+		else
+			MessageLog<>::DefaultInstance().log<LogLevel::Warning>("Failed physical HW allocation by id ", id);
 		#endif
 
 		return returnBuf;
 	}
+
 	template<class Hw> int8_t GetOwner()
 	{
 		return Hw::GetInstance().getOwner();
 	}
+
 	template<class Hw> void Free(Hw **hardware)
 	{
 		if (hardware != nullptr && (*hardware) != nullptr)
 		{
+			//Log message
+			#if ATMIGHTY_MESSAGELOG_ENABLE == true
+			MessageLog<>::DefaultInstance().log<LogLevel::Info>("Physical HW freed by id ", (*hardware)->getOwner());
+			#endif
+
 			(*hardware)->free();
 			AllocatedItems--;
 			(*hardware) = nullptr;
 		}
+		#if ATMIGHTY_MESSAGELOG_ENABLE == true
+		else
+		{
+			MessageLog<>::DefaultInstance().log<LogLevel::Warning>("Failed physical HW free by unknown id");
+		}
+		#endif
+
 		return;
 	}
 

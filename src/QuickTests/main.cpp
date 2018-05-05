@@ -9,14 +9,13 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
+#include <avr/pgmspace.h>
 #include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
 #include "ATmighty/Ressources/Periphery/Physical/Timer.h"
 #include "ATmighty/Ressources/Periphery/Physical/Usart.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
 #include "ATmighty/Utilities/Logs/MessageLogWriter.h"
 
-
-uint8_t c = 0;
 
 void * operator new(size_t n)
 {
@@ -37,64 +36,45 @@ extern "C" void __cxa_guard_abort (__guard *){}
 extern "C" void __cxa_pure_virtual(void){}
 extern "C" void	atexit( void ) { }//MCU would never "exit", so atexit can be dummy.
 
-
-template <bool debug>
-void test(const char* txt)
-{
-	if (debug)
-	{
-		while (*txt)
-		{
-			UDR0 = *txt;
-			txt++;
-			for (long i = 250000; i>0; i--){
-				asm ( "nop \n" );
-			}
-		}
-		return;
-	}
-}
-
 int main( void )
 {
 	namespace hw = PhysicalHardwareManager;
-
-	unsigned long i = 0;
 	MessageLogWriter::Usart usbWriter;
+	Timer0* timer = hw::Alloc<Timer0>(37);
+	PortA* port = hw::Alloc<PortA>(-111);
 
-	Timer0* timer = hw::Alloc<Timer0>(1);
-	PortA* port = hw::Alloc<PortA>(1);
+	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
+
+	static const char test[] PROGMEM = "Programspace!!!";
+
+	MessageLog<>::DefaultInstance().log<LogLevel::Debug>(test, true);
 
 	//Pin A1 setup
 	port->setDDRA(1);
 	port->setPORTA(1);
-
-	test<false>("Hallo Welt");
 
 	//Timer setup
 	timer->setTCCR0B(5);//set prescalar 1024
 	timer->setTIMSK0(1);//enable overflow-interrupt
 	sei();
 
-	for (long i = 5000000; i>0; i--){
-		asm ( "nop \n" );
-	}
-	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
+	hw::Free<Timer0>(&timer);
+	hw::Free<Timer0>(&timer);
+	timer = hw::Alloc<Timer0>(8);
 
 	//mainloop
 	while(1){
-		port->setPINA(1); //toggle pin A1
-		for (i = 250000; i>0; i--){
-			asm ( "nop \n" );
-		}
+		asm ( "nop \n" );
 	}
 }
 
 ISR(TIMER0_OVF_vect)
 {
+	static uint8_t c(0);
 	c++;
-	if (c>=50)
+	if (c>=42)
 	{
 		c=0;
+		PINA=1;
 	}
 }
