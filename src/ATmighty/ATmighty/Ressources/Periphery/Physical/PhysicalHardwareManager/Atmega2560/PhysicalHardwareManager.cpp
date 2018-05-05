@@ -2,7 +2,7 @@
  * This file implements the namespace \see PhysicalHardwareManager
  */
 
-#include "Atmega2560PhysicalHardwareManager.h"
+#include "PhysicalHardwareManager.h"
 
 #include <util/atomic.h>
 #include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"

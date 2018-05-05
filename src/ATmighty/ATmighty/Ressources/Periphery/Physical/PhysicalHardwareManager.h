@@ -9,7 +9,7 @@
 
 
 #if defined (__AVR_ATmega2560__)
-#  include "PhysicalHardwareManager/Atmega2560PhysicalHardwareManager.h"
+#  include "PhysicalHardwareManager/Atmega2560/PhysicalHardwareManager.h"
 #else
 #  warning "PhysicalHardwareManager is not defined for this µC."
 #endif
