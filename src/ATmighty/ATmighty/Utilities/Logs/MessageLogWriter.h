@@ -1,4 +1,5 @@
 /*
+ * This headerfile is µC-independent and can be used directly with all AVR's.
  * This headerfile declares different MessageLogWriter classes as well as their common base class.
  */
 

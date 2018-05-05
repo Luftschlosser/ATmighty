@@ -131,6 +131,7 @@ template<LogLevel OutputLevel> template<LogLevel Level> void MessageLog<OutputLe
 	if (Level > LogLevel::NoLog)
 	{
 		buffer((PGM_P)pgm_read_word(&(Phrases[Level])), true);
+		buffer(' ');
 	}
 }
 

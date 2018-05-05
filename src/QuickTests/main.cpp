@@ -39,15 +39,14 @@ extern "C" void	atexit( void ) { }//MCU would never "exit", so atexit can be dum
 int main( void )
 {
 	namespace hw = PhysicalHardwareManager;
+
 	MessageLogWriter::Usart usbWriter;
+	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
+
 	Timer0* timer = hw::Alloc<Timer0>(37);
 	PortA* port = hw::Alloc<PortA>(-111);
 
-	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
-
-	static const char test[] PROGMEM = "Programspace!!!";
-
-	MessageLog<>::DefaultInstance().log<LogLevel::Fatal>(false, '#', (uint8_t)1, " Test ", (int8_t)-57, " Hooray! ", true);
+	MessageLog<>::DefaultInstance().log<LogLevel::Fatal>(false, "Test ", (int8_t)-57, " Hooray! ", true);
 
 	//Pin A1 setup
 	port->setDDRA(1);
@@ -61,6 +60,7 @@ int main( void )
 	hw::Free<Timer0>(&timer);
 	hw::Free<Timer0>(&timer);
 	timer = hw::Alloc<Timer0>(8);
+	timer = hw::Alloc<Timer0>(9);
 
 	//mainloop
 	while(1){

@@ -9,6 +9,7 @@
 #include "ATmighty/Ressources/Periphery/Physical/Timer.h"
 #include "ATmighty/Ressources/Periphery/Physical/Usart.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
+#include "MessageLogPhrases.h"
 
 
 namespace PhysicalHardwareManager
@@ -54,10 +55,11 @@ namespace PhysicalHardwareManager
 
 		//Log message
 		#if ATMIGHTY_MESSAGELOG_ENABLE == true
+		PGM_P hwString = GetHardwareStringRepresentation<Hw>();
 		if (returnBuf)
-			MessageLog<>::DefaultInstance().log<LogLevel::Info>("Physical HW allocated by id ", id);
+			MessageLog<>::DefaultInstance().log<LogLevel::Info>(true, Phrase_Physical, hwString, Phrase_AllocSucess, Phrase_By, id);
 		else
-			MessageLog<>::DefaultInstance().log<LogLevel::Warning>("Failed physical HW allocation by id ", id);
+			MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true, Phrase_Failed, Phrase_AllocFail, Phrase_Physical, hwString, Phrase_By, id);
 		#endif
 
 		return returnBuf;
@@ -74,7 +76,7 @@ namespace PhysicalHardwareManager
 		{
 			//Log message
 			#if ATMIGHTY_MESSAGELOG_ENABLE == true
-			MessageLog<>::DefaultInstance().log<LogLevel::Info>("Physical HW freed by id ", (*hardware)->getOwner());
+			MessageLog<>::DefaultInstance().log<LogLevel::Info>(true, Phrase_Physical, GetHardwareStringRepresentation<Hw>(), Phrase_FreeSucess, Phrase_By, (*hardware)->getOwner());
 			#endif
 
 			(*hardware)->free();
@@ -84,7 +86,7 @@ namespace PhysicalHardwareManager
 		#if ATMIGHTY_MESSAGELOG_ENABLE == true
 		else
 		{
-			MessageLog<>::DefaultInstance().log<LogLevel::Warning>("Failed physical HW free by unknown id");
+			MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true, Phrase_Failed, Phrase_FreeFail, Phrase_Physical, GetHardwareStringRepresentation<Hw>(), Phrase_By, '?');
 		}
 		#endif
 
