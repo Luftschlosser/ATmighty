@@ -1,5 +1,5 @@
 /*
- * This headerfile is µC-dependent, it should not be included by anyone else than Atmega2560PhysicalHardwareManager.cpp
+ * This headerfile is µC-dependent, it should not be included by anyone else than Atmega2560/PhysicalHardwareManager.cpp
  * This headerfile defines several string-literals and helper function which are needed to correctly log the activities of the
  * Atmega2560's PhysicalHardwareManager.
  */
@@ -11,6 +11,7 @@
 #if ATMIGHTY_MESSAGELOG_ENABLE == true
 
 #include <avr/pgmspace.h>
+
 
 namespace PhysicalHardwareManager
 {
@@ -28,6 +29,7 @@ namespace PhysicalHardwareManager
 	const char Phrase_FreeFail[] PROGMEM = "freeing of ";
 	const char Phrase_Failed[] PROGMEM = "failed ";
 	const char Phrase_By[] PROGMEM = " by ";
+	const char Phrase_Id[] PROGMEM = "ID ";
 
 	//helper-functions
 	template<class T> inline PGM_P GetHardwareStringRepresentation() {return Hw_Undefined;}

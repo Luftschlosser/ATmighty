@@ -12,6 +12,7 @@
 //temp
 #include "ATmighty/Ressources/Periphery/Physical/Usart.h"
 #include <ATmighty/Ressources/Periphery/Physical/PhysicalHardwareManager.h>
+#include "ATmighty/Utilities/LUTs/HardwareOwnerID.h"
 
 
 using namespace MessageLogWriter;
@@ -40,7 +41,7 @@ Usart::~Usart()
 void Usart::init(IoQueue<char>* logBuffer)
 {
 	//allocate necessary hardware
-	usart = PhysicalHardwareManager::Alloc<Usart0>(100);
+	usart = PhysicalHardwareManager::Alloc<Usart0>(OwnerID::MsgLogWriter);
 
 	//Serial init
 	usart->setUBRR0H(0x0F & (uint8_t)(103>>8));

@@ -43,10 +43,8 @@ int main( void )
 	MessageLogWriter::Usart usbWriter;
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
 
-	Timer0* timer = hw::Alloc<Timer0>(37);
-	PortA* port = hw::Alloc<PortA>(-111);
-
-	MessageLog<>::DefaultInstance().log<LogLevel::Fatal>(false, "Test ", (int8_t)-57, " Hooray! ", true);
+	Timer0* timer = hw::Alloc<Timer0>(-2);
+	PortA* port = hw::Alloc<PortA>(0);
 
 	//Pin A1 setup
 	port->setDDRA(1);
@@ -60,7 +58,7 @@ int main( void )
 	hw::Free<Timer0>(&timer);
 	hw::Free<Timer0>(&timer);
 	timer = hw::Alloc<Timer0>(8);
-	timer = hw::Alloc<Timer0>(9);
+	timer = hw::Alloc<Timer0>(-3);
 
 	//mainloop
 	while(1){

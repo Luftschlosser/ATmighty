@@ -10,7 +10,7 @@
 #include "ATmighty/Ressources/Periphery/Physical/Usart.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
 #include "MessageLogPhrases.h"
-
+#include "ATmighty/Utilities/LUTs/HardwareOwnerID.h"
 
 namespace PhysicalHardwareManager
 {
@@ -56,10 +56,17 @@ namespace PhysicalHardwareManager
 		//Log message
 		#if ATMIGHTY_MESSAGELOG_ENABLE == true
 		PGM_P hwString = GetHardwareStringRepresentation<Hw>();
+		PGM_P idString = GetOwnerIdDescription(id);
 		if (returnBuf)
-			MessageLog<>::DefaultInstance().log<LogLevel::Info>(true, Phrase_Physical, hwString, Phrase_AllocSucess, Phrase_By, id);
+			if (idString)
+				MessageLog<>::DefaultInstance().log<LogLevel::Info>(true, Phrase_Physical, hwString, Phrase_AllocSucess, Phrase_By, idString);
+			else
+				MessageLog<>::DefaultInstance().log<LogLevel::Info>(true, Phrase_Physical, hwString, Phrase_AllocSucess, Phrase_By, Phrase_Id, id);
 		else
-			MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true, Phrase_Failed, Phrase_AllocFail, Phrase_Physical, hwString, Phrase_By, id);
+			if (idString)
+				MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true, Phrase_Failed, Phrase_AllocFail, Phrase_Physical, hwString, Phrase_By, idString);
+			else
+				MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true, Phrase_Failed, Phrase_AllocFail, Phrase_Physical, hwString, Phrase_Id, id);
 		#endif
 
 		return returnBuf;
@@ -76,7 +83,12 @@ namespace PhysicalHardwareManager
 		{
 			//Log message
 			#if ATMIGHTY_MESSAGELOG_ENABLE == true
-			MessageLog<>::DefaultInstance().log<LogLevel::Info>(true, Phrase_Physical, GetHardwareStringRepresentation<Hw>(), Phrase_FreeSucess, Phrase_By, (*hardware)->getOwner());
+			int8_t id = (*hardware)->getOwner();
+			PGM_P idString = GetOwnerIdDescription(id);
+			if (idString)
+				MessageLog<>::DefaultInstance().log<LogLevel::Info>(true, Phrase_Physical, GetHardwareStringRepresentation<Hw>(), Phrase_FreeSucess, Phrase_By, idString);
+			else
+				MessageLog<>::DefaultInstance().log<LogLevel::Info>(true, Phrase_Physical, GetHardwareStringRepresentation<Hw>(), Phrase_FreeSucess, Phrase_By, Phrase_Id, id);
 			#endif
 
 			(*hardware)->free();
