@@ -9,10 +9,8 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
-#include <avr/pgmspace.h>
 #include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
 #include "ATmighty/Ressources/Periphery/Physical/Timer.h"
-#include "ATmighty/Ressources/Periphery/Physical/Usart.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
 #include "ATmighty/Utilities/Logs/MessageLogWriter.h"
 

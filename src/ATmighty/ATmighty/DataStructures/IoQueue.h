@@ -19,6 +19,7 @@
  * It doesn't use dynamic memory allocation, but may loose data if Queue is full.
  * The type of the data-elements to be stored is declared by the template argument.
  * The size of this IoQueue in RAM will be size*sizeof(T)+7 Bytes.
+ * Dynamic memory-allocation only happens in Constructor, not while using the IoQueue!
  */
 template <class T> class IoQueue
 {
