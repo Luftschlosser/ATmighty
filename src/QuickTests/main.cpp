@@ -18,6 +18,7 @@
 void * operator new(size_t n)
 {
 	if (n == 0){n=1;}
+	///if malloc return 0 -> reset avr + fatal error
   return malloc(n);
 }
 
@@ -34,6 +35,9 @@ extern "C" void __cxa_guard_abort (__guard *){}
 extern "C" void __cxa_pure_virtual(void){}
 extern "C" void	atexit( void ) { }//MCU would never "exit", so atexit can be dummy.
 
+
+PortA* port;
+
 int main( void )
 {
 	namespace hw = PhysicalHardwareManager;
@@ -41,8 +45,8 @@ int main( void )
 	MessageLogWriter::Usart usbWriter;
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
 
-	Timer0* timer = hw::Alloc<Timer0>(-2);
-	PortA* port = hw::Alloc<PortA>(0);
+	Timer0* timer = hw::Alloc<Timer0>(0);
+	port = hw::Alloc<PortA>(1);
 
 	//Pin A1 setup
 	port->setDDRA(1);
@@ -55,8 +59,8 @@ int main( void )
 
 	hw::Free<Timer0>(&timer);
 	hw::Free<Timer0>(&timer);
-	timer = hw::Alloc<Timer0>(8);
-	timer = hw::Alloc<Timer0>(-3);
+	timer = hw::Alloc<Timer0>(2);
+	timer = hw::Alloc<Timer0>(3);
 
 	//mainloop
 	while(1){
@@ -66,11 +70,11 @@ int main( void )
 
 ISR(TIMER0_OVF_vect)
 {
-	static uint8_t c(0);
+	static uint8_t c(41);
 	c++;
 	if (c>=42)
 	{
 		c=0;
-		PINA=1;
+		port->setPINA(1);
 	}
 }
