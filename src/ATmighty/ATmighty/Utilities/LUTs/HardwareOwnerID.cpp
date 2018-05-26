@@ -7,21 +7,23 @@
 
 PGM_P GetOwnerIdDescription(int8_t id)
 {
-	static const uint8_t numberOfDescriptions = 5;
+	static const uint8_t numberOfDescriptions = 6;
 
 	//string definitions for logging owners (defined static in function, so that it is only included into final assembly when actually used)
 	static const char Owner_Unused[] PROGMEM = "Nobody";
 	static const char Owner_Default[] PROGMEM = "Default";
 	static const char Owner_DirectAbstraction[] PROGMEM = "Abstraction";
+	static const char Owner_IndirectAbstraction[] PROGMEM = "indirect Abstraction";
 	static const char Owner_AbstractionDependency[] PROGMEM = "abstr.Dependency";
 	static const char Owner_MessageLogWriter[] PROGMEM = "MessageLogWriter";
 	static PGM_P const Owner_Phrases[numberOfDescriptions] PROGMEM =
 	{
-			[0] = Owner_Unused,
-			[1] = Owner_Default,
-			[2] = Owner_DirectAbstraction,
-			[3] = Owner_AbstractionDependency,
-			[4] = Owner_MessageLogWriter
+			[-OwnerID::Unused] = Owner_Unused,
+			[-OwnerID::Default] = Owner_Default,
+			[-OwnerID::DirectAbstraction] = Owner_DirectAbstraction,
+			[-OwnerID::IndirectAbstraction] = Owner_IndirectAbstraction,
+			[-OwnerID::AbstractionDependency] = Owner_AbstractionDependency,
+			[-OwnerID::MsgLogWriter] = Owner_MessageLogWriter
 	};
 
 	//actual function

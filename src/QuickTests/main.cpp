@@ -61,6 +61,7 @@ int main( void )
 	hw::Free<Timer0>(&timer);
 	timer = hw::Alloc<Timer0>(2);
 	timer = hw::Alloc<Timer0>(3);
+	PortF* pf = hw::Alloc<PortF>(3);
 
 	//mainloop
 	while(1){

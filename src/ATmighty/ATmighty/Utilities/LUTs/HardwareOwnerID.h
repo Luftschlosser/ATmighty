@@ -18,8 +18,9 @@ enum OwnerID : int8_t {
 	Unused = 0,					//Hw is actually not in use at all (free)
 	Default = -1,				//Fallback OwnerID (gets used when HW is allocated by OwnerID 0)
 	DirectAbstraction = -2,		//physical HW is used as an abstract HW of the same Type (e.g. Timer0 as Timer8b)
-	AbstractionDependency = -3,	//HW is used by another abtract HW (e.g. Pin as PWM-output by Timer8b)
-	MsgLogWriter = -4,			//HW is used by MessageLogWriter-instance
+	IndirectAbstraction = -3,	//physical HW is indirectly used by an abstract HW of another Type (e.g. PortA by PinA0, PinA1...)
+	AbstractionDependency = -4,	//HW is used by another abtract HW (e.g. Pin as PWM-output by Timer8b)
+	MsgLogWriter = -5,			//HW is used by MessageLogWriter-instance
 };
 
 

@@ -9,6 +9,11 @@
 
 #if defined (__AVR_ATmega2560__)
 #  include "IoPorts/Atmega2560/PortA.h"
+#  include "IoPorts/Atmega2560/PortB.h"
+#  include "IoPorts/Atmega2560/PortC.h"
+#  include "IoPorts/Atmega2560/PortD.h"
+#  include "IoPorts/Atmega2560/PortE.h"
+#  include "IoPorts/Atmega2560/PortF.h"
 #else
 #  warning "No IoPorts are defined for this µC."
 #endif

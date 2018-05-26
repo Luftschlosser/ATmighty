@@ -16,6 +16,7 @@ class Usart0;
 
 /*
  * This namespace collects different MessageLogWriter classes as well as their common base class.
+ * Each MessageLogWriter instance can only be used with one MessageLog.
  */
 namespace MessageLogWriter
 {
@@ -43,7 +44,7 @@ namespace MessageLogWriter
 	/*!
 	 * This class represents a MessageLogWriter which prints out the Messages via Usart/(USB)
 	 */
-	//temp - change Implementation later to use abstract hardware manager + move to cpp-file
+	//temp - change Implementation later to use abstract hardware manager
 	class Usart : public Base
 	{
 		private:

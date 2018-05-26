@@ -118,4 +118,19 @@ namespace PhysicalHardwareManager
 	template PortA* Alloc<PortA>(int8_t id);
 	template int8_t GetOwner<PortA>();
 	template void Free<PortA>(PortA **hardware);
+	template PortB* Alloc<PortB>(int8_t id);
+	template int8_t GetOwner<PortB>();
+	template void Free<PortB>(PortB **hardware);
+	template PortC* Alloc<PortC>(int8_t id);
+	template int8_t GetOwner<PortC>();
+	template void Free<PortC>(PortC **hardware);
+	template PortD* Alloc<PortD>(int8_t id);
+	template int8_t GetOwner<PortD>();
+	template void Free<PortD>(PortD **hardware);
+	template PortE* Alloc<PortE>(int8_t id);
+	template int8_t GetOwner<PortE>();
+	template void Free<PortE>(PortE **hardware);
+	template PortF* Alloc<PortF>(int8_t id);
+	template int8_t GetOwner<PortF>();
+	template void Free<PortF>(PortF **hardware);
 }

@@ -20,6 +20,11 @@ namespace PhysicalHardwareManager
 	const char Hw_Timer0[] PROGMEM = "Timer0";
 	const char Hw_Usart0[] PROGMEM = "Usart0";
 	const char Hw_PortA[] PROGMEM = "PortA";
+	const char Hw_PortB[] PROGMEM = "PortB";
+	const char Hw_PortC[] PROGMEM = "PortC";
+	const char Hw_PortD[] PROGMEM = "PortD";
+	const char Hw_PortE[] PROGMEM = "PortE";
+	const char Hw_PortF[] PROGMEM = "PortF";
 
 	//define general phrases
 	const char Phrase_Physical[] PROGMEM = "phys.HW ";
@@ -36,6 +41,11 @@ namespace PhysicalHardwareManager
 	template<> inline PGM_P GetHardwareStringRepresentation<Timer0>() {return Hw_Timer0;}
 	template<> inline PGM_P GetHardwareStringRepresentation<Usart0>() {return Hw_Usart0;}
 	template<> inline PGM_P GetHardwareStringRepresentation<PortA>() {return Hw_PortA;}
+	template<> inline PGM_P GetHardwareStringRepresentation<PortB>() {return Hw_PortB;}
+	template<> inline PGM_P GetHardwareStringRepresentation<PortC>() {return Hw_PortC;}
+	template<> inline PGM_P GetHardwareStringRepresentation<PortD>() {return Hw_PortD;}
+	template<> inline PGM_P GetHardwareStringRepresentation<PortE>() {return Hw_PortE;}
+	template<> inline PGM_P GetHardwareStringRepresentation<PortF>() {return Hw_PortF;}
 }
 
 #endif
