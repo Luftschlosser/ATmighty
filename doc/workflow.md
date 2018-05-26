@@ -1,8 +1,8 @@
 # ATmighty Workflow
 
-## Development Environment
-
 The ATmighty library is developed using Eclipse Oxygen (4.7.3a) under Ubuntu 16.04 (LTS), using the avr-eclipse plugin. In the current version an ArduinoMega2560 with an ATmega2560 microcontroller is used as a development board.
+
+## Development Environment
 
 ### Setting up Eclipse for AVR-development
 
@@ -170,6 +170,16 @@ In order to debug directly from eclipse it is necessary to set up a correct debu
 
 To debug from eclipse, start an avarice instance manually via a terminal, then select your debug-configuration from the dropdown-menu next to the debug-button in eclipse.
 
+#### Unsolved Debugging issues
+
+For some reason the On-Chip-Debugging doesn't work correctly and I was not able to find any solution yet. So here is at least a description of the problems:
+
+* GDB seems to assign wrong C/C++ linenumbers to the programcounter-value. (skipping lines, random branching/looping). As a consequence, breakpoints don't work as they should and it becomes very hard to trace the code execution. When viewing the disassembled code, everythings seems to work fine.
+This can happen because of compiler-optimizations, but it happened also when all optimizations where turned off.
+* When running uninterrupted, the program resets after a short ammount of time. This does not happen when singlestepping. After each reset, the MCUSR-register holds the value 29 (0x1D) - from my understanding, this should be an invalid value. An unhandled interrupt is also not the problem, as I set the BADISR_vect to an empty ISR-routine. This problem occurs always when the ATmega2560 was programmed via JTAG, not only when debugging. The same program runs fine when using the standard Arduino-programmer.
+
+Please write a comment if you find a solution to any of these problems.
+
 ### Serial Terminal
 
 In order to communicate with the connected Arduino-board via USART (over USB) its nice to have a serial-terminal ready to use inside eclipse.
@@ -195,7 +205,7 @@ ln -s /usr/lib/jni/librxtxSerial.so ~/.p2/pool/plugins/gnu.io.rxtx.linux.x86_64_
 ```
 #### Usage
 
-The terminal can be opened in Eclipse under Window/ShowView/Other/Terminal/Terminal. When opening a new Terminal, use Mode "Serial" and set the Port to "/dev/ttyUSBn" (n = 0,1,2,...,n) - (may be different on other linux-machines).
+The terminal can be opened in Eclipse under Window/ShowView/Other/Terminal/Terminal. When opening a new Terminal, use Mode "Serial" and set the Port to "/dev/ttyUSBn" or "/dev/ttyACMn" (n = 0,1,2,...,n) - (may be different on other linux-machines).
 
 Beware! In order to program the board via it's Serial connection you must disconnect the serial terminal first or you will get a avrdude timeout error.
 
