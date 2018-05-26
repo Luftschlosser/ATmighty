@@ -1,0 +1,20 @@
+
+avr-gcc -g  -mmcu=atmega2560 -o blink.elf blink.c 
+avr-objcopy -O ihex blink.elf  blink.hex
+avrdude -c jtag2 -p m2560 -v -U flash:w:blink.hex 
+
+avarice  -2 --jtag usb  :4242
+avr-gdb blink.elf
+(gdb) target remote localhost:4242
+
+
+Fuses:
+
+E:FD
+H:00
+L:FF
+
+avrdude -c jtag2isp -p m2560 -v -U efuse:w:0b11111101:m
+avrdude -c jtag2isp -p m2560 -v -U hfuse:w:0b00000000:m
+
+
