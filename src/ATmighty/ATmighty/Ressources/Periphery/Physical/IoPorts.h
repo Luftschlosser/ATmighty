@@ -1,5 +1,5 @@
 /*!
- * This headerfile includes a collection of all IO-Ports for this µC.
+ * This headerfile includes a collection of all physical IO-Ports for this µC.
  * This headerfile is µC-independent, it will include the µC-dependent IoPort-versions if available.
  */
 
@@ -15,7 +15,7 @@
 #  include "IoPorts/Atmega2560/PortE.h"
 #  include "IoPorts/Atmega2560/PortF.h"
 #else
-#  warning "No IoPorts are defined for this µC."
+#  warning "No physical IoPorts are defined for this µC."
 #endif
 
 

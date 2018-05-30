@@ -9,8 +9,12 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
+
 #include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
 #include "ATmighty/Ressources/Periphery/Physical/Timer.h"
+
+#include "ATmighty/Ressources/Periphery/Abstract/IoPorts.h"
+
 #include "ATmighty/Utilities/Logs/MessageLog.h"
 #include "ATmighty/Utilities/Logs/MessageLogWriter.h"
 
@@ -35,33 +39,32 @@ extern "C" void __cxa_guard_abort (__guard *){}
 extern "C" void __cxa_pure_virtual(void){}
 extern "C" void	atexit( void ) { }//MCU would never "exit", so atexit can be dummy.
 
-
-PortA* port;
+IoPort* absPort;
 
 int main( void )
 {
-	namespace hw = PhysicalHardwareManager;
+	namespace phHw = PhysicalHardwareManager;
+	AbstractHardwareManager abHw = AbstractHardwareManager();
 
 	MessageLogWriter::Usart usbWriter;
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
 
-	Timer0* timer = hw::Alloc<Timer0>(0);
-	port = hw::Alloc<PortA>(1);
+	Timer0* timer = phHw::Alloc<Timer0>(0);
+	absPort = abHw.Alloc<AbstractPortA>(7);
 
 	//Pin A1 setup
-	port->setDDRA(1);
-	port->setPORTA(1);
+	absPort->setDataDirectionMask(1);
+	absPort->setData(1);
 
 	//Timer setup
 	timer->setTCCR0B(5);//set prescalar 1024
 	timer->setTIMSK0(1);//enable overflow-interrupt
 	sei();
 
-	hw::Free<Timer0>(&timer);
-	hw::Free<Timer0>(&timer);
-	timer = hw::Alloc<Timer0>(2);
-	timer = hw::Alloc<Timer0>(3);
-	PortF* pf = hw::Alloc<PortF>(3);
+	phHw::Free<Timer0>(&timer);
+	phHw::Free<Timer0>(&timer);
+	timer = phHw::Alloc<Timer0>(2);
+	timer = phHw::Alloc<Timer0>(3);
 
 	//mainloop
 	while(1){
@@ -76,6 +79,6 @@ ISR(TIMER0_OVF_vect)
 	if (c>=42)
 	{
 		c=0;
-		port->setPINA(1);
+		absPort->applyPinToggleMask(1);
 	}
 }

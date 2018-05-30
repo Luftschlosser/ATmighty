@@ -21,7 +21,7 @@ namespace PhysicalHardwareManager
 	/*!
 	 * Allocate a specified physical hardware-item.
 	 * The desired hardware item is defined by the template argument, which must be one of the physical hardware wrapper-classes
-	 * \param id The OwnerId which requests this hardware allocation (must not be 0, use negative numbers for internal use by ATmighty)
+	 * \param id The OwnerId which requests this hardware allocation (must not be 0, use positive numbers, negatives are reserved for internal use by ATmighty)
 	 * \returns a pointer to the allocated hardware-item, or nullptr if the allocation failed
 	 */
 	template<class Hw> Hw* Alloc (int8_t id);
