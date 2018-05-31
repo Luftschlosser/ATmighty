@@ -9,14 +9,16 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-/// This class is a common baseclass for all abstract hardware and manages the exclusive access of each hardware.
+/// This class is a common base-class for all abstract hardware and manages the exclusive access of each hardware.
 class AbstractHardwareBase
 {
+	friend class AbstractHardwareManager;
+
 	private:
 		/// 1 Byte overhead stores owner (0 if free) - Positive range is for user, Negative range is for ATmighty
 		volatile int8_t owner;
 
-	public:
+	protected:
 		/// Constructor (initializes this abstract hardware as "free")
 		inline AbstractHardwareBase() : owner(0) {}
 
@@ -34,7 +36,7 @@ class AbstractHardwareBase
 		 */
 		virtual int8_t init(int8_t ownerId)
 		{
-			if (owner != 0)
+			if (owner == 0)
 			{
 				owner = ownerId;
 				return 0;
@@ -53,6 +55,12 @@ class AbstractHardwareBase
 
 		/// Returns the current owner id
 		inline int8_t getOwner() {return owner;}
+
+	public:
+		/*! Returns the corresponding number or letter (upper-case) associated with the specific physical hardware used by this
+		 * abstract hardware. ('0'-'9' / 'A'-'Z')
+		 */
+		virtual char getCharCode() = 0;
 };
 
 

@@ -37,6 +37,7 @@ enum LogLevel : uint8_t {
  */
 template<LogLevel OutputLevel = LogLevel::ATMIGHTY_MESSAGELOG_LEVEL> class MessageLog
 {
+	//TODO: add function "logSpace()" to print out empty line for formatting reasons
 	private:
 		//the buffer which holds the messages to write out
 		IoQueue<char> bufferQueue;

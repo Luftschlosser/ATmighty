@@ -11,7 +11,7 @@
 #include "ATmighty/Ressources/Periphery/Abstract/AbstractHardwareManager.h"
 
 ///This class represents a common interface for all 8bit IoPorts
-class IoPort : protected AbstractHardwareBase
+class IoPort : public AbstractHardwareBase
 {
 	friend class AbstractHardwareManager;
 
@@ -55,9 +55,6 @@ class IoPort : protected AbstractHardwareBase
 
 		/// Reads the value of the pins of this port independently of the data-direction.
 		virtual uint8_t getPinValues() = 0;
-
-		/// Returns the corresponding letter (upper-case) associated with this port.
-		virtual char getPortLetter() = 0;
 };
 
 

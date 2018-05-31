@@ -16,15 +16,38 @@ class AbstractPortA : public IoPort
 	friend class AbstractHardwareManager;
 
 	private:
+		///A pointer to the physical PortA-wrapper to be used by this abstraction
 		PortA* physicalReference;
 
+		///Default Constructor
 		inline AbstractPortA() : physicalReference(nullptr) {}
 
-		virtual ~AbstractPortA() {}
+		///Destructor
+		~AbstractPortA() {}
 
+		/*!
+		 * Tries to allocate this abstract hardware, initializes physical hardware dependencies.
+		 * This routine can only be called by friends.
+		 * \param ownerId The owner-id of the caller who wants to allocate this abstract hardware
+		 * \returns 0 on success, >0 if this abstract hardware is already in use or <0 if the physical hardware dependencies could not be resolved.
+		 */
 		int8_t init(int8_t ownerId);
 
+		/*!
+		 * Frees this abstract hardware and the allocated physical hardware dependencies.
+		 * This routine can only be called by friends.
+		 */
 		void exit();
+
+		/*!
+		 * Returns a singleton-instance. Each specific abstract hardware is a singleton, as the same physical hardware can only be abstracted once.
+		 * This implementation was chosen because it does not require the use of new/delete.
+		 */
+		static inline AbstractPortA& GetInstance()
+		{
+			static AbstractPortA instance;
+			return instance;
+		}
 
 	public:
 		/// Sets the data-direction-bits of Port A. ('1' = out, '0' = in)
@@ -47,7 +70,7 @@ class AbstractPortA : public IoPort
 		inline uint8_t getPinValues() {return physicalReference->getPINA();}
 
 		/// Returns the corresponding letter (upper-case) associated with Port A.
-		inline char getPortLetter() {return 'A';}
+		inline char getCharCode() {return 'A';}
 };
 
 

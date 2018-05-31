@@ -5,35 +5,38 @@
 #include "HardwareOwnerID.h"
 
 
-PGM_P GetOwnerIdDescription(int8_t id)
+namespace OwnerID
 {
-	static const uint8_t numberOfDescriptions = 6;
-
-	//string definitions for logging owners (defined static in function, so that it is only included into final assembly when actually used)
-	static const char Owner_Unused[] PROGMEM = "Nobody";
-	static const char Owner_Default[] PROGMEM = "Default";
-	static const char Owner_DirectAbstraction[] PROGMEM = "Abstraction";
-	static const char Owner_IndirectAbstraction[] PROGMEM = "indirect Abstraction";
-	static const char Owner_AbstractionDependency[] PROGMEM = "abstr.Dependency";
-	static const char Owner_MessageLogWriter[] PROGMEM = "MessageLogWriter";
-	static PGM_P const Owner_Phrases[numberOfDescriptions] PROGMEM =
+	PGM_P GetOwnerIdDescription(int8_t id)
 	{
-			[-OwnerID::Unused] = Owner_Unused,
-			[-OwnerID::Default] = Owner_Default,
-			[-OwnerID::DirectAbstraction] = Owner_DirectAbstraction,
-			[-OwnerID::IndirectAbstraction] = Owner_IndirectAbstraction,
-			[-OwnerID::AbstractionDependency] = Owner_AbstractionDependency,
-			[-OwnerID::MsgLogWriter] = Owner_MessageLogWriter
-	};
+		static const uint8_t numberOfDescriptions = 6;
 
-	//actual function
-	if (id <= 0) //negative
-	{
-		id = -id;
-		if (id < numberOfDescriptions) //in defined range
+		//string definitions for logging owners (defined static in function, so that it is only included into final assembly when actually used)
+		static const char Owner_Unused[] PROGMEM = "Nobody";
+		static const char Owner_Default[] PROGMEM = "Default";
+		static const char Owner_DirectAbstraction[] PROGMEM = "Abstraction";
+		static const char Owner_IndirectAbstraction[] PROGMEM = "indirect Abstraction";
+		static const char Owner_AbstractionDependency[] PROGMEM = "abstr.Dependency";
+		static const char Owner_MessageLogWriter[] PROGMEM = "MessageLogWriter";
+		static PGM_P const Owner_Phrases[numberOfDescriptions] PROGMEM =
 		{
-			return (PGM_P)pgm_read_word(&(Owner_Phrases[id]));
+				[-OwnerID::Unused] = Owner_Unused,
+				[-OwnerID::Default] = Owner_Default,
+				[-OwnerID::DirectAbstraction] = Owner_DirectAbstraction,
+				[-OwnerID::IndirectAbstraction] = Owner_IndirectAbstraction,
+				[-OwnerID::AbstractionDependency] = Owner_AbstractionDependency,
+				[-OwnerID::MsgLogWriter] = Owner_MessageLogWriter
+		};
+
+		//actual function
+		if (id <= 0) //negative
+		{
+			id = -id;
+			if (id < numberOfDescriptions) //in defined range
+			{
+				return (PGM_P)pgm_read_word(&(Owner_Phrases[id]));
+			}
 		}
+		return nullptr;
 	}
-	return nullptr;
 }

@@ -44,13 +44,20 @@ IoPort* absPort;
 int main( void )
 {
 	namespace phHw = PhysicalHardwareManager;
-	AbstractHardwareManager abHw = AbstractHardwareManager();
+	AbstractHardwareManager abHw = AbstractHardwareManager(42);
 
 	MessageLogWriter::Usart usbWriter;
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
 
 	Timer0* timer = phHw::Alloc<Timer0>(0);
-	absPort = abHw.Alloc<AbstractPortA>(7);
+	absPort = abHw.allocIoPort();
+	abHw.allocIoPort();
+	abHw.freeItem(&absPort); //implicit template parameter! ;)
+	abHw.freeItem(&absPort); //implicit template parameter! ;)
+	PortA* a = phHw::Alloc<PortA>(101);
+	absPort = abHw.allocIoPort();
+	phHw::Free(&a);
+	absPort = abHw.allocIoPort();
 
 	//Pin A1 setup
 	absPort->setDataDirectionMask(1);
@@ -61,7 +68,7 @@ int main( void )
 	timer->setTIMSK0(1);//enable overflow-interrupt
 	sei();
 
-	phHw::Free<Timer0>(&timer);
+	phHw::Free(&timer); //implicit template parameter! ;)
 	phHw::Free<Timer0>(&timer);
 	timer = phHw::Alloc<Timer0>(2);
 	timer = phHw::Alloc<Timer0>(3);
