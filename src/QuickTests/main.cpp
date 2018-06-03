@@ -14,6 +14,7 @@
 #include "ATmighty/Ressources/Periphery/Physical/Timer.h"
 
 #include "ATmighty/Ressources/Periphery/Abstract/IoPorts.h"
+#include "ATmighty/Ressources/Periphery/Abstract/IoPins.h"
 
 #include "ATmighty/Utilities/Logs/MessageLog.h"
 #include "ATmighty/Utilities/Logs/MessageLogWriter.h"
@@ -39,7 +40,7 @@ extern "C" void __cxa_guard_abort (__guard *){}
 extern "C" void __cxa_pure_virtual(void){}
 extern "C" void	atexit( void ) { }//MCU would never "exit", so atexit can be dummy.
 
-AbstractIoPort* absPort;
+AbstractPinA0* absPin;
 
 int main( void )
 {
@@ -50,18 +51,18 @@ int main( void )
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
 
 	Timer0* timer = phHw::Alloc<Timer0>(0);
-	absPort = abHw.allocIoPort();
-	abHw.allocIoPort();
-	abHw.freeItem(&absPort); //implicit template parameter! ;)
-	abHw.freeItem(&absPort); //implicit template parameter! ;)
+	absPin = abHw.allocItem<AbstractPinA0>();
+	abHw.allocItem<AbstractPinA0>();
+	abHw.freeItem(&absPin); //implicit template parameter! ;)
+	abHw.freeItem(&absPin); //implicit template parameter! ;)
 	PortA* a = phHw::Alloc<PortA>(101);
-	absPort = abHw.allocIoPort();
+	absPin = abHw.allocItem<AbstractPinA0>();
 	phHw::Free(&a);
-	absPort = abHw.allocIoPort();
+	absPin = abHw.allocItem<AbstractPinA0>();
 
 	//Pin A1 setup
-	absPort->setDataDirectionMask(1);
-	absPort->setData(1);
+	absPin->setDirection(IoPin::DataDirection::Output);
+	absPin->set(true);
 
 	//Timer setup
 	timer->setTCCR0B(5);//set prescalar 1024
@@ -86,6 +87,6 @@ ISR(TIMER0_OVF_vect)
 	if (c>=42)
 	{
 		c=0;
-		absPort->applyPinToggleMask(1);
+		absPin->toggle();
 	}
 }

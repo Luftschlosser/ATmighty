@@ -30,7 +30,7 @@ class AbstractHardwareManager
 		 * Allocate a specific abstract hardware-item.
 		 * The desired hardware item is defined by the template argument, which must be one of the abstract hardware classes.
 		 * An hardware item allocated by this routine can be used faster than general abstract hardware instances, as the virtual function-calls don't need
-		 * to be dereferenced via the v-table when the reference is stored as a pointer to a final class type.
+		 * to be dereferenced via the v-table when the reference is stored as a pointer to the final class type.
 		 * \returns a pointer to the allocated hardware-item, or nullptr if the allocation failed
 		 */
 		template<class Hw> Hw* allocItem();

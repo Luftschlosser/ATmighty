@@ -1,4 +1,5 @@
 /*!
+ * This headerfile is µC-dependent, it should only be included indirectly via "AbstractHardwareManager.h".
  * This headerfile is µC-dependent, it should only be included indirectly via "IoPorts.h".
  */
 
@@ -8,9 +9,9 @@
 
 #include <ATmighty/Ressources/Periphery/Abstract/IoPorts/AbstractIoPort.h>
 #include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
-#include "ATmighty/Ressources/Periphery/Physical/PhysicalHardwareManager.h"
 
 
+/// This class abstractly wraps physical PortA
 class AbstractPortA : public AbstractIoPort
 {
 	friend class AbstractHardwareManager;
@@ -61,7 +62,7 @@ class AbstractPortA : public AbstractIoPort
 		inline void setData(uint8_t data) {physicalReference->setPORTA(data);}
 
 		/// toggles the Pins where mask == '1' independently of the data-direction.
-		inline void applyPinToggleMask(uint8_t mask) {physicalReference->setPINA(mask);};
+		inline void applyPinToggleMask(uint8_t mask) {physicalReference->setPINA(mask);}
 
 		/// Reads the data-direction-bits of PortA. ('1' = out, '0' = in)
 		inline uint8_t getDataDirections() {return physicalReference->getDDRA();}

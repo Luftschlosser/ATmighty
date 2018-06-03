@@ -1,17 +1,17 @@
 /*
- * This headerfile represents a common interface for all abstract 8bit IoPorts.
+ * This headerfile represents a common interface for all abstract 1bit IoPins.
  */
 
-#ifndef ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_IOPORTS_ABSTRACTIOPORT_H_
-#define ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_IOPORTS_ABSTRACTIOPORT_H_
+#ifndef ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_IOPINS_ABSTRACTIOPIN_H_
+#define ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_IOPINS_ABSTRACTIOPIN_H_
 
 
 #include <stdint.h>
-#include "ATmighty/Ressources/Periphery/Abstract/IoPorts/IoPort.h"
+#include "ATmighty/Ressources/Periphery/Abstract/IoPins/IoPin.h"
 #include "ATmighty/Ressources/Periphery/Abstract/AbstractHardwareManager.h"
 
-///This class represents a common interface for all abstract 8bit IoPorts
-class AbstractIoPort : public IoPort
+///This class represents a common interface for all abstract 1bit IoPins
+class AbstractIoPin : public IoPin
 {
 	friend class AbstractHardwareManager;
 
@@ -21,17 +21,17 @@ class AbstractIoPort : public IoPort
 
 	protected:
 		/// Default Constructor - Can only be called by friends
-		inline AbstractIoPort() : owner(0) {}
+		inline AbstractIoPin() : owner(0) {}
 
 		/// Virtual Destructor
-		virtual ~AbstractIoPort() {}
+		virtual ~AbstractIoPin() {}
 
 		/*!
 		 * Tries to allocate this abstract hardware, initializes physical hardware dependencies.
 		 * When this method gets overridden in derived types, this base-class implementation must still be called!
 		 * This routine can only be called by friends.
 		 * \param ownerId The owner-id of the caller who wants to allocate this abstract hardware
-		 * \returns 0 on success, >0 if this abstract hardware is already in use or <0 if the physical hardware dependencies could not be resolved.
+		 * \returns 0 on success, >0 if this abstract hardware is already in use or <0 if the hardware dependencies could not be resolved.
 		 */
 		virtual inline int8_t init(int8_t ownerId) {
 			if (owner == 0)
@@ -46,7 +46,7 @@ class AbstractIoPort : public IoPort
 		}
 
 		/*!
-		 * Frees this abstract hardware and the allocated physical hardware dependencies.
+		 * Frees this abstract hardware and the allocated hardware dependencies.
 		 * When this method gets overridden in derived types, this base-class implementation must still be called!
 		 * This routine can only be called by friends.
 		 */
@@ -65,9 +65,12 @@ class AbstractIoPort : public IoPort
 		}
 
 	public:
-		/// Returns the corresponding letter (upper-case) associated with the specific physical IoPort used by this AbstractIoPort \returns ('A'-'L')
+		/// Returns the corresponding letter (upper-case) associated with the specific physical IoPort used by this AbstractIoPin \returns ('A'-'L')
 		virtual char getCharCode() = 0;
+
+		/// Returns the corresponding pin-number associated with this specific pin within its IoPort (as printable character) \returns ('0' - '7')
+		virtual char getPinNumber() = 0;
 };
 
 
-#endif /* ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_IOPORTS_ABSTRACTIOPORT_H_ */
+#endif /* ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_IOPINS_ABSTRACTIOPIN_H_ */

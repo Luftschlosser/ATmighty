@@ -25,6 +25,7 @@ namespace MessageLogPhrases
 	const char Hw_PortE[] PROGMEM = "PortE";
 	const char Hw_PortF[] PROGMEM = "PortF";
 	const char Hw_IoPort[] PROGMEM = "IoPort";
+	const char Hw_IoPin[] PROGMEM = "IoPin";
 
 
 	//define general hardware-allocation/-freeing phrases

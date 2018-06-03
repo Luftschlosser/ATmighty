@@ -15,13 +15,14 @@ namespace OwnerID
 	//ATmighty OwnerID's have to be negative numbers, as the positive range is reserved for the user.
 
 	///This enum defines different usages/OwnerID's for ATmighty's hardware-allocations
-	enum OwnerID : int8_t {
-	Unused = 0,					//Hw is actually not in use at all (free)
-	Default = -1,				//Fallback OwnerID (gets used when HW is allocated by OwnerID 0)
-	DirectAbstraction = -2,		//physical HW is used as an abstract HW of the same Type (e.g. Timer0 as Timer8b)
-	IndirectAbstraction = -3,	//physical HW is indirectly used by an abstract HW of another Type (e.g. PortA by PinA0, PinA1...)
-	AbstractionDependency = -4,	//HW is used by another abtract HW (e.g. Pin as PWM-output by Timer8b)
-	MsgLogWriter = -5,			//HW is used by MessageLogWriter-instance
+	enum OwnerID : int8_t
+	{
+		Unused = 0,					//Hw is actually not in use at all (free)
+		Default = -1,				//Fallback OwnerID (gets used when HW is allocated by OwnerID 0)
+		DirectAbstraction = -2,		//physical HW is used as an abstract HW of the same Type (e.g. PortA as IoPort->AbstractIoPort->AbstractPortA)
+		IndirectAbstraction = -3,	//physical HW is partially used by an abstract HW of a dependent type Type (e.g. PortA by IoPin->AbstractIoPin->AbstractPinA0)
+		AbstractionDependency = -4,	//HW is used by another abstract HW (e.g. AbstractIoPin as PWM-output by AbstractTimer8b)
+		MsgLogWriter = -5,			//HW is used by MessageLogWriter-instance
 	};
 
 

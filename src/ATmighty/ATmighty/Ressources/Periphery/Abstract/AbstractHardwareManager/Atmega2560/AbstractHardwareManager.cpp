@@ -6,19 +6,25 @@
 
 #include <util/atomic.h>
 #include "ATmighty/Ressources/Periphery/Abstract/IoPorts.h"
+#include "ATmighty/Ressources/Periphery/Abstract/IoPins.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
 #include "ATmighty/Utilities/LUTs/MessageLogPhrases.h"
 #include "ATmighty/Utilities/LUTs/HardwareOwnerID.h"
 
 
 //Additional Helper-functions and explicitly instantiated template functions for Message-Logging
+#if ATMIGHTY_MESSAGELOG_ENABLE == true
 namespace MessageLogPhrases
 {
 	template<class T> inline PGM_P GetHardwareStringRepresentation() {return Hw_Undefined;}
 
 	template<> inline PGM_P GetHardwareStringRepresentation<AbstractIoPort>() {return Hw_IoPort;}
 	template<> inline PGM_P GetHardwareStringRepresentation<AbstractPortA>() {return Hw_IoPort;}
+
+	template<> inline PGM_P GetHardwareStringRepresentation<AbstractIoPin>() {return Hw_IoPin;}
+	template<> inline PGM_P GetHardwareStringRepresentation<AbstractPinA0>() {return Hw_IoPin;}
 }
+#endif
 
 
 
@@ -296,3 +302,8 @@ template<class Hw> void AbstractHardwareManager::freeItem(Hw **hardware)
 //The explizitely instantiated versions of the template-functions (update the list when adding new types!)
 template AbstractPortA* AbstractHardwareManager::allocItem<AbstractPortA>();
 template void AbstractHardwareManager::freeItem<AbstractIoPort>(AbstractIoPort **hardware);
+template void AbstractHardwareManager::freeItem<AbstractPortA>(AbstractPortA **hardware);
+
+template AbstractPinA0* AbstractHardwareManager::allocItem<AbstractPinA0>();
+template void AbstractHardwareManager::freeItem<AbstractIoPin>(AbstractIoPin **hardware);
+template void AbstractHardwareManager::freeItem<AbstractPinA0>(AbstractPinA0 **hardware);

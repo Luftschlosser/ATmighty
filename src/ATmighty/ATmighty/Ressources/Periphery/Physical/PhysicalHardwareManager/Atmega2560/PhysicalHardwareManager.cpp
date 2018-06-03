@@ -14,6 +14,7 @@
 
 
 //Additional Helper-functions and explicitly instantiated template functions for Message-Logging
+#if ATMIGHTY_MESSAGELOG_ENABLE == true
 namespace MessageLogPhrases
 {
 	template<class T> inline PGM_P GetHardwareStringRepresentation() {return Hw_Undefined;}
@@ -27,6 +28,7 @@ namespace MessageLogPhrases
 	template<> inline PGM_P GetHardwareStringRepresentation<PortE>() {return Hw_PortE;}
 	template<> inline PGM_P GetHardwareStringRepresentation<PortF>() {return Hw_PortF;}
 }
+#endif
 
 
 //main implementation of PhysicalHardwareManager

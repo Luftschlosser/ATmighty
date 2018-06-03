@@ -25,7 +25,7 @@ class IoPort
 		 */
 		virtual void setData(uint8_t data) = 0;
 
-		/// toggles the Pins where mask == '1' independently of the data-direction.
+		/// toggles the pins where mask == '1' independently of the data-direction.
 		virtual void applyPinToggleMask(uint8_t mask) = 0;
 
 		/// Reads the data-direction-bits of this port. ('1' = out, '0' = in)
