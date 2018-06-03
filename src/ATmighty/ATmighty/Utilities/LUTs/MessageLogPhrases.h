@@ -42,6 +42,7 @@ namespace MessageLogPhrases
 	const char Reason_FreeFail[] PROGMEM = ": Already free";
 	const char Reason_AllocFail_InUse[] PROGMEM = ": In use by ";
 	const char Reason_AllocFail_Dependency[] PROGMEM = ": Dependency not free";
+	const char Reason_AllUsed[] PROGMEM = ": All in use";
 }
 
 #endif

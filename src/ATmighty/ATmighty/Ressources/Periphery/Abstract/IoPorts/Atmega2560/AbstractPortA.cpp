@@ -9,7 +9,7 @@
 
 int8_t AbstractPortA::init(int8_t ownerId)
 {
-	if (!AbstractHardwareBase::init(ownerId))
+	if (!AbstractIoPort::init(ownerId))
 	{
 		physicalReference = PhysicalHardwareManager::Alloc<PortA>(OwnerID::DirectAbstraction);
 		if (physicalReference != nullptr)
@@ -18,7 +18,7 @@ int8_t AbstractPortA::init(int8_t ownerId)
 		}
 		else
 		{
-			AbstractHardwareBase::exit();
+			AbstractIoPort::exit();
 			return -1;
 		}
 	}
@@ -30,6 +30,6 @@ int8_t AbstractPortA::init(int8_t ownerId)
 
 void AbstractPortA::exit()
 {
-	AbstractHardwareBase::exit();
 	PhysicalHardwareManager::Free(&physicalReference);
+	AbstractIoPort::exit();
 }

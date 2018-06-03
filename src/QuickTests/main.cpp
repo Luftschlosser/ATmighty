@@ -39,7 +39,7 @@ extern "C" void __cxa_guard_abort (__guard *){}
 extern "C" void __cxa_pure_virtual(void){}
 extern "C" void	atexit( void ) { }//MCU would never "exit", so atexit can be dummy.
 
-IoPort* absPort;
+AbstractIoPort* absPort;
 
 int main( void )
 {

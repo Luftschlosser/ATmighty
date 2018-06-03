@@ -9,7 +9,7 @@
 #include <stdint.h>
 
 //forward-declare necessary classes
-class IoPort;
+class AbstractIoPort;
 class AbstractHardwareBase;
 
 
@@ -40,7 +40,7 @@ class AbstractHardwareManager
 		 * Functioncalls will have an overhead of *x* cycles, as the virtual functions from the returned interface-type need to be dereferenced for each call.
 		 * \returns a pointer to an abstract allocated IoPort-instance or nullptr if the allocation failed, which happens when all IoPorts are already in use.
 		 */
-		IoPort* allocIoPort();
+		AbstractIoPort* allocIoPort();
 
 		/*!
 		 * Frees an allocated abstract hardware-item.

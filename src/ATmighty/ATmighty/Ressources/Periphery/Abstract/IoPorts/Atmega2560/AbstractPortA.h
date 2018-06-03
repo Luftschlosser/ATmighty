@@ -6,12 +6,12 @@
 #define ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_IOPORTS_ATMEGA2560_ABSTRACTPORTA_H_
 
 
-#include "ATmighty/Ressources/Periphery/Abstract/IoPorts/IoPort.h"
+#include <ATmighty/Ressources/Periphery/Abstract/IoPorts/AbstractIoPort.h>
 #include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
 #include "ATmighty/Ressources/Periphery/Physical/PhysicalHardwareManager.h"
 
 
-class AbstractPortA : public IoPort
+class AbstractPortA : public AbstractIoPort
 {
 	friend class AbstractHardwareManager;
 

@@ -1,5 +1,5 @@
 /*
- * This headerfile represents a common interface for all 8bit IoPorts.
+ * This headerfile represents a common interface for all 8bit IoPorts. (abstract and virtual)
  */
 
 #ifndef ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_IOPORTS_IOPORT_H_
@@ -7,36 +7,14 @@
 
 
 #include <stdint.h>
-#include "ATmighty/Ressources/Periphery/Abstract/AbstractHardwareBase/AbstractHardwareBase.h"
-#include "ATmighty/Ressources/Periphery/Abstract/AbstractHardwareManager.h"
 
-///This class represents a common interface for all 8bit IoPorts
-class IoPort : public AbstractHardwareBase
+///This class represents a pure virtual common interface for all 8bit IoPorts
+class IoPort
 {
-	friend class AbstractHardwareManager;
-
-	protected:
-		/// Default Constructor - Can only be called by friends
-		inline IoPort() {}
-
+	public:
 		/// Virtual Destructor
 		virtual ~IoPort() {}
 
-		/*!
-		 * Tries to allocate this abstract hardware, initializes physical hardware dependencies.
-		 * This routine can only be called by friends.
-		 * \param ownerId The owner-id of the caller who wants to allocate this abstract hardware
-		 * \returns 0 on success, >0 if this abstract hardware is already in use or <0 if the physical hardware dependencies could not be resolved.
-		 */
-		virtual int8_t init(int8_t ownerId) = 0;
-
-		/*!
-		 * Frees this abstract hardware and the allocated physical hardware dependencies.
-		 * This routine can only be called by friends.
-		 */
-		virtual void exit() = 0;
-
-	public:
 		/// Sets the data-direction-bits of this port. ('1' = out, '0' = in)
 		virtual void setDataDirectionMask(uint8_t mask) = 0;
 
