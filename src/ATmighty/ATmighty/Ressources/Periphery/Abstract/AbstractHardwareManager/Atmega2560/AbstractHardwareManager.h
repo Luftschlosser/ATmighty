@@ -10,7 +10,6 @@
 
 //forward-declare necessary classes
 class AbstractIoPort;
-class AbstractHardwareBase;
 
 
 ///This namespace contains some functions to manage the exclusive access to the abstract hardware class-instances.

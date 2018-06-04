@@ -8,8 +8,10 @@
 
 #include <stdint.h>
 #include <avr/io.h>
+#include <avr/pgmspace.h>
 #include "ATmighty/Ressources/Periphery/Physical/PhysicalHardwareBase/PhysicalHardwareBase.h"
 #include "ATmighty/Ressources/Periphery/Physical/PhysicalHardwareManager.h"
+
 
 /// This class provides access to the Timer0-periphery of the atmega2560 µC.
 class Timer0 : private PhysicalHardwareBase
@@ -19,13 +21,21 @@ class Timer0 : private PhysicalHardwareBase
 	friend void PhysicalHardwareManager::Free<Timer0>(Timer0 **hardware);
 
 	private:
-		///Default Constructor
+		/// Default Constructor
 		inline Timer0() : PhysicalHardwareBase() {}
 
+		/// returns a singleton-instance
 		inline static Timer0& GetInstance()
 		{
 			static Timer0 instance;
 			return instance;
+		}
+
+		/// returns a string-representation of this type stored in flash
+		inline static PGM_P GetHardwareStringRepresentation()
+		{
+			static const char me[] PROGMEM = "Timer0";
+			return me;
 		}
 
 	public:

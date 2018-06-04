@@ -12,23 +12,6 @@
 #include "ATmighty/Utilities/LUTs/HardwareOwnerID.h"
 
 
-//Additional Helper-functions and explicitly instantiated template functions for Message-Logging
-#if ATMIGHTY_MESSAGELOG_ENABLE == true
-namespace MessageLogPhrases
-{
-	template<class T> inline PGM_P GetHardwareStringRepresentation() {return Hw_Undefined;}
-
-	template<> inline PGM_P GetHardwareStringRepresentation<AbstractIoPort>() {return Hw_IoPort;}
-	template<> inline PGM_P GetHardwareStringRepresentation<AbstractPortA>() {return Hw_IoPort;}
-
-	template<> inline PGM_P GetHardwareStringRepresentation<AbstractIoPin>() {return Hw_IoPin;}
-	template<> inline PGM_P GetHardwareStringRepresentation<AbstractPinA0>() {return Hw_IoPin;}
-}
-#endif
-
-
-
-//main implementation of AbstractHardwareManager
 
 AbstractHardwareManager::AbstractHardwareManager(int8_t ownerId) : owner(ownerId)
 {
@@ -46,7 +29,7 @@ template<class Hw> Hw* AbstractHardwareManager::allocItem ()
 
 	//MessageLog Variables
 	#if ATMIGHTY_MESSAGELOG_ENABLE == true
-	PGM_P hwString = MessageLogPhrases::GetHardwareStringRepresentation<Hw>();
+	PGM_P hwString = instance.getHardwareStringRepresentation();
 	PGM_P idString = OwnerID::GetOwnerIdDescription(owner);
 	#endif
 
@@ -75,6 +58,7 @@ template<class Hw> Hw* AbstractHardwareManager::allocItem ()
 						MessageLogPhrases::Phrase_By,
 						idString,
 						MessageLogPhrases::Reason_AllocFail_InUse,
+						MessageLogPhrases::Phrase_By,
 						userString);
 			}
 			else
@@ -88,7 +72,7 @@ template<class Hw> Hw* AbstractHardwareManager::allocItem ()
 						MessageLogPhrases::Phrase_By,
 						idString,
 						MessageLogPhrases::Reason_AllocFail_InUse,
-						MessageLogPhrases::Phrase_Id,
+						MessageLogPhrases::Phrase_ById,
 						userId);
 			}
 		}
@@ -102,10 +86,10 @@ template<class Hw> Hw* AbstractHardwareManager::allocItem ()
 						MessageLogPhrases::Phrase_AbstractHw,
 						hwString,
 						'[', instance.getCharCode(),']',
-						MessageLogPhrases::Phrase_By,
-						MessageLogPhrases::Phrase_Id,
+						MessageLogPhrases::Phrase_ById,
 						owner,
 						MessageLogPhrases::Reason_AllocFail_InUse,
+						MessageLogPhrases::Phrase_By,
 						userString);
 			}
 			else
@@ -116,11 +100,10 @@ template<class Hw> Hw* AbstractHardwareManager::allocItem ()
 						MessageLogPhrases::Phrase_AbstractHw,
 						hwString,
 						'[', instance.getCharCode(),']',
-						MessageLogPhrases::Phrase_By,
-						MessageLogPhrases::Phrase_Id,
+						MessageLogPhrases::Phrase_ById,
 						owner,
 						MessageLogPhrases::Reason_AllocFail_InUse,
-						MessageLogPhrases::Phrase_Id,
+						MessageLogPhrases::Phrase_ById,
 						userId);
 			}
 		}
@@ -152,8 +135,7 @@ template<class Hw> Hw* AbstractHardwareManager::allocItem ()
 					MessageLogPhrases::Phrase_AbstractHw,
 					hwString,
 					'[', instance.getCharCode(),']',
-					MessageLogPhrases::Phrase_By,
-					MessageLogPhrases::Phrase_Id,
+					MessageLogPhrases::Phrase_ById,
 					owner,
 					MessageLogPhrases::Reason_AllocFail_Dependency);
 
@@ -183,8 +165,7 @@ template<class Hw> Hw* AbstractHardwareManager::allocItem ()
 					hwString,
 					'[', instance.getCharCode(),']',
 					MessageLogPhrases::Phrase_AllocSucess,
-					MessageLogPhrases::Phrase_By,
-					MessageLogPhrases::Phrase_Id,
+					MessageLogPhrases::Phrase_ById,
 					owner);
 		}
 		#endif
@@ -210,6 +191,7 @@ AbstractIoPort* AbstractHardwareManager::allocIoPort()
 	#if ATMIGHTY_MESSAGELOG_ENABLE == true
 	//log "All Ports in use"
 	PGM_P idString = OwnerID::GetOwnerIdDescription(owner);
+	IoPort& instance = AbstractPortA::GetInstance();
 
 	if (idString)
 	{
@@ -217,7 +199,7 @@ AbstractIoPort* AbstractHardwareManager::allocIoPort()
 				MessageLogPhrases::Phrase_Failed,
 				MessageLogPhrases::Phrase_AllocFail,
 				MessageLogPhrases::Phrase_AbstractHw,
-				MessageLogPhrases::GetHardwareStringRepresentation<AbstractPortA>(),
+				instance.getHardwareStringRepresentation(),
 				MessageLogPhrases::Phrase_By,
 				idString,
 				MessageLogPhrases::Reason_AllUsed);
@@ -228,9 +210,8 @@ AbstractIoPort* AbstractHardwareManager::allocIoPort()
 				MessageLogPhrases::Phrase_Failed,
 				MessageLogPhrases::Phrase_AllocFail,
 				MessageLogPhrases::Phrase_AbstractHw,
-				MessageLogPhrases::GetHardwareStringRepresentation<AbstractPortA>(),
-				MessageLogPhrases::Phrase_By,
-				MessageLogPhrases::Phrase_Id,
+				instance.getHardwareStringRepresentation(),
+				MessageLogPhrases::Phrase_ById,
 				owner,
 				MessageLogPhrases::Reason_AllUsed);
 	}
@@ -244,7 +225,7 @@ template<class Hw> void AbstractHardwareManager::freeItem(Hw **hardware)
 {
 	//MessageLog Variables
 	#if ATMIGHTY_MESSAGELOG_ENABLE == true
-	PGM_P hwString = MessageLogPhrases::GetHardwareStringRepresentation<Hw>();
+	PGM_P hwString = (*hardware)->getHardwareStringRepresentation();
 	#endif
 
 	if (hardware != nullptr && (*hardware) != nullptr)
@@ -272,8 +253,7 @@ template<class Hw> void AbstractHardwareManager::freeItem(Hw **hardware)
 					hwString,
 					'[', (*hardware)->getCharCode(),']',
 					MessageLogPhrases::Phrase_FreeSucess,
-					MessageLogPhrases::Phrase_By,
-					MessageLogPhrases::Phrase_Id,
+					MessageLogPhrases::Phrase_ById,
 					owner);
 		}
 		#endif
@@ -290,8 +270,7 @@ template<class Hw> void AbstractHardwareManager::freeItem(Hw **hardware)
 				MessageLogPhrases::Phrase_AbstractHw,
 				hwString,
 				'[', '?',']',
-				MessageLogPhrases::Phrase_By,
-				MessageLogPhrases::Phrase_Id,
+				MessageLogPhrases::Phrase_ById,
 				owner,
 				MessageLogPhrases::Reason_FreeFail);
 	}
@@ -300,6 +279,7 @@ template<class Hw> void AbstractHardwareManager::freeItem(Hw **hardware)
 
 
 //The explizitely instantiated versions of the template-functions (update the list when adding new types!)
+//TODO find out if there is a better way rather than instantiating every type separately
 template AbstractPortA* AbstractHardwareManager::allocItem<AbstractPortA>();
 template void AbstractHardwareManager::freeItem<AbstractIoPort>(AbstractIoPort **hardware);
 template void AbstractHardwareManager::freeItem<AbstractPortA>(AbstractPortA **hardware);

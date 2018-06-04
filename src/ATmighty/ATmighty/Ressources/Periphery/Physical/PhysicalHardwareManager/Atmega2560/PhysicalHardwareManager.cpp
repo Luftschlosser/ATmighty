@@ -13,24 +13,6 @@
 #include "ATmighty/Utilities/LUTs/HardwareOwnerID.h"
 
 
-//Additional Helper-functions and explicitly instantiated template functions for Message-Logging
-#if ATMIGHTY_MESSAGELOG_ENABLE == true
-namespace MessageLogPhrases
-{
-	template<class T> inline PGM_P GetHardwareStringRepresentation() {return Hw_Undefined;}
-
-	template<> inline PGM_P GetHardwareStringRepresentation<Timer0>() {return Hw_Timer0;}
-	template<> inline PGM_P GetHardwareStringRepresentation<Usart0>() {return Hw_Usart0;}
-	template<> inline PGM_P GetHardwareStringRepresentation<PortA>() {return Hw_PortA;}
-	template<> inline PGM_P GetHardwareStringRepresentation<PortB>() {return Hw_PortB;}
-	template<> inline PGM_P GetHardwareStringRepresentation<PortC>() {return Hw_PortC;}
-	template<> inline PGM_P GetHardwareStringRepresentation<PortD>() {return Hw_PortD;}
-	template<> inline PGM_P GetHardwareStringRepresentation<PortE>() {return Hw_PortE;}
-	template<> inline PGM_P GetHardwareStringRepresentation<PortF>() {return Hw_PortF;}
-}
-#endif
-
-
 //main implementation of PhysicalHardwareManager
 namespace PhysicalHardwareManager
 {
@@ -75,7 +57,7 @@ namespace PhysicalHardwareManager
 
 		//Log message
 		#if ATMIGHTY_MESSAGELOG_ENABLE == true
-		PGM_P hwString = MessageLogPhrases::GetHardwareStringRepresentation<Hw>();
+		PGM_P hwString = Hw::GetHardwareStringRepresentation();
 		PGM_P idString = OwnerID::GetOwnerIdDescription(id);
 		if (returnBuf)
 		{
@@ -95,8 +77,7 @@ namespace PhysicalHardwareManager
 						MessageLogPhrases::Phrase_PhysicalHw,
 						hwString,
 						MessageLogPhrases::Phrase_AllocSucess,
-						MessageLogPhrases::Phrase_By,
-						MessageLogPhrases::Phrase_Id,
+						MessageLogPhrases::Phrase_ById,
 						id);
 			}
 		}
@@ -117,6 +98,7 @@ namespace PhysicalHardwareManager
 							MessageLogPhrases::Phrase_By,
 							idString,
 							MessageLogPhrases::Reason_AllocFail_InUse,
+							MessageLogPhrases::Phrase_By,
 							userString);
 				}
 				else
@@ -129,7 +111,7 @@ namespace PhysicalHardwareManager
 							MessageLogPhrases::Phrase_By,
 							idString,
 							MessageLogPhrases::Reason_AllocFail_InUse,
-							MessageLogPhrases::Phrase_Id,
+							MessageLogPhrases::Phrase_ById,
 							userId);
 				}
 			}
@@ -142,10 +124,10 @@ namespace PhysicalHardwareManager
 							MessageLogPhrases::Phrase_AllocFail,
 							MessageLogPhrases::Phrase_PhysicalHw,
 							hwString,
-							MessageLogPhrases::Phrase_By,
-							MessageLogPhrases::Phrase_Id,
+							MessageLogPhrases::Phrase_ById,
 							id,
 							MessageLogPhrases::Reason_AllocFail_InUse,
+							MessageLogPhrases::Phrase_By,
 							userString);
 
 				}
@@ -156,11 +138,10 @@ namespace PhysicalHardwareManager
 							MessageLogPhrases::Phrase_AllocFail,
 							MessageLogPhrases::Phrase_PhysicalHw,
 							hwString,
-							MessageLogPhrases::Phrase_By,
-							MessageLogPhrases::Phrase_Id,
+							MessageLogPhrases::Phrase_ById,
 							id,
 							MessageLogPhrases::Reason_AllocFail_InUse,
-							MessageLogPhrases::Phrase_Id,
+							MessageLogPhrases::Phrase_ById,
 							userId);
 				}
 			}
@@ -187,7 +168,7 @@ namespace PhysicalHardwareManager
 			{
 				MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
 						MessageLogPhrases::Phrase_PhysicalHw,
-						MessageLogPhrases::GetHardwareStringRepresentation<Hw>(),
+						Hw::GetHardwareStringRepresentation(),
 						MessageLogPhrases::Phrase_FreeSucess,
 						MessageLogPhrases::Phrase_By,
 						idString);
@@ -196,10 +177,9 @@ namespace PhysicalHardwareManager
 			{
 				MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
 						MessageLogPhrases::Phrase_PhysicalHw,
-						MessageLogPhrases::GetHardwareStringRepresentation<Hw>(),
+						Hw::GetHardwareStringRepresentation(),
 						MessageLogPhrases::Phrase_FreeSucess,
-						MessageLogPhrases::Phrase_By,
-						MessageLogPhrases::Phrase_Id,
+						MessageLogPhrases::Phrase_ById,
 						id);
 			}
 			#endif
@@ -216,7 +196,7 @@ namespace PhysicalHardwareManager
 					MessageLogPhrases::Phrase_Failed,
 					MessageLogPhrases::Phrase_FreeFail,
 					MessageLogPhrases::Phrase_PhysicalHw,
-					MessageLogPhrases::GetHardwareStringRepresentation<Hw>(),
+					Hw::GetHardwareStringRepresentation(),
 					MessageLogPhrases::Phrase_By,
 					'?',
 					MessageLogPhrases::Reason_FreeFail);

@@ -8,8 +8,10 @@
 
 #include <stdint.h>
 #include <avr/io.h>
+#include <avr/pgmspace.h>
 #include "ATmighty/Ressources/Periphery/Physical/PhysicalHardwareBase/PhysicalHardwareBase.h"
 #include "ATmighty/Ressources/Periphery/Physical/PhysicalHardwareManager.h"
+
 
 /// This class provides access to the Usart0-periphery of the atmega2560 µC.
 class Usart0 : private PhysicalHardwareBase
@@ -19,13 +21,21 @@ class Usart0 : private PhysicalHardwareBase
 	friend void PhysicalHardwareManager::Free<Usart0>(Usart0 **hardware);
 
 	private:
-		///Default Constructor
+		/// Default Constructor
 		inline Usart0() : PhysicalHardwareBase() {}
 
+		/// returns a singleton-instance
 		inline static Usart0& GetInstance()
 		{
 			static Usart0 instance;
 			return instance;
+		}
+
+		/// returns a string-representation of this type stored in flash
+		inline static PGM_P GetHardwareStringRepresentation()
+		{
+			static const char me[] PROGMEM = "Usart0";
+			return me;
 		}
 
 	public:

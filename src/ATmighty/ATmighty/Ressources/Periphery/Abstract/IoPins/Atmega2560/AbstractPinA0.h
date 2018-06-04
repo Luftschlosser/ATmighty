@@ -65,7 +65,14 @@ class AbstractPinA0 : public AbstractIoPin
 		bool read();
 
 		/// Returns the corresponding letter (upper-case) associated with the specific physical IoPort used by this AbstractIoPin \returns ('A'-'L')
-		inline char getCharCode() {return 'A';}
+		inline PGM_P getCharCode()
+		{
+			static const char pinCode[] PROGMEM = "A0";
+			return pinCode;
+		}
+
+		/// Returns the corresponding port-character associated with the specific port used by this IoPin abstraction \returns ('A' - 'L')
+		virtual char getPinPort() {return 'A';}
 
 		/// Returns the corresponding pin-number associated with this specific pin within its IoPort (as printable character) \returns ('0' - '7')
 		inline char getPinNumber() {return '0';}

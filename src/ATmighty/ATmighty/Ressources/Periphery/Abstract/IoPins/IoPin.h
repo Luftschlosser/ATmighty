@@ -7,10 +7,14 @@
 
 
 #include <stdint.h>
+#include <avr/pgmspace.h>
+
 
 ///This class represents a pure virtual common interface for all 1bit IoPins
 class IoPin
 {
+	friend class AbstractHardwareManager;
+
 	public:
 		/// Enum type-declaration for Input/Output-Direction Values
 		enum DataDirection : uint8_t
@@ -39,6 +43,15 @@ class IoPin
 
 		/// returns the current value of this pin, independently of the data-direction. (true = high, false = low)
 		virtual bool read() = 0;
+
+
+	private:
+		/// returns a string-representation of this type stored in flash
+		inline PGM_P getHardwareStringRepresentation()
+		{
+			static const char me[] PROGMEM = "IoPin";
+			return me;
+		}
 };
 
 

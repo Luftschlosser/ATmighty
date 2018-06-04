@@ -5,6 +5,8 @@
  *      Author: valentin
  */
 
+//TODO Implement all Ports!
+//TODO Implement all Pins!
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -45,7 +47,7 @@ AbstractPinA0* absPin;
 int main( void )
 {
 	namespace phHw = PhysicalHardwareManager;
-	AbstractHardwareManager abHw = AbstractHardwareManager(42);
+	AbstractHardwareManager abHw = AbstractHardwareManager(41);
 
 	MessageLogWriter::Usart usbWriter;
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);

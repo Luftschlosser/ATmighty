@@ -65,8 +65,14 @@ class AbstractIoPin : public IoPin
 		}
 
 	public:
-		/// Returns the corresponding letter (upper-case) associated with the specific physical IoPort used by this AbstractIoPin \returns ('A'-'L')
-		virtual char getCharCode() = 0;
+		/*!
+		 * The corresponding letter (upper-case) + the pin-number associated with the specific physical IoPort used by this AbstractIoPin
+		 * \returns a string-representation of this IoPin's address stored in flash ("A0" - "L7")
+		 */
+		virtual PGM_P getCharCode() = 0;
+
+		/// Returns the corresponding port-character associated with the specific port used by this IoPin abstraction \returns ('A' - 'L')
+		virtual char getPinPort() = 0;
 
 		/// Returns the corresponding pin-number associated with this specific pin within its IoPort (as printable character) \returns ('0' - '7')
 		virtual char getPinNumber() = 0;

@@ -7,10 +7,14 @@
 
 
 #include <stdint.h>
+#include <avr/pgmspace.h>
+
 
 ///This class represents a pure virtual common interface for all 8bit IoPorts
 class IoPort
 {
+	friend class AbstractHardwareManager;
+
 	public:
 		/// Virtual Destructor
 		virtual ~IoPort() {}
@@ -33,6 +37,15 @@ class IoPort
 
 		/// Reads the value of the pins of this port independently of the data-direction.
 		virtual uint8_t getPinValues() = 0;
+
+
+	private:
+		/// returns a string-representation of this type stored in flash
+		inline PGM_P getHardwareStringRepresentation()
+		{
+			static const char me[] PROGMEM = "IoPort";
+			return me;
+		}
 };
 
 

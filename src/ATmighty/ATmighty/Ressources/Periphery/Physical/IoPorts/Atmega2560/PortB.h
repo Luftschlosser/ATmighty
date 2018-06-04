@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include <avr/io.h>
+#include <avr/pgmspace.h>
 #include "ATmighty/Ressources/Periphery/Physical/PhysicalHardwareBase/PhysicalHardwareBase.h"
 #include "ATmighty/Ressources/Periphery/Physical/PhysicalHardwareManager.h"
 
@@ -19,13 +20,21 @@ class PortB : private PhysicalHardwareBase
 	friend void PhysicalHardwareManager::Free<PortB>(PortB **hardware);
 
 	private:
-		///Default Constructor
+		/// Default Constructor
 		inline PortB() : PhysicalHardwareBase() {}
 
+		/// returns a singleton-instance
 		inline static PortB& GetInstance()
 		{
 			static PortB instance;
 			return instance;
+		}
+
+		/// returns a string-representation of this type stored in flash
+		inline static PGM_P GetHardwareStringRepresentation()
+		{
+			static const char me[] PROGMEM = "PortB";
+			return me;
 		}
 
 	public:

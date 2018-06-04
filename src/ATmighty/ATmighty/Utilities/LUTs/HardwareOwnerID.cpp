@@ -9,7 +9,7 @@ namespace OwnerID
 {
 	PGM_P GetOwnerIdDescription(int8_t id)
 	{
-		static const uint8_t numberOfDescriptions = 6;
+		static const int8_t numberOfDescriptions = 6;
 
 		//string definitions for logging owners (defined static in function, so that it is only included into final assembly when actually used)
 		static const char Owner_Unused[] PROGMEM = "Nobody";
