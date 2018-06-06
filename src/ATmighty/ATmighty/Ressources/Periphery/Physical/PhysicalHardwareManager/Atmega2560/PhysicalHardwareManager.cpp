@@ -23,6 +23,138 @@ namespace PhysicalHardwareManager
 	uint8_t AllocatedItems = 0;
 
 
+	//Logging-helper-Methods
+	#if ATMIGHTY_MESSAGELOG_ENABLE == true
+
+	void LogAllocSuccess(PGM_P hardware, int8_t id)
+	{
+		PGM_P idString = OwnerID::GetOwnerIdDescription(id);
+
+		if (idString)
+		{
+			MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
+					MessageLogPhrases::Phrase_PhysicalHw,
+					hardware,
+					MessageLogPhrases::Phrase_AllocSucess,
+					MessageLogPhrases::Phrase_By,
+					idString);
+		}
+		else
+		{
+			MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
+					MessageLogPhrases::Phrase_PhysicalHw,
+					hardware,
+					MessageLogPhrases::Phrase_AllocSucess,
+					MessageLogPhrases::Phrase_ById,
+					id);
+		}
+	}
+
+	void LogAllocFail(PGM_P hardware,int8_t id, int8_t owner)
+	{
+		PGM_P idString = OwnerID::GetOwnerIdDescription(id);
+		PGM_P ownerString = OwnerID::GetOwnerIdDescription(owner);
+
+		if (idString)
+		{
+			if (ownerString)
+			{
+				MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
+						MessageLogPhrases::Phrase_Failed,
+						MessageLogPhrases::Phrase_AllocFail,
+						MessageLogPhrases::Phrase_PhysicalHw,
+						hardware,
+						MessageLogPhrases::Phrase_By,
+						idString,
+						MessageLogPhrases::Reason_AllocFail_InUse,
+						MessageLogPhrases::Phrase_By,
+						ownerString);
+			}
+			else
+			{
+				MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
+						MessageLogPhrases::Phrase_Failed,
+						MessageLogPhrases::Phrase_AllocFail,
+						MessageLogPhrases::Phrase_PhysicalHw,
+						hardware,
+						MessageLogPhrases::Phrase_By,
+						idString,
+						MessageLogPhrases::Reason_AllocFail_InUse,
+						MessageLogPhrases::Phrase_ById,
+						owner);
+			}
+		}
+		else
+		{
+			if (ownerString)
+			{
+				MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
+						MessageLogPhrases::Phrase_Failed,
+						MessageLogPhrases::Phrase_AllocFail,
+						MessageLogPhrases::Phrase_PhysicalHw,
+						hardware,
+						MessageLogPhrases::Phrase_ById,
+						id,
+						MessageLogPhrases::Reason_AllocFail_InUse,
+						MessageLogPhrases::Phrase_By,
+						ownerString);
+
+			}
+			else
+			{
+				MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
+						MessageLogPhrases::Phrase_Failed,
+						MessageLogPhrases::Phrase_AllocFail,
+						MessageLogPhrases::Phrase_PhysicalHw,
+						hardware,
+						MessageLogPhrases::Phrase_ById,
+						id,
+						MessageLogPhrases::Reason_AllocFail_InUse,
+						MessageLogPhrases::Phrase_ById,
+						owner);
+			}
+		}
+	}
+
+	void LogFreeSuccess(PGM_P hardware, int8_t id)
+	{
+		PGM_P idString = OwnerID::GetOwnerIdDescription(id);
+
+		if (idString)
+		{
+			MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
+					MessageLogPhrases::Phrase_PhysicalHw,
+					hardware,
+					MessageLogPhrases::Phrase_FreeSucess,
+					MessageLogPhrases::Phrase_By,
+					idString);
+		}
+		else
+		{
+			MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
+					MessageLogPhrases::Phrase_PhysicalHw,
+					hardware,
+					MessageLogPhrases::Phrase_FreeSucess,
+					MessageLogPhrases::Phrase_ById,
+					id);
+		}
+	}
+
+	void LogFreeFail(PGM_P hardware)
+	{
+		MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
+				MessageLogPhrases::Phrase_Failed,
+				MessageLogPhrases::Phrase_FreeFail,
+				MessageLogPhrases::Phrase_PhysicalHw,
+				hardware,
+				MessageLogPhrases::Phrase_By,
+				'?',
+				MessageLogPhrases::Reason_FreeFail);
+	}
+
+	#endif
+
+
 	//Function-implementations:
 	uint8_t GetTotalHardwareItems()
 	{
@@ -57,94 +189,15 @@ namespace PhysicalHardwareManager
 
 		//Log message
 		#if ATMIGHTY_MESSAGELOG_ENABLE == true
-		PGM_P hwString = Hw::GetHardwareStringRepresentation();
-		PGM_P idString = OwnerID::GetOwnerIdDescription(id);
 		if (returnBuf)
 		{
 			//Success-Message
-			if (idString)
-			{
-				MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
-						MessageLogPhrases::Phrase_PhysicalHw,
-						hwString,
-						MessageLogPhrases::Phrase_AllocSucess,
-						MessageLogPhrases::Phrase_By,
-						idString);
-			}
-			else
-			{
-				MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
-						MessageLogPhrases::Phrase_PhysicalHw,
-						hwString,
-						MessageLogPhrases::Phrase_AllocSucess,
-						MessageLogPhrases::Phrase_ById,
-						id);
-			}
+			LogAllocSuccess(Hw::GetHardwareStringRepresentation(), id);
 		}
 		else
 		{
 			//Fail-Message
-			int8_t userId = instance.getOwner();
-			PGM_P userString = OwnerID::GetOwnerIdDescription(userId);
-			if (idString)
-			{
-				if (userString)
-				{
-					MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
-							MessageLogPhrases::Phrase_Failed,
-							MessageLogPhrases::Phrase_AllocFail,
-							MessageLogPhrases::Phrase_PhysicalHw,
-							hwString,
-							MessageLogPhrases::Phrase_By,
-							idString,
-							MessageLogPhrases::Reason_AllocFail_InUse,
-							MessageLogPhrases::Phrase_By,
-							userString);
-				}
-				else
-				{
-					MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
-							MessageLogPhrases::Phrase_Failed,
-							MessageLogPhrases::Phrase_AllocFail,
-							MessageLogPhrases::Phrase_PhysicalHw,
-							hwString,
-							MessageLogPhrases::Phrase_By,
-							idString,
-							MessageLogPhrases::Reason_AllocFail_InUse,
-							MessageLogPhrases::Phrase_ById,
-							userId);
-				}
-			}
-			else
-			{
-				if (userString)
-				{
-					MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
-							MessageLogPhrases::Phrase_Failed,
-							MessageLogPhrases::Phrase_AllocFail,
-							MessageLogPhrases::Phrase_PhysicalHw,
-							hwString,
-							MessageLogPhrases::Phrase_ById,
-							id,
-							MessageLogPhrases::Reason_AllocFail_InUse,
-							MessageLogPhrases::Phrase_By,
-							userString);
-
-				}
-				else
-				{
-					MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
-							MessageLogPhrases::Phrase_Failed,
-							MessageLogPhrases::Phrase_AllocFail,
-							MessageLogPhrases::Phrase_PhysicalHw,
-							hwString,
-							MessageLogPhrases::Phrase_ById,
-							id,
-							MessageLogPhrases::Reason_AllocFail_InUse,
-							MessageLogPhrases::Phrase_ById,
-							userId);
-				}
-			}
+			LogAllocFail(Hw::GetHardwareStringRepresentation(), id, instance.getOwner());
 		}
 		#endif
 
@@ -162,26 +215,7 @@ namespace PhysicalHardwareManager
 		{
 			//Success-Message
 			#if ATMIGHTY_MESSAGELOG_ENABLE == true
-			int8_t id = (*hardware)->getOwner();
-			PGM_P idString = OwnerID::GetOwnerIdDescription(id);
-			if (idString)
-			{
-				MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
-						MessageLogPhrases::Phrase_PhysicalHw,
-						Hw::GetHardwareStringRepresentation(),
-						MessageLogPhrases::Phrase_FreeSucess,
-						MessageLogPhrases::Phrase_By,
-						idString);
-			}
-			else
-			{
-				MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
-						MessageLogPhrases::Phrase_PhysicalHw,
-						Hw::GetHardwareStringRepresentation(),
-						MessageLogPhrases::Phrase_FreeSucess,
-						MessageLogPhrases::Phrase_ById,
-						id);
-			}
+			LogFreeSuccess(Hw::GetHardwareStringRepresentation(), (*hardware)->getOwner());
 			#endif
 
 			(*hardware)->free();
@@ -192,14 +226,7 @@ namespace PhysicalHardwareManager
 		else
 		{
 			//Fail-Message
-			MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
-					MessageLogPhrases::Phrase_Failed,
-					MessageLogPhrases::Phrase_FreeFail,
-					MessageLogPhrases::Phrase_PhysicalHw,
-					Hw::GetHardwareStringRepresentation(),
-					MessageLogPhrases::Phrase_By,
-					'?',
-					MessageLogPhrases::Reason_FreeFail);
+			LogFreeFail(Hw::GetHardwareStringRepresentation());
 		}
 		#endif
 

@@ -7,16 +7,40 @@
 
 
 #include <stdint.h>
+#include "ATmighty/Ressources/Periphery/Abstract/IoPorts.h"
+#include "ATmighty/Ressources/Periphery/Abstract/IoPins.h"
+#include "Config/MessageLogConfig.h"
 
-//forward-declare necessary classes
-class AbstractIoPort;
 
-
-///This namespace contains some functions to manage the exclusive access to the abstract hardware class-instances.
+///This class contains some methods to manage the exclusive access to the abstract hardware class-instances.
 class AbstractHardwareManager
 {
 	private:
+		///The owner-id of this AbstractHardwareManager-instance. All Allocation done by this instance are executed using this owner-id.
 		int8_t owner;
+
+		/*!
+		 * Allocate a specific abstract hardware-item.
+		 * The desired hardware item is defined by the template argument, which must be one of the abstract hardware classes.
+		 * An hardware item allocated by this routine can be used faster than general abstract hardware instances, as the virtual function-calls don't need
+		 * to be dereferenced via the v-table when the reference is stored as a pointer to the final class type.
+		 * If the specific abstract hardware to allocate is known at compile-time, this function should be preferred over the general parameterized allocator-functions.
+		 * \returns a pointer to the allocated hardware-item, or nullptr if the allocation failed
+		 */
+		template<class Hw> Hw* allocItem();
+
+		//Logging-helper-Methods
+		#if ATMIGHTY_MESSAGELOG_ENABLE == true
+		static void logAllocSuccess(PGM_P hardware, char hwCode, int8_t id);
+		static void logAllocSuccess(PGM_P hardware, char hwCode1, char hwCode2, int8_t id);
+		static void logAllocFailDependency(PGM_P hardware, char hwCode, int8_t id);
+		static void logAllocFailDependency(PGM_P hardware, char hwCode1, char hwCode2, int8_t id);
+		static void logAllocFailUsed(PGM_P hardware, char hwCode, int8_t id, int8_t owner);
+		static void logAllocFailUsed(PGM_P hardware, char hwCode1, char hwCode2, int8_t id, int8_t owner);
+		static void logFreeSuccess(PGM_P hardware, char hwCode, int8_t id);
+		static void logFreeSuccess(PGM_P hardware, char hwCode1, char hwCode2, int8_t id);
+		static void logFreeFail(PGM_P hardware, int8_t id);
+		#endif
 
 	public:
 		/*!
@@ -26,20 +50,37 @@ class AbstractHardwareManager
 		AbstractHardwareManager(int8_t ownerId);
 
 		/*!
-		 * Allocate a specific abstract hardware-item.
-		 * The desired hardware item is defined by the template argument, which must be one of the abstract hardware classes.
-		 * An hardware item allocated by this routine can be used faster than general abstract hardware instances, as the virtual function-calls don't need
-		 * to be dereferenced via the v-table when the reference is stored as a pointer to the final class type.
-		 * \returns a pointer to the allocated hardware-item, or nullptr if the allocation failed
+		 * Allocates an IoPort.
+		 * If the specific abstract IoPort to allocate is known at compile-time, this function should be preferred over the general parameterized allocator-function.
+		 * The letter ('A'-'L') of the Port to allocate are defined via the template parameter PortChar
+		 * \returns a pointer to an abstract allocated IoPort-instance or nullptr if the allocation failed, which happens when the specified IoPort is already in use.
 		 */
-		template<class Hw> Hw* allocItem();
+		template<char PortChar> inline SpecificIoPort<PortChar>* allocIoPort() {return allocItem<SpecificIoPort<PortChar>>();}
 
 		/*!
-		 * Allocate any unused IoPort.
-		 * Functioncalls will have an overhead of *x* cycles, as the virtual functions from the returned interface-type need to be dereferenced for each call.
-		 * \returns a pointer to an abstract allocated IoPort-instance or nullptr if the allocation failed, which happens when all IoPorts are already in use.
+		 * Allocates an IoPort.
+		 * This general IoPort-Allocator should only be used when the specific IoPort to allocate is not known at compile-time!
+		 * \param portChar the upper-case character which specifies the IoPort to allocate ('A'-'L')
+		 * \returns a pointer to an abstract allocated IoPort-instance or nullptr if the allocation failed, which happens when the specified IoPort is already in use.
 		 */
-		AbstractIoPort* allocIoPort();
+		GeneralIoPort* allocIoPort(char portChar);
+
+		/*!
+		 * Allocates an IoPin.
+		 * If the specific abstract IoPin to allocate is known at compile-time, this function should be preferred over the general parameterized allocator-function.
+		 * The letter ('A'-'L') and the pin-number (0-7) of the Port/Pin are defined via the template parameters PortChar and PinNumber
+		 * \returns a pointer to an abstract allocated IoPin-instance or nullptr if the allocation failed, which happens when the specified IoPin is already in use.
+		 */
+		template<char PortChar, uint8_t PinNumber> SpecificIoPin<PortChar, PinNumber>* allocIoPin();
+
+		/*!
+		 * Allocates an IoPin.
+		 * This general IoPin-Allocator should only be used when the specific IoPin to allocate is not known at compile-time!
+		 * \param portChar the upper-case character which specifies the IoPort the IoPin to allocate is part of ('A'-'L')
+		 * \param pinNumber the number of the IoPin to allocate within the IoPort (0-7)
+		 * \returns a pointer to an abstract allocated IoPin-instance or nullptr if the allocation failed, which happens when the specified IoPin is already in use.
+		 */
+		GeneralIoPin* allocIoPin(char portChar, uint8_t pinNumber);
 
 		/*!
 		 * Frees an allocated abstract hardware-item.

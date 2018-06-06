@@ -1,6 +1,6 @@
 /*!
  * This headerfile defines the class \see AbstractPinManager which holds some helper function to keep track of used/free pins.
- * This headerfile should only be included by AbstractPin-Classes!
+ * This headerfile should only be included by AbstractHardware-classes which are part of ATmighty!
  */
 
 #ifndef ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_IOPINS_ABSTRACTPINMANAGER_H_
@@ -13,7 +13,7 @@
 /*!
  * This class holds some static helper-functions which keep track of used pins on each IoPort
  * and manage the allocation/freeing of the respective physical Hardware.
- * This class must only be used by the init()/exit()-functions of the AbstractIoPins! NO MESSING AROUND!
+ * This class must only be used by the init()/exit()-functions of the AbstractIoPins or other Pin-using abstractHardware-classes! NO MESSING AROUND!
  * The template-Parameter can be any of the physical IoPort-classes,
  * it is used to instantiate a unique set of the static-members for each IoPort.
  * This class cannot be instantiated, only its static methods should be accessed!

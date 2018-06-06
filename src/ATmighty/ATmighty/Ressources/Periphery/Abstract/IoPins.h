@@ -13,9 +13,10 @@
 
 //specifics
 #if defined (__AVR_ATmega2560__)
-#  include "IoPins/Atmega2560/AbstractPinA0.h"
+#  include <ATmighty/Ressources/Periphery/Abstract/IoPins/Atmega2560/GeneralIoPin.h>
+#  include <ATmighty/Ressources/Periphery/Abstract/IoPins/Atmega2560/SpecificIoPin.h>
 #else
-#  warning "No abstract IoPorts are defined for this µC."
+#  warning "No abstract IoPins are defined for this µC."
 #endif
 
 

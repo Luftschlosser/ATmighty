@@ -5,76 +5,51 @@
  *      Author: valentin
  */
 
-//TODO Implement all Ports!
-//TODO Implement all Pins!
-
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
 
+#include "ATmighty/Utilities/C++/FullCppSupport.h"
+
 #include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
 #include "ATmighty/Ressources/Periphery/Physical/Timer.h"
 
+#include "ATmighty/Ressources/Periphery/Abstract/AbstractHardwareManager.h"
 #include "ATmighty/Ressources/Periphery/Abstract/IoPorts.h"
 #include "ATmighty/Ressources/Periphery/Abstract/IoPins.h"
 
 #include "ATmighty/Utilities/Logs/MessageLog.h"
 #include "ATmighty/Utilities/Logs/MessageLogWriter.h"
 
-
-void * operator new(size_t n)
-{
-	if (n == 0){n=1;}
-	///if malloc return 0 -> reset avr + fatal error
-  return malloc(n);
-}
-
-void operator delete(void * p) // or delete(void *, std::size_t)
-{
-  free(p);
-}
-
-//src: https://www.avrfreaks.net/forum/avr-c-micro-how?page=all
-__extension__ typedef int __guard __attribute__((mode (__DI__)));
-extern "C" int __cxa_guard_acquire(__guard *g){return !*(char *)(g);}
-extern "C" void __cxa_guard_release (__guard *g){*(char *)g = 1;}
-extern "C" void __cxa_guard_abort (__guard *){}
-extern "C" void __cxa_pure_virtual(void){}
-extern "C" void	atexit( void ) { }//MCU would never "exit", so atexit can be dummy.
-
-AbstractPinA0* absPin;
+AbstractIoPin* absPin;
+AbstractIoPort* absPort;
 
 int main( void )
 {
 	namespace phHw = PhysicalHardwareManager;
-	AbstractHardwareManager abHw = AbstractHardwareManager(41);
+	AbstractHardwareManager abHw = AbstractHardwareManager(42);
 
 	MessageLogWriter::Usart usbWriter;
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
 
 	Timer0* timer = phHw::Alloc<Timer0>(0);
-	absPin = abHw.allocItem<AbstractPinA0>();
-	abHw.allocItem<AbstractPinA0>();
-	abHw.freeItem(&absPin); //implicit template parameter! ;)
-	abHw.freeItem(&absPin); //implicit template parameter! ;)
-	PortA* a = phHw::Alloc<PortA>(101);
-	absPin = abHw.allocItem<AbstractPinA0>();
-	phHw::Free(&a);
-	absPin = abHw.allocItem<AbstractPinA0>();
+	absPin = abHw.allocIoPin<'A',1>();
+	abHw.freeItem(&absPin);
+	absPin = abHw.allocIoPin('C',7);
+	absPort = abHw.allocIoPort<'A'>();
 
-	//Pin A1 setup
+	//Pin setup
 	absPin->setDirection(IoPin::DataDirection::Output);
 	absPin->set(true);
+
+	//Port setup
+	absPort->setDataDirectionMask(0xff);
+	absPort->setData(0xff);
 
 	//Timer setup
 	timer->setTCCR0B(5);//set prescalar 1024
 	timer->setTIMSK0(1);//enable overflow-interrupt
 	sei();
-
-	phHw::Free(&timer); //implicit template parameter! ;)
-	phHw::Free<Timer0>(&timer);
-	timer = phHw::Alloc<Timer0>(2);
-	timer = phHw::Alloc<Timer0>(3);
 
 	//mainloop
 	while(1){
@@ -90,5 +65,6 @@ ISR(TIMER0_OVF_vect)
 	{
 		c=0;
 		absPin->toggle();
+		absPort->applyPinToggleMask(0x0f);
 	}
 }

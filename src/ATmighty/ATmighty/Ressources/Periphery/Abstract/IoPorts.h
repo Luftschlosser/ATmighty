@@ -13,7 +13,8 @@
 
 //specifics
 #if defined (__AVR_ATmega2560__)
-#  include "IoPorts/Atmega2560/AbstractPortA.h"
+#  include "IoPorts/Atmega2560/GeneralIoPort.h"
+#  include "IoPorts/Atmega2560/SpecificIoPort.h"
 #else
 #  warning "No abstract IoPorts are defined for this µC."
 #endif

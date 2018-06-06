@@ -1,16 +1,11 @@
 /*!
- * This file implements the class \see AbstractHardwareManager
+ * This file implements the main part of class \see AbstractHardwareManager
+ * IoPin-Management is implemented in AbstractHardwareManagerIoPins.cpp, as IoPins need a different implementation of "free()" than the other abstract hardware-types.
+ * Static Message-logging helper-functions are implemented in "AbstractHardwareManagerLogging.cpp" to not waste too much space here.
  */
 
 #include "AbstractHardwareManager.h"
-
 #include <util/atomic.h>
-#include "ATmighty/Ressources/Periphery/Abstract/IoPorts.h"
-#include "ATmighty/Ressources/Periphery/Abstract/IoPins.h"
-#include "ATmighty/Utilities/Logs/MessageLog.h"
-#include "ATmighty/Utilities/LUTs/MessageLogPhrases.h"
-#include "ATmighty/Utilities/LUTs/HardwareOwnerID.h"
-
 
 
 AbstractHardwareManager::AbstractHardwareManager(int8_t ownerId) : owner(ownerId)
@@ -21,269 +16,112 @@ AbstractHardwareManager::AbstractHardwareManager(int8_t ownerId) : owner(ownerId
 	}
 }
 
-
 template<class Hw> Hw* AbstractHardwareManager::allocItem ()
 {
-	Hw& instance = Hw::GetInstance();
+	Hw* instance = new Hw();
 	int8_t returnCode;
-
-	//MessageLog Variables
-	#if ATMIGHTY_MESSAGELOG_ENABLE == true
-	PGM_P hwString = instance.getHardwareStringRepresentation();
-	PGM_P idString = OwnerID::GetOwnerIdDescription(owner);
-	#endif
 
 	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
 	{
-		returnCode = instance.init(owner);
+		returnCode = instance->init(owner);
 	}
 
-	if (returnCode > 0) //abstract hardware is already in use
+	if (returnCode == 0)
 	{
-		//Fail-Message
+		//Success
 		#if ATMIGHTY_MESSAGELOG_ENABLE == true
-		int8_t userId = instance.getOwner();
-		PGM_P userString = OwnerID::GetOwnerIdDescription(userId);
+		logAllocSuccess(instance->getHardwareStringRepresentation(), instance->getCharCode(), owner);
+		#endif
 
-		if (idString)
+		return instance;
+	}
+	else //Error
+	{
+		#if ATMIGHTY_MESSAGELOG_ENABLE == true
+		if (returnCode > 0) //abstract hardware is already in use
 		{
-			if (userString)
-			{
-				MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
-						MessageLogPhrases::Phrase_Failed,
-						MessageLogPhrases::Phrase_AllocFail,
-						MessageLogPhrases::Phrase_AbstractHw,
-						hwString,
-						'[', instance.getCharCode(),']',
-						MessageLogPhrases::Phrase_By,
-						idString,
-						MessageLogPhrases::Reason_AllocFail_InUse,
-						MessageLogPhrases::Phrase_By,
-						userString);
-			}
-			else
-			{
-				MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
-						MessageLogPhrases::Phrase_Failed,
-						MessageLogPhrases::Phrase_AllocFail,
-						MessageLogPhrases::Phrase_AbstractHw,
-						hwString,
-						'[', instance.getCharCode(),']',
-						MessageLogPhrases::Phrase_By,
-						idString,
-						MessageLogPhrases::Reason_AllocFail_InUse,
-						MessageLogPhrases::Phrase_ById,
-						userId);
-			}
+			logAllocFailUsed(instance->getHardwareStringRepresentation(), instance->getCharCode(), owner, instance->getOwner());
 		}
-		else
+		else //physical hardware dependency could not be resolved
 		{
-			if (userString)
-			{
-				MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
-						MessageLogPhrases::Phrase_Failed,
-						MessageLogPhrases::Phrase_AllocFail,
-						MessageLogPhrases::Phrase_AbstractHw,
-						hwString,
-						'[', instance.getCharCode(),']',
-						MessageLogPhrases::Phrase_ById,
-						owner,
-						MessageLogPhrases::Reason_AllocFail_InUse,
-						MessageLogPhrases::Phrase_By,
-						userString);
-			}
-			else
-			{
-				MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
-						MessageLogPhrases::Phrase_Failed,
-						MessageLogPhrases::Phrase_AllocFail,
-						MessageLogPhrases::Phrase_AbstractHw,
-						hwString,
-						'[', instance.getCharCode(),']',
-						MessageLogPhrases::Phrase_ById,
-						owner,
-						MessageLogPhrases::Reason_AllocFail_InUse,
-						MessageLogPhrases::Phrase_ById,
-						userId);
-			}
+			logAllocFailDependency(instance->getHardwareStringRepresentation(), instance->getCharCode(), owner);
 		}
 		#endif
 
+		delete(instance);
 		return nullptr;
-	}
-	else if (returnCode <0) //physical hardware dependency could not be resolved
-	{
-		//Fail-Message
-		#if ATMIGHTY_MESSAGELOG_ENABLE == true
-		if (idString)
-		{
-			MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
-					MessageLogPhrases::Phrase_Failed,
-					MessageLogPhrases::Phrase_AllocFail,
-					MessageLogPhrases::Phrase_AbstractHw,
-					hwString,
-					'[', instance.getCharCode(),']',
-					MessageLogPhrases::Phrase_By,
-					idString,
-					MessageLogPhrases::Reason_AllocFail_Dependency);
-		}
-		else
-		{
-			MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
-					MessageLogPhrases::Phrase_Failed,
-					MessageLogPhrases::Phrase_AllocFail,
-					MessageLogPhrases::Phrase_AbstractHw,
-					hwString,
-					'[', instance.getCharCode(),']',
-					MessageLogPhrases::Phrase_ById,
-					owner,
-					MessageLogPhrases::Reason_AllocFail_Dependency);
-
-		}
-		#endif
-
-		return nullptr;
-	}
-	else
-	{
-		//Success-Message
-		#if ATMIGHTY_MESSAGELOG_ENABLE == true
-		if (idString)
-		{
-			MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
-					MessageLogPhrases::Phrase_AbstractHw,
-					hwString,
-					'[', instance.getCharCode(),']',
-					MessageLogPhrases::Phrase_AllocSucess,
-					MessageLogPhrases::Phrase_By,
-					idString);
-		}
-		else
-		{
-			MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
-					MessageLogPhrases::Phrase_AbstractHw,
-					hwString,
-					'[', instance.getCharCode(),']',
-					MessageLogPhrases::Phrase_AllocSucess,
-					MessageLogPhrases::Phrase_ById,
-					owner);
-		}
-		#endif
-
-		return &instance;
 	}
 }
 
-
-AbstractIoPort* AbstractHardwareManager::allocIoPort()
+GeneralIoPort* AbstractHardwareManager::allocIoPort(char portChar)
 {
-	//Try PortA
-	if (AbstractPortA::GetInstance().isFree())
+	GeneralIoPort* instance = new GeneralIoPort(portChar);
+	int8_t returnCode;
+
+	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
 	{
-		AbstractPortA* ret = allocItem<AbstractPortA>();
-		if (ret)
-		{
-			return ret;
-		}
+		returnCode = instance->init(owner);
 	}
 
-	//Case when no IoPort could be allocated successfully
-	#if ATMIGHTY_MESSAGELOG_ENABLE == true
-	//log "All Ports in use"
-	PGM_P idString = OwnerID::GetOwnerIdDescription(owner);
-	IoPort& instance = AbstractPortA::GetInstance();
-
-	if (idString)
+	if (returnCode == 0)
 	{
-		MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
-				MessageLogPhrases::Phrase_Failed,
-				MessageLogPhrases::Phrase_AllocFail,
-				MessageLogPhrases::Phrase_AbstractHw,
-				instance.getHardwareStringRepresentation(),
-				MessageLogPhrases::Phrase_By,
-				idString,
-				MessageLogPhrases::Reason_AllUsed);
-	}
-	else
-	{
-		MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
-				MessageLogPhrases::Phrase_Failed,
-				MessageLogPhrases::Phrase_AllocFail,
-				MessageLogPhrases::Phrase_AbstractHw,
-				instance.getHardwareStringRepresentation(),
-				MessageLogPhrases::Phrase_ById,
-				owner,
-				MessageLogPhrases::Reason_AllUsed);
-	}
-	#endif
+		//Success
+		#if ATMIGHTY_MESSAGELOG_ENABLE == true
+		logAllocSuccess(instance->getHardwareStringRepresentation(), instance->getCharCode(), owner);
+		#endif
 
-	return nullptr;
+		return instance;
+	}
+	else //physical hardware dependency could not be resolved
+	{
+		//"Already in use" is an impossible error, as the GeneralIoPort-instance is newly initialized and has no static owner-id.
+		#if ATMIGHTY_MESSAGELOG_ENABLE == true
+		logAllocFailDependency(instance->getHardwareStringRepresentation(), instance->getCharCode(), owner);
+		#endif
+
+		delete(instance);
+		return nullptr;
+	}
 }
-
 
 template<class Hw> void AbstractHardwareManager::freeItem(Hw **hardware)
 {
-	//MessageLog Variables
-	#if ATMIGHTY_MESSAGELOG_ENABLE == true
-	PGM_P hwString = (*hardware)->getHardwareStringRepresentation();
-	#endif
-
 	if (hardware != nullptr && (*hardware) != nullptr)
 	{
 		(*hardware)->exit();
 
 		//Success-Message
 		#if ATMIGHTY_MESSAGELOG_ENABLE == true
-		PGM_P idString = OwnerID::GetOwnerIdDescription(owner);
-
-		if (idString)
-		{
-			MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
-					MessageLogPhrases::Phrase_AbstractHw,
-					hwString,
-					'[', (*hardware)->getCharCode(),']',
-					MessageLogPhrases::Phrase_FreeSucess,
-					MessageLogPhrases::Phrase_By,
-					idString);
-		}
-		else
-		{
-			MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
-					MessageLogPhrases::Phrase_AbstractHw,
-					hwString,
-					'[', (*hardware)->getCharCode(),']',
-					MessageLogPhrases::Phrase_FreeSucess,
-					MessageLogPhrases::Phrase_ById,
-					owner);
-		}
+		logFreeSuccess((*hardware)->getHardwareStringRepresentation(), (*hardware)->getCharCode(), owner);
 		#endif
 
+		delete(*hardware);
 		(*hardware)=nullptr;
 	}
 	#if ATMIGHTY_MESSAGELOG_ENABLE == true
 	else
 	{
 		//Fail-Message
-		MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
-				MessageLogPhrases::Phrase_Failed,
-				MessageLogPhrases::Phrase_FreeFail,
-				MessageLogPhrases::Phrase_AbstractHw,
-				hwString,
-				'[', '?',']',
-				MessageLogPhrases::Phrase_ById,
-				owner,
-				MessageLogPhrases::Reason_FreeFail);
+		logFreeFail((*hardware)->getHardwareStringRepresentation(), owner);
 	}
 	#endif
 }
 
 
 //The explizitely instantiated versions of the template-functions (update the list when adding new types!)
-//TODO find out if there is a better way rather than instantiating every type separately
-template AbstractPortA* AbstractHardwareManager::allocItem<AbstractPortA>();
-template void AbstractHardwareManager::freeItem<AbstractIoPort>(AbstractIoPort **hardware);
-template void AbstractHardwareManager::freeItem<AbstractPortA>(AbstractPortA **hardware);
 
-template AbstractPinA0* AbstractHardwareManager::allocItem<AbstractPinA0>();
-template void AbstractHardwareManager::freeItem<AbstractIoPin>(AbstractIoPin **hardware);
-template void AbstractHardwareManager::freeItem<AbstractPinA0>(AbstractPinA0 **hardware);
+//Ports
+template SpecificIoPort<'A'>* AbstractHardwareManager::allocItem<SpecificIoPort<'A'>>();
+template SpecificIoPort<'B'>* AbstractHardwareManager::allocItem<SpecificIoPort<'B'>>();
+template SpecificIoPort<'C'>* AbstractHardwareManager::allocItem<SpecificIoPort<'C'>>();
+template SpecificIoPort<'D'>* AbstractHardwareManager::allocItem<SpecificIoPort<'D'>>();
+template SpecificIoPort<'E'>* AbstractHardwareManager::allocItem<SpecificIoPort<'E'>>();
+template SpecificIoPort<'F'>* AbstractHardwareManager::allocItem<SpecificIoPort<'F'>>();
+template void AbstractHardwareManager::freeItem<AbstractIoPort>(AbstractIoPort **hardware);
+template void AbstractHardwareManager::freeItem<GeneralIoPort>(GeneralIoPort **hardware);
+template void AbstractHardwareManager::freeItem<SpecificIoPort<'A'>>(SpecificIoPort<'A'> **hardware);
+template void AbstractHardwareManager::freeItem<SpecificIoPort<'B'>>(SpecificIoPort<'B'> **hardware);
+template void AbstractHardwareManager::freeItem<SpecificIoPort<'C'>>(SpecificIoPort<'C'> **hardware);
+template void AbstractHardwareManager::freeItem<SpecificIoPort<'D'>>(SpecificIoPort<'D'> **hardware);
+template void AbstractHardwareManager::freeItem<SpecificIoPort<'E'>>(SpecificIoPort<'E'> **hardware);
+template void AbstractHardwareManager::freeItem<SpecificIoPort<'F'>>(SpecificIoPort<'F'> **hardware);

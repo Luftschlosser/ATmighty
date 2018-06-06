@@ -195,7 +195,7 @@
                                     								
                                 </option>
                                 								
-                                <option id="de.innot.avreclipse.cppcompiler.option.otherflags.85062445" name="Other flags" superClass="de.innot.avreclipse.cppcompiler.option.otherflags" useByScannerDiscovery="false" value="-std=c++11" valueType="string"/>
+                                <option id="de.innot.avreclipse.cppcompiler.option.otherflags.85062445" name="Other flags" superClass="de.innot.avreclipse.cppcompiler.option.otherflags" useByScannerDiscovery="false" value="-std=c++11 " valueType="string"/>
                                 								
                                 <inputType id="de.innot.avreclipse.cppcompiler.input.870936745" superClass="de.innot.avreclipse.cppcompiler.input"/>
                                 							

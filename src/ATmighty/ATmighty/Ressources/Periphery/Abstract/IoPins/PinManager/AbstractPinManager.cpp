@@ -10,9 +10,10 @@
 #include "ATmighty/Utilities/LUTs/HardwareOwnerID.h"
 
 
+//Implementation of the class AbstractPinManager
+
 template <class PhysicalPort> uint8_t AbstractPinManager<PhysicalPort>::UsageMask = 0;
 template <class PhysicalPort> PhysicalPort* AbstractPinManager<PhysicalPort>::PhysicalReference = nullptr;
-
 
 template <class PhysicalPort> int8_t AbstractPinManager<PhysicalPort>::AllocPin(uint8_t pin)
 {
@@ -54,11 +55,15 @@ template <class PhysicalPort> void AbstractPinManager<PhysicalPort>::FreePin(uin
 	}
 }
 
-
 //Explizit Instantiations of this template class
+#if defined (__AVR_ATmega2560__)
 template class AbstractPinManager<PortA>;
 template class AbstractPinManager<PortB>;
 template class AbstractPinManager<PortC>;
 template class AbstractPinManager<PortD>;
 template class AbstractPinManager<PortE>;
 template class AbstractPinManager<PortF>;
+#else
+#  warning "AbstractPinManager was not configured for this µC."
+#endif
+

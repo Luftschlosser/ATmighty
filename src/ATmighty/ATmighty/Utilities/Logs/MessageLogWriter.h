@@ -44,7 +44,7 @@ namespace MessageLogWriter
 	/*!
 	 * This class represents a MessageLogWriter which prints out the Messages via Usart/(USB)
 	 */
-	//temp - change Implementation later to use abstract hardware manager
+	//TODO change Implementation later to use abstract hardware manager
 	class Usart : public Base
 	{
 		private:
