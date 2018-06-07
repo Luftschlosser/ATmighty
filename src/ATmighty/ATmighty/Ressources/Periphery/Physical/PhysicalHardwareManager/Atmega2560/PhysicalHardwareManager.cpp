@@ -2,10 +2,10 @@
  * This file implements the namespace \see PhysicalHardwareManager
  */
 
+#include <ATmighty/Ressources/Periphery/Physical/Ports.h>
 #include "PhysicalHardwareManager.h"
 
 #include <util/atomic.h>
-#include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
 #include "ATmighty/Ressources/Periphery/Physical/Timer.h"
 #include "ATmighty/Ressources/Periphery/Physical/Usart.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
@@ -243,22 +243,37 @@ namespace PhysicalHardwareManager
 	template int8_t GetOwner<Usart0>();
 	template void Free<Usart0>(Usart0 **hardware);
 
-	template PortA* Alloc<PortA>(int8_t id);
-	template int8_t GetOwner<PortA>();
-	template void Free<PortA>(PortA **hardware);
-	template PortB* Alloc<PortB>(int8_t id);
-	template int8_t GetOwner<PortB>();
-	template void Free<PortB>(PortB **hardware);
-	template PortC* Alloc<PortC>(int8_t id);
-	template int8_t GetOwner<PortC>();
-	template void Free<PortC>(PortC **hardware);
-	template PortD* Alloc<PortD>(int8_t id);
-	template int8_t GetOwner<PortD>();
-	template void Free<PortD>(PortD **hardware);
-	template PortE* Alloc<PortE>(int8_t id);
-	template int8_t GetOwner<PortE>();
-	template void Free<PortE>(PortE **hardware);
-	template PortF* Alloc<PortF>(int8_t id);
-	template int8_t GetOwner<PortF>();
-	template void Free<PortF>(PortF **hardware);
+	template Port<'A'>* Alloc<Port<'A'>>(int8_t id);
+	template int8_t GetOwner<Port<'A'>>();
+	template void Free<Port<'A'>>(Port<'A'> **hardware);
+	template Port<'B'>* Alloc<Port<'B'>>(int8_t id);
+	template int8_t GetOwner<Port<'B'>>();
+	template void Free<Port<'B'>>(Port<'B'> **hardware);
+	template Port<'C'>* Alloc<Port<'C'>>(int8_t id);
+	template int8_t GetOwner<Port<'C'>>();
+	template void Free<Port<'C'>>(Port<'C'> **hardware);
+	template Port<'D'>* Alloc<Port<'D'>>(int8_t id);
+	template int8_t GetOwner<Port<'D'>>();
+	template void Free<Port<'D'>>(Port<'D'> **hardware);
+	template Port<'E'>* Alloc<Port<'E'>>(int8_t id);
+	template int8_t GetOwner<Port<'E'>>();
+	template void Free<Port<'E'>>(Port<'E'> **hardware);
+	template Port<'F'>* Alloc<Port<'F'>>(int8_t id);
+	template int8_t GetOwner<Port<'F'>>();
+	template void Free<Port<'F'>>(Port<'F'> **hardware);
+	template Port<'G'>* Alloc<Port<'G'>>(int8_t id);
+	template int8_t GetOwner<Port<'G'>>();
+	template void Free<Port<'G'>>(Port<'G'> **hardware);
+	template Port<'H'>* Alloc<Port<'H'>>(int8_t id);
+	template int8_t GetOwner<Port<'H'>>();
+	template void Free<Port<'H'>>(Port<'H'> **hardware);
+	template Port<'J'>* Alloc<Port<'J'>>(int8_t id);
+	template int8_t GetOwner<Port<'J'>>();
+	template void Free<Port<'J'>>(Port<'J'> **hardware);
+	template Port<'K'>* Alloc<Port<'K'>>(int8_t id);
+	template int8_t GetOwner<Port<'K'>>();
+	template void Free<Port<'K'>>(Port<'K'> **hardware);
+	template Port<'L'>* Alloc<Port<'L'>>(int8_t id);
+	template int8_t GetOwner<Port<'L'>>();
+	template void Free<Port<'L'>>(Port<'L'> **hardware);
 }

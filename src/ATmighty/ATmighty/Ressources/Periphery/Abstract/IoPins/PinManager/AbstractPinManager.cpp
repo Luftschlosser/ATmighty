@@ -3,8 +3,8 @@
  */
 
 
+#include <ATmighty/Ressources/Periphery/Physical/Ports.h>
 #include "AbstractPinManager.h"
-#include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
 #include <util/atomic.h>
 #include "ATmighty/Ressources/Periphery/Physical/PhysicalHardwareManager.h"
 #include "ATmighty/Utilities/LUTs/HardwareOwnerID.h"
@@ -12,14 +12,15 @@
 
 //Implementation of the class AbstractPinManager
 
-template <class PhysicalPort> uint8_t AbstractPinManager<PhysicalPort>::UsageMask = 0;
-template <class PhysicalPort> PhysicalPort* AbstractPinManager<PhysicalPort>::PhysicalReference = nullptr;
+template <char PortChar> uint8_t AbstractPinManager<PortChar>::UsageMask = 0;
 
-template <class PhysicalPort> int8_t AbstractPinManager<PhysicalPort>::AllocPin(uint8_t pin)
+template <char PortChar> Port<PortChar>* AbstractPinManager<PortChar>::PhysicalReference = nullptr;
+
+template <char PortChar> int8_t AbstractPinManager<PortChar>::AllocPin(uint8_t pin)
 {
 	if (!PhysicalReference) //need to allocate physical IoPort?
 	{
-		PhysicalReference = PhysicalHardwareManager::Alloc<PhysicalPort>(OwnerID::IndirectAbstraction);
+		PhysicalReference = PhysicalHardwareManager::Alloc<Port<PortChar>>(OwnerID::IndirectAbstraction);
 		if (!PhysicalReference) //physical hardware could not be allocated?
 		{
 			return -1;
@@ -45,7 +46,7 @@ template <class PhysicalPort> int8_t AbstractPinManager<PhysicalPort>::AllocPin(
 	return retbuf;
 }
 
-template <class PhysicalPort> void AbstractPinManager<PhysicalPort>::FreePin(uint8_t pin)
+template <char PortChar> void AbstractPinManager<PortChar>::FreePin(uint8_t pin)
 {
 	UsageMask &= (~(1<<pin));
 
@@ -57,12 +58,17 @@ template <class PhysicalPort> void AbstractPinManager<PhysicalPort>::FreePin(uin
 
 //Explizit Instantiations of this template class
 #if defined (__AVR_ATmega2560__)
-template class AbstractPinManager<PortA>;
-template class AbstractPinManager<PortB>;
-template class AbstractPinManager<PortC>;
-template class AbstractPinManager<PortD>;
-template class AbstractPinManager<PortE>;
-template class AbstractPinManager<PortF>;
+template class AbstractPinManager<'A'>;
+template class AbstractPinManager<'B'>;
+template class AbstractPinManager<'C'>;
+template class AbstractPinManager<'D'>;
+template class AbstractPinManager<'E'>;
+template class AbstractPinManager<'F'>;
+template class AbstractPinManager<'G'>;
+template class AbstractPinManager<'H'>;
+template class AbstractPinManager<'J'>;
+template class AbstractPinManager<'K'>;
+template class AbstractPinManager<'L'>;
 #else
 #  warning "AbstractPinManager was not configured for this µC."
 #endif

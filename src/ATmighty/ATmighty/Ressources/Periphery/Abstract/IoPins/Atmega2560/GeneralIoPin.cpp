@@ -3,15 +3,15 @@
  */
 
 
+#include <ATmighty/Ressources/Periphery/Physical/Ports.h>
+#include <ATmighty/Ressources/Periphery/Utilities/IoPortAddresses.h>
 #include "GeneralIoPin.h"
-#include "ATmighty/Ressources/Periphery/Abstract/IoPorts/IoPortData.h"
 #include "ATmighty/Ressources/Periphery/Abstract/IoPins/PinManager/AbstractPinManager.h"
-#include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
 
 
-GeneralIoPin::GeneralIoPin(char portChar, uint8_t pinNumber) : owner(0), pin(pinNumber), portAddress(PortData::CharToAddress(portChar))
+GeneralIoPin::GeneralIoPin(char portChar, uint8_t pinNumber) : owner(0), pin(pinNumber), portAddress(IoPortAddresses::CharToAddress(portChar))
 {
-	if (!PortData::IsValidPortChar(portChar))
+	if (!IoPortAddresses::IsValidPortChar(portChar))
 	{
 		pin = 8; //if the port is invalid, assign an invalid pin-number to prevent it from being used.
 	}
@@ -31,22 +31,37 @@ int8_t GeneralIoPin::init(int8_t ownerId)
 		switch (getPinPort())
 		{
 		case 'A':
-			allocResult = AbstractPinManager<PortA>::AllocPin(pin);
+			allocResult = AbstractPinManager<'A'>::AllocPin(pin);
 			break;
 		case 'B':
-			allocResult = AbstractPinManager<PortB>::AllocPin(pin);
+			allocResult = AbstractPinManager<'B'>::AllocPin(pin);
 			break;
 		case 'C':
-			allocResult = AbstractPinManager<PortC>::AllocPin(pin);
+			allocResult = AbstractPinManager<'C'>::AllocPin(pin);
 			break;
 		case 'D':
-			allocResult = AbstractPinManager<PortD>::AllocPin(pin);
+			allocResult = AbstractPinManager<'D'>::AllocPin(pin);
 			break;
 		case 'E':
-			allocResult = AbstractPinManager<PortE>::AllocPin(pin);
+			allocResult = AbstractPinManager<'E'>::AllocPin(pin);
 			break;
 		case 'F':
-			allocResult = AbstractPinManager<PortF>::AllocPin(pin);
+			allocResult = AbstractPinManager<'F'>::AllocPin(pin);
+			break;
+		case 'G':
+			allocResult = AbstractPinManager<'G'>::AllocPin(pin);
+			break;
+		case 'H':
+			allocResult = AbstractPinManager<'H'>::AllocPin(pin);
+			break;
+		case 'J':
+			allocResult = AbstractPinManager<'J'>::AllocPin(pin);
+			break;
+		case 'K':
+			allocResult = AbstractPinManager<'K'>::AllocPin(pin);
+			break;
+		case 'L':
+			allocResult = AbstractPinManager<'L'>::AllocPin(pin);
 			break;
 		default:
 			allocResult = -1;
@@ -73,22 +88,37 @@ void GeneralIoPin::exit()
 	switch (getPinPort())
 	{
 	case 'A':
-		AbstractPinManager<PortA>::FreePin(pin);
+		AbstractPinManager<'A'>::FreePin(pin);
 		break;
 	case 'B':
-		AbstractPinManager<PortB>::FreePin(pin);
+		AbstractPinManager<'B'>::FreePin(pin);
 		break;
 	case 'C':
-		AbstractPinManager<PortC>::FreePin(pin);
+		AbstractPinManager<'C'>::FreePin(pin);
 		break;
 	case 'D':
-		AbstractPinManager<PortD>::FreePin(pin);
+		AbstractPinManager<'D'>::FreePin(pin);
 		break;
 	case 'E':
-		AbstractPinManager<PortE>::FreePin(pin);
+		AbstractPinManager<'E'>::FreePin(pin);
 		break;
 	case 'F':
-		AbstractPinManager<PortF>::FreePin(pin);
+		AbstractPinManager<'F'>::FreePin(pin);
+		break;
+	case 'G':
+		AbstractPinManager<'G'>::FreePin(pin);
+		break;
+	case 'H':
+		AbstractPinManager<'H'>::FreePin(pin);
+		break;
+	case 'J':
+		AbstractPinManager<'J'>::FreePin(pin);
+		break;
+	case 'K':
+		AbstractPinManager<'K'>::FreePin(pin);
+		break;
+	case 'L':
+		AbstractPinManager<'L'>::FreePin(pin);
 		break;
 	}
 
@@ -137,5 +167,5 @@ bool GeneralIoPin::read()
 char GeneralIoPin::getPinPort()
 {
 	//double casting portAddress, because it throws an compiler-error when casting a pointer directly into an uint8_t
-	return PortData::AddressToChar((uint8_t*)portAddress);
+	return IoPortAddresses::AddressToChar((uint8_t*)portAddress);
 }

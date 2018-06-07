@@ -3,16 +3,16 @@
  */
 
 
+#include <ATmighty/Ressources/Periphery/Physical/Ports.h>
+#include <ATmighty/Ressources/Periphery/Utilities/IoPortAddresses.h>
 #include "GeneralIoPort.h"
 #include "ATmighty/Utilities/LUTs/HardwareOwnerID.h"
 #include "ATmighty/Ressources/Periphery/Physical/PhysicalHardwareManager.h"
-#include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
-#include "ATmighty/Ressources/Periphery/Abstract/IoPorts/IoPortData.h"
 
 
-GeneralIoPort::GeneralIoPort(char portChar) : owner(0), physicalReference(nullptr), portAddress(PortData::CharToAddress(portChar))
+GeneralIoPort::GeneralIoPort(char portChar) : owner(0), physicalReference(nullptr), portAddress(IoPortAddresses::CharToAddress(portChar))
 {
-	if (!PortData::IsValidPortChar(portChar))
+	if (!IoPortAddresses::IsValidPortChar(portChar))
 	{
 		physicalReference = (uint8_t*)(1); //set physicalReference != 0 to function as flag for an invalid portChar!
 	}
@@ -30,22 +30,37 @@ int8_t GeneralIoPort::init(int8_t ownerId)
 		switch (getCharCode())
 		{
 		case 'A':
-			physicalReference = PhysicalHardwareManager::Alloc<PortA>(OwnerID::DirectAbstraction);
+			physicalReference = PhysicalHardwareManager::Alloc<Port<'A'>>(OwnerID::DirectAbstraction);
 			break;
 		case 'B':
-			physicalReference = PhysicalHardwareManager::Alloc<PortB>(OwnerID::DirectAbstraction);
+			physicalReference = PhysicalHardwareManager::Alloc<Port<'B'>>(OwnerID::DirectAbstraction);
 			break;
 		case 'C':
-			physicalReference = PhysicalHardwareManager::Alloc<PortC>(OwnerID::DirectAbstraction);
+			physicalReference = PhysicalHardwareManager::Alloc<Port<'C'>>(OwnerID::DirectAbstraction);
 			break;
 		case 'D':
-			physicalReference = PhysicalHardwareManager::Alloc<PortD>(OwnerID::DirectAbstraction);
+			physicalReference = PhysicalHardwareManager::Alloc<Port<'D'>>(OwnerID::DirectAbstraction);
 			break;
 		case 'E':
-			physicalReference = PhysicalHardwareManager::Alloc<PortE>(OwnerID::DirectAbstraction);
+			physicalReference = PhysicalHardwareManager::Alloc<Port<'E'>>(OwnerID::DirectAbstraction);
 			break;
 		case 'F':
-			physicalReference = PhysicalHardwareManager::Alloc<PortF>(OwnerID::DirectAbstraction);
+			physicalReference = PhysicalHardwareManager::Alloc<Port<'F'>>(OwnerID::DirectAbstraction);
+			break;
+		case 'G':
+			physicalReference = PhysicalHardwareManager::Alloc<Port<'G'>>(OwnerID::DirectAbstraction);
+			break;
+		case 'H':
+			physicalReference = PhysicalHardwareManager::Alloc<Port<'H'>>(OwnerID::DirectAbstraction);
+			break;
+		case 'J':
+			physicalReference = PhysicalHardwareManager::Alloc<Port<'J'>>(OwnerID::DirectAbstraction);
+			break;
+		case 'K':
+			physicalReference = PhysicalHardwareManager::Alloc<Port<'K'>>(OwnerID::DirectAbstraction);
+			break;
+		case 'L':
+			physicalReference = PhysicalHardwareManager::Alloc<Port<'L'>>(OwnerID::DirectAbstraction);
 			break;
 		}
 
@@ -70,22 +85,37 @@ void GeneralIoPort::exit()
 	switch (getCharCode())
 	{
 	case 'A':
-		PhysicalHardwareManager::Free((PortA**)(&physicalReference));
+		PhysicalHardwareManager::Free((Port<'A'>**)(&physicalReference));
 		break;
 	case 'B':
-		PhysicalHardwareManager::Free((PortB**)(&physicalReference));
+		PhysicalHardwareManager::Free((Port<'B'>**)(&physicalReference));
 		break;
 	case 'C':
-		PhysicalHardwareManager::Free((PortC**)(&physicalReference));
+		PhysicalHardwareManager::Free((Port<'C'>**)(&physicalReference));
 		break;
 	case 'D':
-		PhysicalHardwareManager::Free((PortD**)(&physicalReference));
+		PhysicalHardwareManager::Free((Port<'D'>**)(&physicalReference));
 		break;
 	case 'E':
-		PhysicalHardwareManager::Free((PortE**)(&physicalReference));
+		PhysicalHardwareManager::Free((Port<'E'>**)(&physicalReference));
 		break;
 	case 'F':
-		PhysicalHardwareManager::Free((PortF**)(&physicalReference));
+		PhysicalHardwareManager::Free((Port<'F'>**)(&physicalReference));
+		break;
+	case 'G':
+		PhysicalHardwareManager::Free((Port<'G'>**)(&physicalReference));
+		break;
+	case 'H':
+		PhysicalHardwareManager::Free((Port<'H'>**)(&physicalReference));
+		break;
+	case 'J':
+		PhysicalHardwareManager::Free((Port<'J'>**)(&physicalReference));
+		break;
+	case 'K':
+		PhysicalHardwareManager::Free((Port<'K'>**)(&physicalReference));
+		break;
+	case 'L':
+		PhysicalHardwareManager::Free((Port<'L'>**)(&physicalReference));
 		break;
 	}
 
@@ -119,5 +149,5 @@ uint8_t GeneralIoPort::getPinValues()
 
 char GeneralIoPort::getCharCode()
 {
-	return PortData::AddressToChar((uint8_t*)portAddress);
+	return IoPortAddresses::AddressToChar((uint8_t*)portAddress);
 }

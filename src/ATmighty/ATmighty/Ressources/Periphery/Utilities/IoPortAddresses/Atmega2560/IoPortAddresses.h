@@ -1,10 +1,10 @@
 /*!
- * This headerfile is µC-dependent, it should only be included indirectly via "IoPorts.h".
+ * This headerfile is µC-dependent, it should only be included indirectly via "IoPortAddresses.h".
  * This headerfile defines functions to validate a port-character for this µC and to parse a port-character into an IO-address
  */
 
-#ifndef ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_IOPORTS_ATMEGA2560_PORTDATA_H_
-#define ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_IOPORTS_ATMEGA2560_PORTDATA_H_
+#ifndef ATMIGHTY_RESSOURCES_PERIPHERY_UTILITIES_IOPORTADDRESSES_ATMEGA2560_IOPORTADDRESSES_H_
+#define ATMIGHTY_RESSOURCES_PERIPHERY_UTILITIES_IOPORTADDRESSES_ATMEGA2560_IOPORTADDRESSES_H_
 
 
 #include <stdint.h>
@@ -12,7 +12,7 @@
 
 
 ///This namespace defines functions to validate a port-character for this µC and to parse a port-character into an IO-address
-namespace PortData
+namespace IoPortAddresses
 {
 	/*!
 	 * Tests if the given character is a valid port-character for this µC
@@ -69,4 +69,4 @@ namespace PortData
 }
 
 
-#endif /* ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_IOPORTS_ATMEGA2560_PORTDATA_H_ */
+#endif /* ATMIGHTY_RESSOURCES_PERIPHERY_UTILITIES_IOPORTADDRESSES_ATMEGA2560_IOPORTADDRESSES_H_ */

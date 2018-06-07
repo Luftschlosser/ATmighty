@@ -18,11 +18,11 @@
  * it is used to instantiate a unique set of the static-members for each IoPort.
  * This class cannot be instantiated, only its static methods should be accessed!
  */
-template <class PhysicalPort> class AbstractPinManager
+template <char PortChar> class AbstractPinManager
 {
 	private:
 		/// A static pointer to the physical Port from which the pins will get used
-		static PhysicalPort* PhysicalReference;
+		static Port<PortChar>* PhysicalReference;
 
 		/// An 8-bit mask which defines the usage-state for each of the port's IoPins
 		static uint8_t UsageMask; //0=free, 1=used

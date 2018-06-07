@@ -29,6 +29,8 @@ class AbstractHardwareManager
 		 */
 		template<class Hw> Hw* allocItem();
 
+		//general freeing-method (to save memory for all the specific abstract hardware-types to free
+		template<class ToFree> static void Free(ToFree** hardware, int8_t owner);
 		//Logging-helper-Methods
 		#if ATMIGHTY_MESSAGELOG_ENABLE == true
 		static void logAllocSuccess(PGM_P hardware, char hwCode, int8_t id);

@@ -7,11 +7,11 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <ATmighty/Ressources/Periphery/Physical/Ports.h>
 #include <stdlib.h>
 
 #include "ATmighty/Utilities/C++/FullCppSupport.h"
 
-#include "ATmighty/Ressources/Periphery/Physical/IoPorts.h"
 #include "ATmighty/Ressources/Periphery/Physical/Timer.h"
 
 #include "ATmighty/Ressources/Periphery/Abstract/AbstractHardwareManager.h"
@@ -35,7 +35,7 @@ int main( void )
 	Timer0* timer = phHw::Alloc<Timer0>(0);
 	absPin = abHw.allocIoPin<'A',1>();
 	abHw.freeItem(&absPin);
-	absPin = abHw.allocIoPin('C',7);
+	absPin = abHw.allocIoPin<'L',5>();
 	absPort = abHw.allocIoPort<'A'>();
 
 	//Pin setup
