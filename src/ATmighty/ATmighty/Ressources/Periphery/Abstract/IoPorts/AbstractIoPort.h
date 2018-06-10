@@ -6,7 +6,6 @@
 #define ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_IOPORTS_ABSTRACTIOPORT_H_
 
 
-#include <stdint.h>
 #include "ATmighty/Ressources/Periphery/Abstract/IoPorts/IoPort.h"
 
 

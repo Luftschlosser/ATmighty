@@ -65,37 +65,42 @@ GeneralIoPin* AbstractHardwareManager::allocIoPin(char portChar, uint8_t pinNumb
 
 template<char PortChar, uint8_t PinNumber> SpecificIoPin<PortChar, PinNumber>* AbstractHardwareManager::allocIoPin()
 {
-	SpecificIoPin<PortChar, PinNumber>* instance = new SpecificIoPin<PortChar, PinNumber>();
-	int8_t returnCode;
-
-	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+	if (SpecificIoPin<PortChar, PinNumber>::Owner == 0) //All specific abstract IoPins must behave like a Singleton, so they all must have static "Owner"-member!
 	{
-		returnCode = instance->init(owner);
-	}
+		SpecificIoPin<PortChar, PinNumber>* instance = new SpecificIoPin<PortChar, PinNumber>();
+		int8_t returnCode;
 
-	if (returnCode == 0)
-	{
-		//Success
-		#if ATMIGHTY_MESSAGELOG_ENABLE == true
-		logAllocSuccess(instance->getHardwareStringRepresentation(), instance->getPinPort(), instance->getPinNumber(), owner);
-		#endif
-
-		return instance;
-	}
-	else //Error
-	{
-		#if ATMIGHTY_MESSAGELOG_ENABLE == true
-		if (returnCode > 0) //abstract hardware is already in use
+		ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
 		{
-			logAllocFailUsed(instance->getHardwareStringRepresentation(), instance->getPinPort(), instance->getPinNumber(), owner, instance->getOwner());
+			returnCode = instance->init(owner);
 		}
-		else //physical hardware dependency could not be resolved
+
+		if (returnCode == 0)
 		{
+			//Success
+			#if ATMIGHTY_MESSAGELOG_ENABLE == true
+			logAllocSuccess(instance->getHardwareStringRepresentation(), instance->getPinPort(), instance->getPinNumber(), owner);
+			#endif
+
+			return instance;
+		}
+		else //Error -> physical hardware dependency could not be resolved
+		{
+			#if ATMIGHTY_MESSAGELOG_ENABLE == true
 			logAllocFailDependency(instance->getHardwareStringRepresentation(), instance->getPinPort(), instance->getPinNumber(), owner);
+			#endif
+
+			delete(instance);
+			return nullptr;
 		}
+	}
+	else
+	{
+		#if ATMIGHTY_MESSAGELOG_ENABLE == true
+		SpecificIoPin<PortChar, PinNumber> instance;
+		logAllocFailUsed(instance.getHardwareStringRepresentation(), instance.getPinPort(), instance.getPinNumber(), owner, instance.getOwner());
 		#endif
 
-		delete(instance);
 		return nullptr;
 	}
 }

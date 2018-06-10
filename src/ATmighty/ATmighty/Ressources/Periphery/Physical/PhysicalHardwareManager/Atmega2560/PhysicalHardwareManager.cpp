@@ -238,6 +238,9 @@ namespace PhysicalHardwareManager
 	template Timer0* Alloc<Timer0>(int8_t id);
 	template int8_t GetOwner<Timer0>();
 	template void Free<Timer0>(Timer0 **hardware);
+	template Timer2* Alloc<Timer2>(int8_t id);
+	template int8_t GetOwner<Timer2>();
+	template void Free<Timer2>(Timer2 **hardware);
 
 	template Usart0* Alloc<Usart0>(int8_t id);
 	template int8_t GetOwner<Usart0>();

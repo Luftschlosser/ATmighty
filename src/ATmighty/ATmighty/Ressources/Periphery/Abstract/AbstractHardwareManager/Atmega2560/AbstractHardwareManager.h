@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include "ATmighty/Ressources/Periphery/Abstract/IoPorts.h"
 #include "ATmighty/Ressources/Periphery/Abstract/IoPins.h"
+#include "ATmighty/Ressources/Periphery/Abstract/Timer.h"
 #include "Config/MessageLogConfig.h"
 
 
@@ -83,6 +84,17 @@ class AbstractHardwareManager
 		 * \returns a pointer to an abstract allocated IoPin-instance or nullptr if the allocation failed, which happens when the specified IoPin is already in use.
 		 */
 		GeneralIoPin* allocIoPin(char portChar, uint8_t pinNumber);
+
+		/*!
+		 * Allocates an 8bit Timer.
+		 * The template parameter can be either used to specify the type of 8bit-Timer or an specific one to allocate. Possible values are:
+		 * "AbstractTimer8bit"/Default:	When no explicit template parameter is provided, this method will return any free 8bit-Timer.
+		 * "AbstractTimer8bitAsync":	This method will return any free 8bit-Timer which supports asynchronous operation.
+		 * "AbstractTimer0":			This method will return an abstraction of Timer0 if currently available.
+		 * "AbstractTimer2":			This method will return an abstraction of Timer2 if currently available.
+		 * \returns a pointer to the allocated timer-instance on success, nullptr when the specified timer(s) could not be allocated.
+		 */
+		template<class TimerHw = AbstractTimer8bit> TimerHw* allocTimer8bit();
 
 		/*!
 		 * Frees an allocated abstract hardware-item.

@@ -51,6 +51,8 @@ class Usart0 : private PhysicalHardwareBase
 		inline void setUBRR0L(uint8_t value) {UBRR0L = value;}
 		///Sets the value of the UBRR0H register
 		inline void setUBRR0H(uint8_t value) {UBRR0H = value;}
+		///Sets the value of the UBRR0 register
+		inline void setUBRR0(uint16_t value) {UBRR0 = value;}
 
 		///Returns the current value of the UDR0 register
 		inline uint8_t getUDR0() {return UDR0;}
@@ -64,6 +66,8 @@ class Usart0 : private PhysicalHardwareBase
 		inline uint8_t getUBRR0L() {return UBRR0L;}
 		///Returns the current value of the UBRR0H register
 		inline uint8_t getUBRR0H() {return UBRR0H;}
+		///Returns the current value of the UBRR0 register
+		inline uint16_t getUBRR0() {return UBRR0;}
 };
 
 

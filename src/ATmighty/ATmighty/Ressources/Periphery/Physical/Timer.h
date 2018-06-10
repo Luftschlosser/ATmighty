@@ -9,6 +9,7 @@
 
 #if defined (__AVR_ATmega2560__)
 #  include "Timer/Atmega2560/Timer0.h"
+#  include "Timer/Atmega2560/Timer2.h"
 #else
 #  warning "No Timers are defined for this µC."
 #endif

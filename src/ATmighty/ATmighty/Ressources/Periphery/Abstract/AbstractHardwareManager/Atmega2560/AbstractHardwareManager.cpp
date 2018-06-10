@@ -19,37 +19,42 @@ AbstractHardwareManager::AbstractHardwareManager(int8_t ownerId) : owner(ownerId
 
 template<class Hw> Hw* AbstractHardwareManager::allocItem ()
 {
-	Hw* instance = new Hw();
-	int8_t returnCode;
-
-	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+	if (Hw::Owner == 0) //All specific abstract hardware-items must behave like a Singleton, so they all must have static "Owner"-member!
 	{
-		returnCode = instance->init(owner);
-	}
+		Hw* instance = new Hw();
+		int8_t returnCode;
 
-	if (returnCode == 0)
-	{
-		//Success
-		#if ATMIGHTY_MESSAGELOG_ENABLE == true
-		logAllocSuccess(instance->getHardwareStringRepresentation(), instance->getCharCode(), owner);
-		#endif
-
-		return instance;
-	}
-	else //Error
-	{
-		#if ATMIGHTY_MESSAGELOG_ENABLE == true
-		if (returnCode > 0) //abstract hardware is already in use
+		ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
 		{
-			logAllocFailUsed(instance->getHardwareStringRepresentation(), instance->getCharCode(), owner, instance->getOwner());
+			returnCode = instance->init(owner);
 		}
-		else //physical hardware dependency could not be resolved
+
+		if (returnCode == 0)
 		{
+			//Success
+			#if ATMIGHTY_MESSAGELOG_ENABLE == true
+			logAllocSuccess(instance->getHardwareStringRepresentation(), instance->getCharCode(), owner);
+			#endif
+
+			return instance;
+		}
+		else //Error -> physical hardware dependency could not be resolved
+		{
+			#if ATMIGHTY_MESSAGELOG_ENABLE == true
 			logAllocFailDependency(instance->getHardwareStringRepresentation(), instance->getCharCode(), owner);
+			#endif
+
+			delete(instance);
+			return nullptr;
 		}
+	}
+	else //abstract hardware is already in use
+	{
+		#if ATMIGHTY_MESSAGELOG_ENABLE == true
+		Hw instance;
+		logAllocFailUsed(instance.getHardwareStringRepresentation(), instance.getCharCode(), owner, instance.getOwner());
 		#endif
 
-		delete(instance);
 		return nullptr;
 	}
 }
@@ -59,6 +64,7 @@ template<class ToFree> void AbstractHardwareManager::Free(ToFree **hardware, int
 {
 	if (hardware != nullptr && (*hardware) != nullptr)
 	{
+		//TODO make freeing of abstract hardware only possible via the AbstractHardwareManager-instance which allocated the HW by comparing the owner-Id's.
 		(*hardware)->exit();
 
 		//Success-Message
@@ -94,5 +100,9 @@ template SpecificIoPort<'J'>* AbstractHardwareManager::allocItem<SpecificIoPort<
 template SpecificIoPort<'K'>* AbstractHardwareManager::allocItem<SpecificIoPort<'K'>>();
 template SpecificIoPort<'L'>* AbstractHardwareManager::allocItem<SpecificIoPort<'L'>>();
 
+//General allocator: - 8bit-Timers
+template AbstractTimer0* AbstractHardwareManager::allocItem<AbstractTimer0>();
+
 //General freeing:
 template void AbstractHardwareManager::Free<AbstractIoPort>(AbstractIoPort** hardware, int8_t owner);
+template void AbstractHardwareManager::Free<AbstractTimer8bit>(AbstractTimer8bit** hardware, int8_t owner);
