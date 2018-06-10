@@ -38,7 +38,7 @@ int main( void )
 
 	IrqTest blink(abHw.allocIoPin<'B',7>());
 
-	Timer8bit* timer = abHw.allocTimer8bit();
+	Timer8bit* timer = abHw.allocTimer8bit<AbstractTimer8bit>();
 	timer->setTimerOverflowISR(&blink);
 	timer->enableTimerOverflowInterrupt(true);
 	timer->setPrescalar(Timer8bit::Prescale::Scale1024);

@@ -109,7 +109,7 @@ class Timer8bit
 		/*!
 		 * Enables the use of the external clock input if supported by this timer.
 		 * This will clear the prescalar and start the timer.
-		 * To disable the external clock input, either call stop the timer or set a prescalar value for this timer.
+		 * To disable the external clock input, either stop the timer or set a prescalar value for this timer.
 		 * This method can also be used to test if this timer supports an external clock source.
 		 * \param trigger defines the trigger-type to be used by the external clock input. (rising or falling edge)
 		 * Enum type ExtClkTrigger is provided for easier usage, else trigger: 6==falling, 7==rising.
@@ -120,11 +120,11 @@ class Timer8bit
 		/*!
 		 * Gets an abstract instance of the IoPin used as external clock input by this timer.
 		 * If this timer supports asynchronous operation this method will return the Timer-Oscillator1 (TOSC1) IoPin instead.
-		 * This method will either allocate the external clock input pin or both of the asynchronous Timer-Oscillator-Pins (TOSC1 & TOSC2),
+		 * This method will either allocate the external clock input pin or the asynchronous Timer-Oscillator-Pin1 (TOSC1),
 		 * depending on the type of this timer (normal or asynchronous).
 		 * Freeing the IoPin(s) afterwards is only possible by freeing the entire timer.
 		 * This method can be useful to manually interact with the external clock input, for example to enable software-control of the counting.
-		 * \returns a pointer to the used IoPin on sucess, nullptr if the IoPin could not be allocated or this timer does not support
+		 * \returns a pointer to the used IoPin on success, nullptr if the IoPin could not be allocated or this timer does not support
 		 * external or asynchronous clocking.
 		 */
 		virtual IoPin* getExtClkPin() = 0;

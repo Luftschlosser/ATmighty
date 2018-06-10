@@ -58,6 +58,9 @@ namespace Timer0ISR
 //AbstractTimer0-class implementation
 
 int8_t AbstractTimer0::Owner = 0;
+SpecificIoPin<'B',7>* AbstractTimer0::OutputA = nullptr;
+SpecificIoPin<'G',5>* AbstractTimer0::OutputB = nullptr;
+SpecificIoPin<'D',7>* AbstractTimer0::ExtClk = nullptr;
 
 int8_t AbstractTimer0::init(int8_t ownerId)
 {
@@ -84,20 +87,20 @@ int8_t AbstractTimer0::init(int8_t ownerId)
 void AbstractTimer0::exit()
 {
 	PhysicalHardwareManager::Free(&physicalReference);
-	if (outputA || outputB || extClk)
+	if (OutputA || OutputB || ExtClk)
 	{
 		AbstractHardwareManager hwManager(OwnerID::AbstractionDependency);
-		if (outputA != nullptr)
+		if (OutputA != nullptr)
 		{
-			hwManager.freeItem(&outputA);
+			hwManager.freeItem(&OutputA);
 		}
-		if (outputB != nullptr)
+		if (OutputB != nullptr)
 		{
-			hwManager.freeItem(&outputB);
+			hwManager.freeItem(&OutputB);
 		}
-		if (extClk != nullptr)
+		if (ExtClk != nullptr)
 		{
-			hwManager.freeItem(&extClk);
+			hwManager.freeItem(&ExtClk);
 		}
 	}
 	Owner = 0;
@@ -219,11 +222,11 @@ int8_t AbstractTimer0::setCOMx(uint8_t value, char channel)
 	{
 		if (value)
 		{
-			if (outputA == nullptr) //pin not allocated jet
+			if (OutputA == nullptr) //pin not allocated jet
 			{
 				AbstractHardwareManager hwManager(OwnerID::AbstractionDependency);
-				outputA = hwManager.allocIoPin<'B', 7>();
-				if (outputA == nullptr)
+				OutputA = hwManager.allocIoPin<'B', 7>();
+				if (OutputA == nullptr)
 				{
 					return 2;
 				}
@@ -236,11 +239,11 @@ int8_t AbstractTimer0::setCOMx(uint8_t value, char channel)
 	{
 		if (value)
 		{
-			if (outputB == nullptr) //pin not allocated jet
+			if (OutputB == nullptr) //pin not allocated jet
 			{
 				AbstractHardwareManager hwManager(OwnerID::AbstractionDependency);
-				outputB = hwManager.allocIoPin<'G', 5>();
-				if (outputB == nullptr)
+				OutputB = hwManager.allocIoPin<'G', 5>();
+				if (OutputB == nullptr)
 				{
 					return 2;
 				}
@@ -257,21 +260,21 @@ IoPin* AbstractTimer0::getOutputPin(char channel)
 {
 	if (channel == 'A')
 	{
-		if (outputA == nullptr)
+		if (OutputA == nullptr)
 		{
 			AbstractHardwareManager hwManager(OwnerID::AbstractionDependency);
-			outputA = hwManager.allocIoPin<'B', 7>();
+			OutputA = hwManager.allocIoPin<'B', 7>();
 		}
-		return outputA;
+		return OutputA;
 	}
 	if (channel == 'B')
 	{
-		if (outputB == nullptr)
+		if (OutputB == nullptr)
 		{
 			AbstractHardwareManager hwManager(OwnerID::AbstractionDependency);
-			outputB = hwManager.allocIoPin<'G', 5>();
+			OutputB = hwManager.allocIoPin<'G', 5>();
 		}
-		return outputB;
+		return OutputB;
 	}
 	return nullptr;
 }
@@ -291,12 +294,12 @@ int8_t AbstractTimer0::setExtClockInput(ExtClkTrigger trigger)
 
 IoPin* AbstractTimer0::getExtClkPin()
 {
-	if (extClk == nullptr)
+	if (ExtClk == nullptr)
 	{
 		AbstractHardwareManager hwManager(OwnerID::AbstractionDependency);
-		extClk = hwManager.allocIoPin<'D', 7>();
+		ExtClk = hwManager.allocIoPin<'D', 7>();
 	}
-	return extClk;
+	return ExtClk;
 }
 
 void AbstractTimer0::enableOutputCompareInterrupt(bool value, char channel)
