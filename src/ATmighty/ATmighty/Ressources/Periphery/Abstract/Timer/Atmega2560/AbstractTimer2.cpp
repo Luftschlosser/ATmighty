@@ -12,50 +12,9 @@
 #include "ATmighty/Ressources/Periphery/Abstract/AbstractHardwareManager.h"
 #include "ATmighty/Utilities/LUTs/HardwareOwnerID.h"
 #include "ATmighty/Interfaces/Listener.h"
-#include "Config/InterruptConfig.h"
+#include "ATmighty/Ressources/Interrupts/InterruptManager.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
 #include "ATmighty/Utilities/LUTs/MessageLogPhrases.h"
-
-
-//ISR implementations
-namespace Timer2ISR
-{
-	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV2
-	Listener* TovListener = nullptr;
-
-	ISR(TIMER2_OVF_vect)
-	{
-		if (TovListener)
-		{
-			TovListener->trigger();
-		}
-	}
-	#endif
-
-	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF2A
-	Listener* OcfAListener = nullptr;
-
-	ISR(TIMER2_COMPA_vect)
-	{
-		if (OcfAListener)
-		{
-			OcfAListener->trigger();
-		}
-	}
-	#endif
-
-	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF2A
-	Listener* OcfBListener = nullptr;
-
-	ISR(TIMER2_COMPB_vect)
-	{
-		if (OcfBListener)
-		{
-			OcfBListener->trigger();
-		}
-	}
-	#endif
-}
 
 
 //AbstractTimer2-class implementation
@@ -420,13 +379,13 @@ void AbstractTimer2::setOutputCompareISR(Listener* isr, char channel)
 	if (channel == 'A')
 	{
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF2A
-		Timer2ISR::OcfAListener = isr;
+		InterruptManager::setOCF2A(isr);
 		#endif
 	}
 	else if (channel == 'B')
 	{
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF2B
-		Timer2ISR::OcfBListener = isr;
+		InterruptManager::setOCF2B(isr);
 		#endif
 	}
 }
@@ -434,7 +393,7 @@ void AbstractTimer2::setOutputCompareISR(Listener* isr, char channel)
 void AbstractTimer2::setTimerOverflowISR(Listener* isr)
 {
 	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV2
-	Timer2ISR::TovListener = isr;
+	InterruptManager::setTOV2(isr);
 	#endif
 }
 

@@ -11,7 +11,6 @@
 #include <avr/pgmspace.h>
 #include "ATmighty/Ressources/Periphery/Physical/PhysicalHardwareBase/PhysicalHardwareBase.h"
 #include "ATmighty/Ressources/Periphery/Physical/PhysicalHardwareManager.h"
-//#include "Config/InterruptConfig.h" TODO: add interrupt-handling by hw-objects themself
 
 
 /// This class provides access to the Timer0-periphery of the atmega2560 µC.

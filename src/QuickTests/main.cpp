@@ -31,7 +31,7 @@ class IrqTest : public Listener
 
 int main( void )
 {
-	AbstractHardwareManager abHw = AbstractHardwareManager(42);
+	AbstractHardwareManager abHw = AbstractHardwareManager(41);
 
 	MessageLogWriter::Usart usbWriter;
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
