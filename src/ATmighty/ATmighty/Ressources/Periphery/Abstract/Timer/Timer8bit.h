@@ -166,7 +166,7 @@ class Timer8bit
 		/// returns the base-clock frequency which drives this timer in Hz. (Will be processor-speed for abstract timers, less for virtual timers)
 		virtual uint32_t getBaseFrequency() = 0;
 
-	private:
+	protected:
 		/// returns a string-representation of this type stored in flash
 		inline PGM_P getHardwareStringRepresentation()
 		{

@@ -7,11 +7,14 @@
 #include <avr/io.h>
 #include <util/atomic.h>
 #include <avr/interrupt.h>
+#include <avr/pgmspace.h>
 #include "ATmighty/Ressources/Periphery/Physical/PhysicalHardwareManager.h"
 #include "ATmighty/Ressources/Periphery/Abstract/AbstractHardwareManager.h"
 #include "ATmighty/Utilities/LUTs/HardwareOwnerID.h"
 #include "ATmighty/Interfaces/Listener.h"
 #include "Config/InterruptConfig.h"
+#include "ATmighty/Utilities/Logs/MessageLog.h"
+#include "ATmighty/Utilities/LUTs/MessageLogPhrases.h"
 
 
 //ISR implementations
@@ -111,6 +114,19 @@ void AbstractTimer2::exit()
 	Owner = 0;
 }
 
+void AbstractTimer2::signalUpdateBusyError()
+{
+	#if ATMIGHTY_MESSAGELOG_ENABLE
+	static const char msg[] PROGMEM = ": Register write while update-busy-flag is set!";
+
+	MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
+			MessageLogPhrases::Phrase_AbstractHw,
+			getHardwareStringRepresentation(),
+			'[', getCharCode(), '[',
+			msg);
+	#endif
+}
+
 int8_t AbstractTimer2::setWGM(uint8_t value)
 {
 	if ((value <= 7) && (value != 6) && (value != 4))
@@ -119,7 +135,7 @@ int8_t AbstractTimer2::setWGM(uint8_t value)
 		{
 			if (ASSR & 3) //Update-busy flags of TCCR2A or TCCR2B are set while in asynchronous mode?
 			{
-				//TODO warning: writing to register X while update-busy flag is set
+				signalUpdateBusyError();
 			}
 
 			TCCR2A = ((TCCR2A & ~3) | (value & 3));
@@ -179,7 +195,7 @@ int8_t AbstractTimer2::setPrescalar(uint8_t potency)
 
 	if (ASSR & 1) //Update-busy flag of TCCR2B is set while in asynchronous mode?
 	{
-		//TODO warning: writing to register X while update-busy flag is set
+		signalUpdateBusyError();
 	}
 
 	TCCR2B = ((TCCR2B & ~7) | prescalar);
@@ -190,7 +206,7 @@ void AbstractTimer2::stop()
 {
 	if (ASSR & 1) //Update-busy flag of TCCR2B is set while in asynchronous mode?
 	{
-		//TODO warning: writing to register X while update-busy flag is set
+		signalUpdateBusyError();
 	}
 
 	TCCR2B &= ~7;
@@ -200,7 +216,7 @@ void AbstractTimer2::setCounter(uint8_t value)
 {
 	if (ASSR & (1 << 4)) //Update-busy flag of TCNT2 is set while in asynchronous mode?
 	{
-		//TODO warning: writing to register X while update-busy flag is set
+		signalUpdateBusyError();
 	}
 
 	TCNT2 = value;
@@ -217,7 +233,7 @@ int8_t AbstractTimer2::setOCRx(uint8_t value, char channel)
 	{
 		if (ASSR & (1 << 3)) //Update-busy flag of OCR2A is set while in asynchronous mode?
 		{
-			//TODO warning: writing to register X while update-busy flag is set
+			signalUpdateBusyError();
 		}
 
 		OCR2A = value;
@@ -227,7 +243,7 @@ int8_t AbstractTimer2::setOCRx(uint8_t value, char channel)
 	{
 		if (ASSR & (1 << 2)) //Update-busy flag of OCR2B is set while in asynchronous mode?
 		{
-			//TODO warning: writing to register X while update-busy flag is set
+			signalUpdateBusyError();
 		}
 
 		OCR2B = value;
@@ -250,7 +266,7 @@ int8_t AbstractTimer2::forceOutputCompare(char channel)
 	{
 		if (ASSR & 1) //Update-busy flag of TCCR2B is set while in asynchronous mode?
 		{
-			//TODO warning: writing to register X while update-busy flag is set
+			signalUpdateBusyError();
 		}
 
 		TCCR2B |= (1<<7);
@@ -260,7 +276,7 @@ int8_t AbstractTimer2::forceOutputCompare(char channel)
 	{
 		if (ASSR & 1) //Update-busy flag of TCCR2B is set while in asynchronous mode?
 		{
-			//TODO warning: writing to register X while update-busy flag is set
+			signalUpdateBusyError();
 		}
 
 		TCCR2B |= (1<<6);
@@ -296,7 +312,7 @@ int8_t AbstractTimer2::setCOMx(uint8_t value, char channel)
 
 		if (ASSR & (1 << 1)) //Update-busy flag of TCCR2A is set while in asynchronous mode?
 		{
-			//TODO warning: writing to register X while update-busy flag is set
+			signalUpdateBusyError();
 		}
 
 		TCCR2A = ((TCCR2A & ~(3 << 6)) | (value << 6));
@@ -318,7 +334,7 @@ int8_t AbstractTimer2::setCOMx(uint8_t value, char channel)
 		}
 		if (ASSR & (1 << 1)) //Update-busy flag of TCCR2A is set while in asynchronous mode?
 		{
-			//TODO warning: writing to register X while update-busy flag is set
+			signalUpdateBusyError();
 		}
 
 		TCCR2A = ((TCCR2A & ~(3 << 4)) | (value << 4));

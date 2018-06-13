@@ -56,6 +56,12 @@ class AbstractTimer2 : public AbstractTimer8bitAsync
 		/// returns the current owner of this abstract hardware
 		inline int8_t getOwner() {return Owner;}
 
+		/*!
+		 * signals a warning when writing to any register while its update-busy-flag is set when the timer is in asynchronous operation mode.
+		 * The Warning gets signaled as a MessageLog-Entry when Message-Logging is enabled and as a warning-signal to the ErrorLog-System.
+		 */
+		void signalUpdateBusyError();
+
 	public:
 		/*!
 		 * Sets the Waveform-Generation-Mode of this timer.
