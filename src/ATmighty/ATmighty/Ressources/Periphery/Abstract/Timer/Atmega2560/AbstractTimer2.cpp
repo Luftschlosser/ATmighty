@@ -188,23 +188,18 @@ uint8_t AbstractTimer2::getCounter()
 
 int8_t AbstractTimer2::setOCRx(uint8_t value, char channel)
 {
+	if (ASSR & (1 << 2)) //Update-busy flag of OCR2B is set while in asynchronous mode?
+	{
+		signalUpdateBusyError();
+	}
+
 	if (channel == 'A')
 	{
-		if (ASSR & (1 << 3)) //Update-busy flag of OCR2A is set while in asynchronous mode?
-		{
-			signalUpdateBusyError();
-		}
-
 		OCR2A = value;
 		return 0;
 	}
 	else if (channel == 'B')
 	{
-		if (ASSR & (1 << 2)) //Update-busy flag of OCR2B is set while in asynchronous mode?
-		{
-			signalUpdateBusyError();
-		}
-
 		OCR2B = value;
 		return 0;
 	}
@@ -221,23 +216,18 @@ int8_t AbstractTimer2::forceOutputCompare(char channel)
 		return -1;
 	}
 
+	if (ASSR & 1) //Update-busy flag of TCCR2B is set while in asynchronous mode?
+	{
+		signalUpdateBusyError();
+	}
+
 	if (channel == 'A')
 	{
-		if (ASSR & 1) //Update-busy flag of TCCR2B is set while in asynchronous mode?
-		{
-			signalUpdateBusyError();
-		}
-
 		TCCR2B |= (1<<7);
 		return 0;
 	}
 	else if (channel == 'B')
 	{
-		if (ASSR & 1) //Update-busy flag of TCCR2B is set while in asynchronous mode?
-		{
-			signalUpdateBusyError();
-		}
-
 		TCCR2B |= (1<<6);
 		return 0;
 	}

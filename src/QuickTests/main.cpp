@@ -17,6 +17,8 @@
 #include "ATmighty/Utilities/Logs/MessageLog.h"
 #include "ATmighty/Utilities/Logs/MessageLogWriter.h"
 
+#include <ATmighty/Tools/Timing/Stopwatch/Stopwatch.h>
+
 
 class IrqTest : public Listener
 {
@@ -43,6 +45,32 @@ int main( void )
 	timer->enableTimerOverflowInterrupt(true);
 	timer->setPrescalar(Timer16bit::Prescale::Scale8);
 	sei();
+
+	//Stopwatch-tests
+	Stopwatch<> stopwatch = Stopwatch<>(abHw.allocTimer16bit<AbstractTimer5>());
+	volatile uint32_t test;
+
+	stopwatch.start();
+	test = stopwatch.stop();
+	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "Stopwatch time 0: ", (uint8_t)test, " -> ", (test <= 0xFF));
+
+	stopwatch.start();
+	asm volatile ( "nop \n" );
+	test = stopwatch.stop();
+	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "Stopwatch time 1: ", (uint8_t)test, " -> ", (test <= 0xFF));
+
+	stopwatch.start();
+	asm volatile ( "nop \n" );
+	asm volatile ( "nop \n" );
+	test = stopwatch.stop();
+	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "Stopwatch time 2: ", (uint8_t)test, " -> ", (test <= 0xFF));
+
+	stopwatch.start();
+	asm volatile ( "nop \n" );
+	asm volatile ( "nop \n" );
+	asm volatile ( "nop \n" );
+	test = stopwatch.stop();
+	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "Stopwatch time 3: ", (uint8_t)test, " -> ", (test <= 0xFF));
 
 	//mainloop
 	while(1){

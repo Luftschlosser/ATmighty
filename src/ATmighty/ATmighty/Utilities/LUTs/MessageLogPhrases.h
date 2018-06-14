@@ -30,6 +30,9 @@ namespace MessageLogPhrases
 	const char Reason_AllocFail_InUse[] PROGMEM = ": In use";
 	const char Reason_AllocFail_Dependency[] PROGMEM = ": Dependency not free";
 	const char Reason_AllUsed[] PROGMEM = ": All in use";
+
+	//Tool-Specific texts
+	static const char Text_StopwatchCalibration[] PROGMEM = "Calibrating Stopwatch: Offset ";
 }
 
 #endif
