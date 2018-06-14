@@ -11,6 +11,9 @@
 #  include "Timer/Atmega2560/Timer0.h"
 #  include "Timer/Atmega2560/Timer1.h"
 #  include "Timer/Atmega2560/Timer2.h"
+#  include "Timer/Atmega2560/Timer3.h"
+#  include "Timer/Atmega2560/Timer4.h"
+#  include "Timer/Atmega2560/Timer5.h"
 #else
 #  warning "No Timers are defined for this µC."
 #endif

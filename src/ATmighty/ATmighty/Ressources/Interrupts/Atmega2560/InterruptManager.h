@@ -73,6 +73,81 @@ namespace InterruptManager
 	///Sets a Listener which gets triggered on a Timer2-OutputCompareMatchB-Interrupt
 	void setOCF2B(Listener* listener);
 	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV3
+	///Sets a Listener which gets triggered on a Timer3-Overflow-Interrupt
+	void setTOV3(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF3A
+	///Sets a Listener which gets triggered on a Timer3-OutputCompareMatchA-Interrupt
+	void setOCF3A(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF3B
+	///Sets a Listener which gets triggered on a Timer3-OutputCompareMatchB-Interrupt
+	void setOCF3B(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF3C
+	///Sets a Listener which gets triggered on a Timer3-OutputCompareMatchB-Interrupt
+	void setOCF3C(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_ICF3
+	///Sets a Listener which gets triggered on a Timer3-OutputCompareMatchB-Interrupt
+	void setICF3(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV4
+	///Sets a Listener which gets triggered on a Timer4-Overflow-Interrupt
+	void setTOV4(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF4A
+	///Sets a Listener which gets triggered on a Timer4-OutputCompareMatchA-Interrupt
+	void setOCF4A(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF4B
+	///Sets a Listener which gets triggered on a Timer4-OutputCompareMatchB-Interrupt
+	void setOCF4B(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF4C
+	///Sets a Listener which gets triggered on a Timer4-OutputCompareMatchB-Interrupt
+	void setOCF4C(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_ICF4
+	///Sets a Listener which gets triggered on a Timer4-OutputCompareMatchB-Interrupt
+	void setICF4(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV5
+	///Sets a Listener which gets triggered on a Timer5-Overflow-Interrupt
+	void setTOV5(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF5A
+	///Sets a Listener which gets triggered on a Timer5-OutputCompareMatchA-Interrupt
+	void setOCF5A(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF5B
+	///Sets a Listener which gets triggered on a Timer5-OutputCompareMatchB-Interrupt
+	void setOCF5B(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF5C
+	///Sets a Listener which gets triggered on a Timer5-OutputCompareMatchB-Interrupt
+	void setOCF5C(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_ICF5
+	///Sets a Listener which gets triggered on a Timer5-OutputCompareMatchB-Interrupt
+	void setICF5(Listener* listener);
+	#endif
 }
 
 

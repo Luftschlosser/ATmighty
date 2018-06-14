@@ -1,22 +1,22 @@
 /*!
- * This headerfile represents an abstract wrapper for physical Timer1 of the ATmega2560
+ * This headerfile represents an abstract wrapper for physical Timer3 of the ATmega2560
  * This headerfile is µC-dependent, it should only be included indirectly via "Timer.h".
  */
 
-#ifndef ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_TIMER_ATMEGA2560_ABSTRACTTIMER1_H_
-#define ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_TIMER_ATMEGA2560_ABSTRACTTIMER1_H_
+#ifndef ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_TIMER_ATMEGA2560_ABSTRACTTIMER3_H_
+#define ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_TIMER_ATMEGA2560_ABSTRACTTIMER3_H_
 
 
 #include <ATmighty/Ressources/Periphery/Abstract/Timer/AbstractTimer16bit.h>
 
 
 //forward declarations
-class Timer1;
+class Timer3;
 template<char PortChar, uint8_t PinNumber> class SpecificIoPin;
 
 
-/// This class abstractly wraps physical Timer1.
-class AbstractTimer1 : public AbstractTimer16bit
+/// This class abstractly wraps physical Timer3.
+class AbstractTimer3 : public AbstractTimer16bit
 {
 	friend class AbstractHardwareManager;
 
@@ -24,21 +24,21 @@ class AbstractTimer1 : public AbstractTimer16bit
 		///static owner-id, as a specific Timer should behave like a Singleton and can only be owned once.
 		static int8_t Owner;
 
-		///A reference to the physical Timer1-instance wrapped by this AbstractTimer1
-		Timer1* physicalReference;
+		///A reference to the physical Timer3-instance wrapped by this AbstractTimer3
+		Timer3* physicalReference;
 
 		///References to the abstract IoPins used as outputs by this timer. Implementing them static saves dynamically allocated memory.
-		static SpecificIoPin<'B',5>* OutputA;
-		static SpecificIoPin<'B',6>* OutputB;
-		static SpecificIoPin<'B',7>* OutputC;
-		static SpecificIoPin<'D',6>* ExtClk;
-		static SpecificIoPin<'D',4>* Icp; //Input capture Pin
+		static SpecificIoPin<'E',3>* OutputA;
+		static SpecificIoPin<'E',4>* OutputB;
+		static SpecificIoPin<'E',5>* OutputC;
+		static SpecificIoPin<'E',6>* ExtClk;
+		static SpecificIoPin<'E',7>* Icp; //Input capture Pin
 
 		///Default Constructor
-		inline AbstractTimer1() : physicalReference(nullptr) {}
+		inline AbstractTimer3() : physicalReference(nullptr) {}
 
 		///Destructor
-		~AbstractTimer1() {}
+		~AbstractTimer3() {}
 
 		/*!
 		 * Tries to allocate this abstract hardware, initializes physical hardware dependencies.
@@ -226,8 +226,8 @@ class AbstractTimer1 : public AbstractTimer16bit
 		inline uint32_t getBaseFrequency() {return F_CPU;}
 
 		/// Returns the corresponding letter (upper-case) associated with this Timer.
-		inline char getCharCode() {return '1';}
+		inline char getCharCode() {return '3';}
 };
 
 
-#endif /* ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_TIMER_ATMEGA2560_ABSTRACTTIMER1_H_ */
+#endif /* ATMIGHTY_RESSOURCES_PERIPHERY_ABSTRACT_TIMER_ATMEGA2560_ABSTRACTTIMER3_H_ */

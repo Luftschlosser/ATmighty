@@ -2,10 +2,9 @@
  * This file implements the namespace \see PhysicalHardwareManager
  */
 
-#include <ATmighty/Ressources/Periphery/Physical/Ports.h>
 #include "PhysicalHardwareManager.h"
-
 #include <util/atomic.h>
+#include <ATmighty/Ressources/Periphery/Physical/Ports.h>
 #include "ATmighty/Ressources/Periphery/Physical/Timer.h"
 #include "ATmighty/Ressources/Periphery/Physical/Usart.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
@@ -244,6 +243,15 @@ namespace PhysicalHardwareManager
 	template Timer2* Alloc<Timer2>(int8_t id);
 	template int8_t GetOwner<Timer2>();
 	template void Free<Timer2>(Timer2 **hardware);
+	template Timer3* Alloc<Timer3>(int8_t id);
+	template int8_t GetOwner<Timer3>();
+	template void Free<Timer3>(Timer3 **hardware);
+	template Timer4* Alloc<Timer4>(int8_t id);
+	template int8_t GetOwner<Timer4>();
+	template void Free<Timer4>(Timer4 **hardware);
+	template Timer5* Alloc<Timer5>(int8_t id);
+	template int8_t GetOwner<Timer5>();
+	template void Free<Timer5>(Timer5 **hardware);
 
 	template Usart0* Alloc<Usart0>(int8_t id);
 	template int8_t GetOwner<Usart0>();

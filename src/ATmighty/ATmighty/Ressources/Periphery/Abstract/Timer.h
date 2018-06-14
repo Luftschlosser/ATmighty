@@ -18,6 +18,9 @@
 #  include "Timer/Atmega2560/AbstractTimer0.h"
 #  include "Timer/Atmega2560/AbstractTimer1.h"
 #  include "Timer/Atmega2560/AbstractTimer2.h"
+#  include "Timer/Atmega2560/AbstractTimer3.h"
+#  include "Timer/Atmega2560/AbstractTimer4.h"
+#  include "Timer/Atmega2560/AbstractTimer5.h"
 #else
 #  warning "No abstract Timers are defined for this µC."
 #endif
