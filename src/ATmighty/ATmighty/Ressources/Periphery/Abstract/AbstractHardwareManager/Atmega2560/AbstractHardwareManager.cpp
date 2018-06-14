@@ -104,6 +104,10 @@ template SpecificIoPort<'L'>* AbstractHardwareManager::allocItem<SpecificIoPort<
 template AbstractTimer0* AbstractHardwareManager::allocItem<AbstractTimer0>();
 template AbstractTimer2* AbstractHardwareManager::allocItem<AbstractTimer2>();
 
+//General allocator: - 16bit-Timers
+template AbstractTimer1* AbstractHardwareManager::allocItem<AbstractTimer1>();
+
 //General freeing:
 template void AbstractHardwareManager::Free<AbstractIoPort>(AbstractIoPort** hardware, int8_t owner);
 template void AbstractHardwareManager::Free<AbstractTimer8bit>(AbstractTimer8bit** hardware, int8_t owner);
+template void AbstractHardwareManager::Free<AbstractTimer16bit>(AbstractTimer16bit** hardware, int8_t owner);

@@ -97,6 +97,15 @@ class AbstractHardwareManager
 		template<class TimerHw = AbstractTimer8bit> TimerHw* allocTimer8bit();
 
 		/*!
+		 * Allocates an 16bit Timer.
+		 * The template parameter can be either used to specify the type of 16bit-Timer or an specific one to allocate. Possible values are:
+		 * "AbstractTimer16bit"/Default:	When no explicit template parameter is provided, this method will return any free 16bit-Timer.
+		 * "AbstractTimer1":				This method will return an abstraction of Timer1 if currently available.
+		 * \returns a pointer to the allocated timer-instance on success, nullptr when the specified timer(s) could not be allocated.
+		 */
+		template<class TimerHw = AbstractTimer16bit> TimerHw* allocTimer16bit();
+
+		/*!
 		 * Frees an allocated abstract hardware-item.
 		 * The hardware item-type to free is defined by the template argument, which must be one of the abstract hardware classes.
 		 * This is necessary because of the double-indirection, as this function otherwise would be able to substitute the derived base-instance with another

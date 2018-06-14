@@ -34,6 +34,31 @@ namespace InterruptManager
 	void setOCF0B(Listener* listener);
 	#endif
 
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV1
+	///Sets a Listener which gets triggered on a Timer1-Overflow-Interrupt
+	void setTOV1(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF1A
+	///Sets a Listener which gets triggered on a Timer1-OutputCompareMatchA-Interrupt
+	void setOCF1A(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF1B
+	///Sets a Listener which gets triggered on a Timer1-OutputCompareMatchB-Interrupt
+	void setOCF1B(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF1C
+	///Sets a Listener which gets triggered on a Timer1-OutputCompareMatchB-Interrupt
+	void setOCF1C(Listener* listener);
+	#endif
+
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_ICF1
+	///Sets a Listener which gets triggered on a Timer1-OutputCompareMatchB-Interrupt
+	void setICF1(Listener* listener);
+	#endif
+
 	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV2
 	///Sets a Listener which gets triggered on a Timer2-Overflow-Interrupt
 	void setTOV2(Listener* listener);

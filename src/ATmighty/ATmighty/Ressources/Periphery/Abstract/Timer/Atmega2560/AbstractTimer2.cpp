@@ -340,6 +340,7 @@ void AbstractTimer2::enableOutputCompareInterrupt(bool value, char channel)
 {
 	if (channel == 'A')
 	{
+		TIFR2 |= (1 << 1);
 		if (value)
 		{
 			TIMSK2 |= (1 << 1);
@@ -351,6 +352,7 @@ void AbstractTimer2::enableOutputCompareInterrupt(bool value, char channel)
 	}
 	else if (channel == 'B')
 	{
+		TIFR2 |= (1 << 2);
 		if (value)
 		{
 			TIMSK2 |= (1 << 2);
@@ -364,6 +366,7 @@ void AbstractTimer2::enableOutputCompareInterrupt(bool value, char channel)
 
 void AbstractTimer2::enableTimerOverflowInterrupt(bool value)
 {
+	TIFR2 |= 1;
 	if (value)
 	{
 		TIMSK2 |= 1;

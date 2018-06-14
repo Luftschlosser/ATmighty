@@ -31,17 +31,17 @@ class IrqTest : public Listener
 
 int main( void )
 {
-	AbstractHardwareManager abHw = AbstractHardwareManager(41);
+	AbstractHardwareManager abHw = AbstractHardwareManager(42);
 
 	MessageLogWriter::Usart usbWriter;
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
 
 	IrqTest blink(abHw.allocIoPin<'B',7>());
 
-	Timer8bit* timer = abHw.allocTimer8bit<AbstractTimer8bit>();
+	Timer16bit* timer = abHw.allocTimer16bit<AbstractTimer16bit>();
 	timer->setTimerOverflowISR(&blink);
 	timer->enableTimerOverflowInterrupt(true);
-	timer->setPrescalar(Timer8bit::Prescale::Scale1024);
+	timer->setPrescalar(Timer16bit::Prescale::Scale8);
 	sei();
 
 	//mainloop
@@ -57,9 +57,9 @@ IrqTest::IrqTest(IoPin* pin) : blinky(pin)
 
 void IrqTest::trigger()
 {
-	static uint8_t c(41);
+	static uint8_t c(20);
 	c++;
-	if (c>=42)
+	if (c>=20)
 	{
 		c=0;
 		blinky->toggle();

@@ -9,11 +9,14 @@
 
 //bases
 #include <ATmighty/Ressources/Periphery/Abstract/Timer/Timer8bit.h>
+#include <ATmighty/Ressources/Periphery/Abstract/Timer/Timer16bit.h>
 #include <ATmighty/Ressources/Periphery/Abstract/Timer/AbstractTimer8bit.h>
+#include <ATmighty/Ressources/Periphery/Abstract/Timer/AbstractTimer16bit.h>
 
 //specifics
 #if defined (__AVR_ATmega2560__)
 #  include "Timer/Atmega2560/AbstractTimer0.h"
+#  include "Timer/Atmega2560/AbstractTimer1.h"
 #  include "Timer/Atmega2560/AbstractTimer2.h"
 #else
 #  warning "No abstract Timers are defined for this µC."
