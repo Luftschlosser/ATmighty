@@ -15,11 +15,11 @@ template<class Timer> void Stopwatch<Timer>::Overflower::trigger()
 	overflows++;
 }
 
-template<class Timer> uint16_t Stopwatch<Timer>::Calibrate(Stopwatch<Timer>* reference)
+template<class Timer> uint32_t Stopwatch<Timer>::Calibrate(Stopwatch<Timer>* reference)
 {
 	reference->start();
 	uint32_t buf = reference->stop();
-	return (uint16_t)buf + 2; //2 seems to be an additional overhead which occurs when using the stopwatch from outside
+	return buf;
 }
 
 template<class Timer> Stopwatch<Timer>::Stopwatch(Timer* timer) : timer(timer), overflowCounter(), offset(0)
@@ -32,7 +32,7 @@ template<class Timer> Stopwatch<Timer>::Stopwatch(Timer* timer) : timer(timer), 
 	timer->setPrescalar(0); //run with cpu-frequency
 
 	//calibration
-	offset = Stopwatch<Timer>::Calibrate(this);
+	offset = (uint16_t)Stopwatch<Timer>::Calibrate(this);
 	#if ATMIGHTY_MESSAGELOG_ENABLE
 	MessageLog<>::DefaultInstance().log<LogLevel::Debug>(true, MessageLogPhrases::Text_StopwatchCalibration, (uint8_t)offset);
 	#endif

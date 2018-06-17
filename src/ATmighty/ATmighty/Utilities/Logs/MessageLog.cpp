@@ -114,6 +114,68 @@ template<LogLevel OutputLevel> void MessageLog<OutputLevel>::buffer(int8_t num)
 	buffer((uint8_t) num);
 }
 
+template<LogLevel OutputLevel> void MessageLog<OutputLevel>::buffer(uint16_t num)
+{
+	int8_t i;
+	char digits[5];
+
+	for (i = 4; i >= 0; i--)
+	{
+		digits[i] = (num % 10) + '0';
+		num /= 10;
+		if (num == 0)
+		{
+			break;
+		}
+	}
+	do
+	{
+		bufferQueue.push(digits[i]);
+	}
+	while(++i < 5);
+}
+
+template<LogLevel OutputLevel> void MessageLog<OutputLevel>::buffer(int16_t num)
+{
+	if (num < 0)
+	{
+		bufferQueue.push('-');
+		num = -num;
+	}
+	buffer((uint16_t) num);
+}
+
+template<LogLevel OutputLevel> void MessageLog<OutputLevel>::buffer(uint32_t num)
+{
+	int8_t i;
+	char digits[10];
+
+	for (i = 9; i >= 0; i--)
+	{
+		digits[i] = (num % 10) + '0';
+		num /= 10;
+		if (num == 0)
+		{
+			break;
+		}
+	}
+	do
+	{
+		bufferQueue.push(digits[i]);
+	}
+	while(++i < 10);
+}
+
+template<LogLevel OutputLevel> void MessageLog<OutputLevel>::buffer(int32_t num)
+{
+	if (num < 0)
+	{
+		bufferQueue.push('-');
+		num = -num;
+	}
+	buffer((uint32_t) num);
+}
+
 template<LogLevel OutputLevel> void MessageLog<OutputLevel>::buffer(bool var)
 {
 	if (var)

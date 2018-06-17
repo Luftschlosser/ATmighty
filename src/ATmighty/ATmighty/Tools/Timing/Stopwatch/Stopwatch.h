@@ -21,6 +21,8 @@ class AbstractTimer16bit;
  * will reduce the time needed to call the timer-methods significantly because no vtable-entries will need to be dereferenced.
  * Possible values are:
  * AbstractTimer16bit [default], AbtractTimer8bit, and all specific AbstractTimerN's of this µC.
+ * For the Stopwatch to be able to measure consistently precise values, it is recommended to not use any interrupts which might occur during
+ * measurement. But Interrupts need to stay enabled, as the Stopwatch itself does need timer-interrupts to work correctly.
  */
 template<class Timer = AbstractTimer16bit> class Stopwatch
 {
@@ -63,7 +65,7 @@ template<class Timer = AbstractTimer16bit> class Stopwatch
 		 * from outside the instance to get accurate results which behave in the same manner as for any user.
 		 * \returns the offset of an measurement with the given timer in cpu-cycles.
 		 */
-		__attribute__((noinline)) static uint16_t Calibrate(Stopwatch* reference);
+		__attribute__((noinline)) static uint32_t Calibrate(Stopwatch* reference);
 
 	public:
 		/*!

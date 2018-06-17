@@ -51,6 +51,10 @@ template<LogLevel OutputLevel = LogLevel::ATMIGHTY_MESSAGELOG_LEVEL> class Messa
 		void buffer(const char* msg, bool rom);
 		void buffer(uint8_t num);
 		void buffer(int8_t num);
+		void buffer(uint16_t num);
+		void buffer(int16_t num);
+		void buffer(uint32_t num);
+		void buffer(int32_t num);
 		void buffer(bool val);
 
 		//Buffers the init-character-sequence of a  message into the bufferQueue (depends on the Level of the Message specified by the template parameter)
@@ -74,9 +78,32 @@ template<LogLevel OutputLevel = LogLevel::ATMIGHTY_MESSAGELOG_LEVEL> class Messa
 				buffer(firstArg);
 				logVariadic(rom, args...);
 		}
-
 		//int8_t type
 		template<typename... T> void logVariadic(bool rom, int8_t firstArg, const T&... args)
+		{
+				buffer(firstArg);
+				logVariadic(rom, args...);
+		}
+		//uint16_t type
+		template<typename... T> void logVariadic(bool rom, uint16_t firstArg, const T&... args)
+		{
+				buffer(firstArg);
+				logVariadic(rom, args...);
+		}
+		//int16_t type
+		template<typename... T> void logVariadic(bool rom, int16_t firstArg, const T&... args)
+		{
+				buffer(firstArg);
+				logVariadic(rom, args...);
+		}
+		//uint32_t type
+		template<typename... T> void logVariadic(bool rom, uint32_t firstArg, const T&... args)
+		{
+				buffer(firstArg);
+				logVariadic(rom, args...);
+		}
+		//int32_t type
+		template<typename... T> void logVariadic(bool rom, int32_t firstArg, const T&... args)
 		{
 				buffer(firstArg);
 				logVariadic(rom, args...);
