@@ -151,7 +151,7 @@ void GeneralIoPin::set(bool value)
 
 void GeneralIoPin::toggle()
 {
-	/*PINX*/*(portAddress) |= 1<<pin;
+	/*PINX*/*(portAddress) = 1<<pin;
 }
 
 GeneralIoPin::DataDirection GeneralIoPin::getDirection()

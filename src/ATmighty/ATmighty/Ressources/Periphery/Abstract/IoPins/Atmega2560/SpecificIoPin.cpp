@@ -66,7 +66,7 @@ template<char PortChar, uint8_t PinNumber> void SpecificIoPin<PortChar, PinNumbe
 
 template<char PortChar, uint8_t PinNumber> void SpecificIoPin<PortChar, PinNumber>::toggle()
 {
-	/*PINX*/*(IoPortAddresses::CharToAddress(PortChar)) |= 1<<PinNumber; //compiler should be able to calculate all constants and optimize to "sbi"
+	/*PINX*/*(IoPortAddresses::CharToAddress(PortChar)) = 1<<PinNumber; //compiler should be able to calculate all constants and optimize to "sbi"
 }
 
 template<char PortChar, uint8_t PinNumber> AbstractIoPin::DataDirection SpecificIoPin<PortChar, PinNumber>::getDirection()

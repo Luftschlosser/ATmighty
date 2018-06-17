@@ -73,37 +73,37 @@ template<char PortChar> class Port : private PhysicalHardwareBase
 		static const char* GetHardwareStringRepresentation();
 
 	public:
-		///Sets the value of the PORTA register
+		///Sets the value of the PORTx register
 		inline void setPORTx(uint8_t value)
 		{
 			*(IoPortAddresses::CharToAddress(PortChar) + 2) = value; //compiler will optimize to single instruction
 		}
 
-		///Sets the value of the DDRA register
+		///Sets the value of the DDRx register
 		inline void setDDRx(uint8_t value)
 		{
 			*(IoPortAddresses::CharToAddress(PortChar) + 1) = value; //compiler will optimize to single instruction
 		}
 
-		///Sets the value of the PINA register
+		///Sets the value of the PINx register
 		inline void setPINx(uint8_t value)
 		{
 			*(IoPortAddresses::CharToAddress(PortChar)) = value; //compiler will optimize to single instruction
 		}
 
-		///Returns the current value of the PORTA register
+		///Returns the current value of the PORTx register
 		inline uint8_t getPORTx()
 		{
 			return *(IoPortAddresses::CharToAddress(PortChar) + 2); //compiler will optimize to single instruction
 		}
 
-		///Returns the current value of the DDRA register
+		///Returns the current value of the DDRx register
 		inline uint8_t getDDRx()
 		{
 			return *(IoPortAddresses::CharToAddress(PortChar) + 1); //compiler will optimize to single instruction
 		}
 
-		///Returns the current value of the PINA register
+		///Returns the current value of the PINx register
 		inline uint8_t getPINx()
 		{
 			return *(IoPortAddresses::CharToAddress(PortChar)); //compiler will optimize to single instruction
