@@ -16,7 +16,7 @@ template<char PortChar> int8_t SpecificIoPort<PortChar>::init(int8_t ownerId)
 {
 	if (Owner == 0)
 	{
-		physicalReference = PhysicalHardwareManager::Alloc<Port<'A'>>(OwnerID::DirectAbstraction);
+		physicalReference = PhysicalHardwareManager::Alloc<Port<PortChar>>(OwnerID::DirectAbstraction);
 
 		if (physicalReference != nullptr)
 		{

@@ -11,7 +11,7 @@
 
 
 /// This class abstractly wraps any specified physical IoPort. As the exact port is unknown at compile-time, this implementation is relatively slow.
-class GeneralIoPort : AbstractIoPort
+class GeneralIoPort : public AbstractIoPort
 {
 	friend class AbstractHardwareManager;
 

@@ -20,8 +20,6 @@ template<char PortChar, uint8_t PinNumber> class SpecificIoPin : public Abstract
 	friend class AbstractHardwareManager;
 
 	private:
-		//TODO: This class has no member-variables, so 1Byte is wasted with each instantiation. Anything to do with it?
-
 		///static owner-id, as a specific IoPin should behave like a Singleton and can only be owned once.
 		static int8_t Owner;
 
