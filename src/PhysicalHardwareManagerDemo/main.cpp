@@ -1,5 +1,9 @@
 /*!
  * This program demonstrates the usage and the behavior of ATmighty's PhysicalHardwareManager
+ * It demonstrated allocation, freeing and usage of physical hardware-items, as well as
+ * measuring the runtime costs of this operations.
+ * Port B is used as the example hardware-item, it gets configured and used to make the internal
+ * Arduino-LED (Pin B7) blink with active delays within the mainloop.
  */
 
 #include <stdlib.h>
