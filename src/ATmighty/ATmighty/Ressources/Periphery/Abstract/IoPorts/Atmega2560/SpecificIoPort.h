@@ -14,7 +14,7 @@
  * This class abstractly wraps any specified physical IoPort. As the exact port is known at compile-time, this implementation is extremely fast.
  * The template parameter "PortChar" can be any upper-case character which specifies the IoPort.
  */
-template<char PortChar> class SpecificIoPort : public AbstractIoPort
+template<char PortChar> class SpecificIoPort final : public AbstractIoPort
 {
 	friend class AbstractHardwareManager;
 

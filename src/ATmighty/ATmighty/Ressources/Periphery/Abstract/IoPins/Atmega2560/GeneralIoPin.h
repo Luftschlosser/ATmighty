@@ -11,7 +11,7 @@
 
 
 /// This class abstractly wraps any specified physical IoPin. As the exact pin is unknown at compile-time, this implementation is relatively slow.
-class GeneralIoPin : public AbstractIoPin
+class GeneralIoPin final : public AbstractIoPin
 {
 	friend class AbstractHardwareManager;
 

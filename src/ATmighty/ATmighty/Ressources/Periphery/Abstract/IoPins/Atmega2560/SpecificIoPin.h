@@ -15,7 +15,7 @@
  * The template parameter "PortChar" can be any upper-case character which specifies an IoPort.
  * The template parameter "PinNumber" can be any positive integer from 0-7 which specifies the desired IoPin within the Port.
  */
-template<char PortChar, uint8_t PinNumber> class SpecificIoPin : public AbstractIoPin
+template<char PortChar, uint8_t PinNumber> class SpecificIoPin final : public AbstractIoPin
 {
 	friend class AbstractHardwareManager;
 

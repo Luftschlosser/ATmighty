@@ -16,7 +16,7 @@ template<char PortChar, uint8_t PinNumber> class SpecificIoPin;
 
 
 /// This class abstractly wraps physical Timer0.
-class AbstractTimer0 : public AbstractTimer8bit
+class AbstractTimer0 final : public AbstractTimer8bit
 {
 	friend class AbstractHardwareManager;
 
