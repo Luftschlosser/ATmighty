@@ -29,7 +29,7 @@ namespace IoPortAddresses
 	 * \param portChar the character which specifies the desired IoPort X
 	 * \returns the address of the "PINX"-register of the specified IoPort X
 	 */
-	inline uint8_t* CharToAddress(char portChar)
+	inline volatile uint8_t* CharToAddress(char portChar)
 	{
 		if (portChar <= 'G')
 		{

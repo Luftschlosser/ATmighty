@@ -91,7 +91,6 @@ int main( void )
 		{
 			asm volatile ( "nop \n" );
 		}
-		//port->setPINx(0xEF); //For some reason, this gets stripped by compiler-optimization... [?]
-		PINB = 0xEF; //But this works -> why? - it should compile to the exact same assembler!
+		port->setPINx(0xEF);
 	}
 }
