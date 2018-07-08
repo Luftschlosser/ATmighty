@@ -204,6 +204,15 @@ class AbstractTimer1 final : public AbstractTimer16bit
 		void setOutputCompareISR(Listener* isr, char channel);
 
 		/*!
+		 * Sets a Callback-function which gets called when a Compare-Match-Interrupt occurs for a given channel. (Will do nothing if the channel is invalid)
+		 * Call this method with argument isr==nullptr to remove the isr-callback for this interrupt.
+		 * This operation will only have an effect when the corresponding Interrupt-Management by ATmighty is enabled in the Interrupt-Config.h
+		 * \param isr the functionpointer which will be called to serve as interrupt-service-routine.
+		 * \param channel the Compare-Match channel which shall be affected by this operation. (upper-case, 'A', 'B', 'C')
+		 */
+		void setOutputCompareISR(void (*isr)(), char channel);
+
+		/*!
 		 * Sets a Listener which gets triggered when a Timer-Overflow-Interrupt occurs.
 		 * Call this method with argument isr==nullptr to remove the isr-listener for this interrupt.
 		 * This operation will only have an effect when the corresponding Interrupt-Management by ATmighty is enabled in the Interrupt-Config.h
@@ -212,12 +221,28 @@ class AbstractTimer1 final : public AbstractTimer16bit
 		void setTimerOverflowISR(Listener* isr);
 
 		/*!
+		 * Sets a Callback-function which gets called when a Timer-Overflow-Interrupt occurs.
+		 * Call this method with argument isr==nullptr to remove the isr-callback for this interrupt.
+		 * This operation will only have an effect when the corresponding Interrupt-Management by ATmighty is enabled in the Interrupt-Config.h
+		 * \param isr the functionpointer which will be called to serve as interrupt-service-routine.
+		 */
+		void setTimerOverflowISR(void (*isr)());
+
+		/*!
 		 * Sets a Listener which gets triggered when a Input-Capture-Interrupt occurs.
 		 * Call this method with argument isr==nullptr to remove the isr-listener for this interrupt.
 		 * This operation will only have an effect when the corresponding Interrupt-Management by ATmighty is enabled in the Interrupt-Config.h
 		 * \param isr the Listener-object which will be triggered to serve as interrupt-service-routine.
 		 */
 		void setInputCaptureISR(Listener* isr);
+
+		/*!
+		 * Sets a Callback-function which gets called when a Input-Capture-Interrupt occurs.
+		 * Call this method with argument isr==nullptr to remove the isr-callback for this interrupt.
+		 * This operation will only have an effect when the corresponding Interrupt-Management by ATmighty is enabled in the Interrupt-Config.h
+		 * \param isr the functionpointer which will be called to serve as interrupt-service-routine.
+		 */
+		void setInputCaptureISR(void (*isr)());
 
 		/// returns the total number of PWM-output-channels driven by this timer (Channels = A,B,C)
 		inline uint8_t getNumberOfChannels() {return 3;};

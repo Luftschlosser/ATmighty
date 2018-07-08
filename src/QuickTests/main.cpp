@@ -20,16 +20,18 @@
 #include <ATmighty/Tools/Timing/Stopwatch/Stopwatch.h>
 
 
-class IrqTest : public Listener
-{
-	private:
-		IoPin* blinky;
 
-	public:
-		IrqTest(IoPin* pin);
-		void trigger();
-};
+IoPin* blinky;
 
+void blink(){
+	static uint8_t c(20);
+	c++;
+	if (c>=20)
+	{
+		c=0;
+		blinky->toggle();
+	}
+}
 
 int main( void )
 {
@@ -38,7 +40,8 @@ int main( void )
 	MessageLogWriter::Usart usbWriter;
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
 
-	IrqTest blink(abHw.allocIoPin<'B',7>());
+	blinky = abHw.allocIoPin<'B',7>();
+	blinky->setDirection(IoPin::DataDirection::Output);
 
 	Timer16bit* timer = abHw.allocTimer16bit<AbstractTimer3>();
 	timer->setTimerOverflowISR(&blink);
@@ -65,31 +68,8 @@ int main( void )
 	test = stopwatch.stop();
 	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "Stopwatch time 2: ", test);
 
-	stopwatch.start();
-	asm volatile ( "nop \n" );
-	asm volatile ( "nop \n" );
-	asm volatile ( "nop \n" );
-	test = stopwatch.stop();
-	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "Stopwatch time 3: ", test);
-
 	//mainloop
 	while(1){
 		asm ( "nop \n" );
-	}
-}
-
-IrqTest::IrqTest(IoPin* pin) : blinky(pin)
-{
-	pin->setDirection(IoPin::DataDirection::Output);
-}
-
-void IrqTest::trigger()
-{
-	static uint8_t c(20);
-	c++;
-	if (c>=20)
-	{
-		c=0;
-		blinky->toggle();
 	}
 }

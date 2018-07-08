@@ -383,7 +383,30 @@ void AbstractTimer2::setOutputCompareISR(Listener* isr, char channel)
 	}
 }
 
+void AbstractTimer2::setOutputCompareISR(void (*isr)(), char channel)
+{
+	if (channel == 'A')
+	{
+		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF2A
+		InterruptManager::setOCF2A(isr);
+		#endif
+	}
+	else if (channel == 'B')
+	{
+		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF2B
+		InterruptManager::setOCF2B(isr);
+		#endif
+	}
+}
+
 void AbstractTimer2::setTimerOverflowISR(Listener* isr)
+{
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV2
+	InterruptManager::setTOV2(isr);
+	#endif
+}
+
+void AbstractTimer2::setTimerOverflowISR(void (*isr)())
 {
 	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV2
 	InterruptManager::setTOV2(isr);

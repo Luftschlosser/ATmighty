@@ -12,7 +12,7 @@
 #include "ATmighty/Ressources/Periphery/Physical/PhysicalHardwareManager.h"
 
 /// This class provides access to the PortA-periphery of the atmega2560 µC.
-template<char PortChar> class Port : private PhysicalHardwareBase
+template<char PortChar> class Port final : private PhysicalHardwareBase
 {
 	friend Port<'A'>* PhysicalHardwareManager::Alloc<Port<'A'>>(int8_t id);
 	friend int8_t PhysicalHardwareManager::GetOwner<Port<'A'>>();

@@ -14,7 +14,7 @@
 
 
 /// This class provides access to the Timer2-periphery of the atmega2560 µC.
-class Timer2 : private PhysicalHardwareBase
+class Timer2 final : private PhysicalHardwareBase
 {
 	friend Timer2* PhysicalHardwareManager::Alloc<Timer2>(int8_t id);
 	friend int8_t PhysicalHardwareManager::GetOwner<Timer2>();

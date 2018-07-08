@@ -389,6 +389,30 @@ void AbstractTimer1::setOutputCompareISR(Listener* isr, char channel)
 	}
 }
 
+void AbstractTimer1::setOutputCompareISR(void (*isr)(), char channel)
+{
+	switch (channel)
+	{
+		case 'A':
+			#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF1A
+			InterruptManager::setOCF1A(isr);
+			#endif
+			return;
+		case 'B':
+			#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF1B
+			InterruptManager::setOCF1B(isr);
+			#endif
+			return;
+		case 'C':
+			#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF1C
+			InterruptManager::setOCF1C(isr);
+			#endif
+			return;
+		default:
+			return;
+	}
+}
+
 void AbstractTimer1::setTimerOverflowISR(Listener* isr)
 {
 	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV1
@@ -396,7 +420,21 @@ void AbstractTimer1::setTimerOverflowISR(Listener* isr)
 	#endif
 }
 
+void AbstractTimer1::setTimerOverflowISR(void (*isr)())
+{
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV1
+	InterruptManager::setTOV1(isr);
+	#endif
+}
+
 void AbstractTimer1::setInputCaptureISR(Listener* isr)
+{
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_ICF1
+	InterruptManager::setICF1(isr);
+	#endif
+}
+
+void AbstractTimer1::setInputCaptureISR(void (*isr)())
 {
 	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_ICF1
 	InterruptManager::setICF1(isr);

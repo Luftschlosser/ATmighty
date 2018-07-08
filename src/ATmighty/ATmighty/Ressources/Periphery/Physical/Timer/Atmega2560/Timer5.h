@@ -14,7 +14,7 @@
 
 
 /// This class provides access to the Timer5-periphery of the atmega2560 µC.
-class Timer5 : private PhysicalHardwareBase
+class Timer5 final : private PhysicalHardwareBase
 {
 	friend Timer5* PhysicalHardwareManager::Alloc<Timer5>(int8_t id);
 	friend int8_t PhysicalHardwareManager::GetOwner<Timer5>();

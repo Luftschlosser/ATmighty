@@ -389,6 +389,30 @@ void AbstractTimer3::setOutputCompareISR(Listener* isr, char channel)
 	}
 }
 
+void AbstractTimer3::setOutputCompareISR(void (*isr)(), char channel)
+{
+	switch (channel)
+	{
+		case 'A':
+			#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF3A
+			InterruptManager::setOCF3A(isr);
+			#endif
+			return;
+		case 'B':
+			#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF3B
+			InterruptManager::setOCF3B(isr);
+			#endif
+			return;
+		case 'C':
+			#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF3C
+			InterruptManager::setOCF3C(isr);
+			#endif
+			return;
+		default:
+			return;
+	}
+}
+
 void AbstractTimer3::setTimerOverflowISR(Listener* isr)
 {
 	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV3
@@ -396,7 +420,21 @@ void AbstractTimer3::setTimerOverflowISR(Listener* isr)
 	#endif
 }
 
+void AbstractTimer3::setTimerOverflowISR(void (*isr)())
+{
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV3
+	InterruptManager::setTOV3(isr);
+	#endif
+}
+
 void AbstractTimer3::setInputCaptureISR(Listener* isr)
+{
+	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_ICF3
+	InterruptManager::setICF3(isr);
+	#endif
+}
+
+void AbstractTimer3::setInputCaptureISR(void (*isr)())
 {
 	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_ICF3
 	InterruptManager::setICF3(isr);
