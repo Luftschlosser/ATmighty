@@ -22,16 +22,27 @@
 
 
 IoPin* blinky;
+AbstractHardwareManager abHw = AbstractHardwareManager(42);
 
 void blink()
 {
+	static Stopwatch<AbstractTimer16bit> stopwatch = Stopwatch<AbstractTimer16bit>(abHw.allocTimer16bit<AbstractTimer1>());
+	static volatile uint32_t test;
+
 	blinky->toggle();
+	if (!blinky->read())
+	{
+		stopwatch.start();
+	}
+	else
+	{
+		test = stopwatch.stop();
+		MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "time between triggers: ", test);
+	}
 }
 
 int main( void )
 {
-	AbstractHardwareManager abHw = AbstractHardwareManager(42);
-
 	MessageLogWriter::Usart usbWriter;
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
 
@@ -42,29 +53,15 @@ int main( void )
 
 	Timer16bit* timer = abHw.allocTimer16bit<AbstractTimer3>();
 	PeriodicTrigger<> trigger = PeriodicTrigger<>(timer);
-	trigger.setPeriod(16000000);
+
+	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false,trigger.setPeriodHertz(887623));
+	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false,trigger.setPeriodHertz(1510));
+	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false,trigger.setPeriodHertz(7));
+	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false,trigger.setPeriodSeconds(7));
+	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false,trigger.setPeriodSeconds(2));
 	trigger.setTriggerAction(&blink);
+
 	trigger.start();
-
-
-	//Stopwatch-tests
-	Stopwatch<AbstractTimer16bit> stopwatch = Stopwatch<AbstractTimer16bit>(abHw.allocTimer16bit<AbstractTimer4>());
-	volatile uint32_t test;
-
-	stopwatch.start();
-	test = stopwatch.stop();
-	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "Stopwatch time 0: ", test);
-
-	stopwatch.start();
-	asm volatile ( "nop \n" );
-	test = stopwatch.stop();
-	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "Stopwatch time 1: ", test);
-
-	stopwatch.start();
-	asm volatile ( "nop \n" );
-	asm volatile ( "nop \n" );
-	test = stopwatch.stop();
-	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "Stopwatch time 2: ", test);
 
 	//mainloop
 	while(1){

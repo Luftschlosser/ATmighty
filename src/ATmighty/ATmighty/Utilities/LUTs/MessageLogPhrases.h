@@ -38,6 +38,12 @@ namespace MessageLogPhrases
 	static const char Text_PeriodicTriggerInvalidTimer[] PROGMEM = "Periodic Trigger given Timer not suitable!";
 	static const char Text_PeriodicTriggerApproximated[] PROGMEM = "Periodic Trigger interval-time was approximated: Offset ";
 	static const char Text_PeriodicTriggerUnapproximatable[] PROGMEM = "Periodic Trigger couldn't approximate interval-time: Maximum ";
+
+	static const char Text_UnitTimerSteps[] PROGMEM = " timersteps";
+	static const char Text_UnitSeconds[] PROGMEM = " seconds";
+	static const char Text_UnitMilliseconds[] PROGMEM = " milliseconds";
+	static const char Text_UnitMicroseconds[] PROGMEM = " microseconds";
+	static const char Text_UnitHertz[] PROGMEM = " hertz";
 }
 
 #endif

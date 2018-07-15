@@ -31,6 +31,10 @@ template <class Timer> int16_t PeriodicTrigger<Timer>::setPeriod(uint32_t timerS
 	if (timerSteps <= (uint32_t)0xFF)
 	{
 		scale = Timer8bit::Prescale::NoScale;
+		if (timerSteps == 0)
+		{
+			timerSteps++;
+		}
 	}
 	else if (timerSteps <= ((uint32_t)0xFF * 8))
 	{
@@ -70,37 +74,43 @@ template <class Timer> int16_t PeriodicTrigger<Timer>::setPeriod(uint32_t timerS
 	//round counter down to maximal 8bit-value
 	if (cntTop > 0xFF)
 	{
-		cntTop = 0xFF;
+		cntTop = 0x100;
 	}
 
 	//set counter-top in timer
-	timer->setOCRx((uint8_t)cntTop, 'A');
+	timer->setOCRx((uint8_t)((uint16_t)cntTop - 1), 'A');
 	#if ATMIGHTY_MESSAGELOG_ENABLE
-	MessageLog<>::DefaultInstance().log<LogLevel::Debug>(true, MessageLogPhrases::Text_PeriodicTriggerValuesSet, scalefactor, '/', cntTop);
+	MessageLog<>::DefaultInstance().log<LogLevel::Debug>(true,
+			MessageLogPhrases::Text_PeriodicTriggerValuesSet,
+			scalefactor, '/', cntTop);
 	#endif
 
 	//calculate return value
 	cntTop = cntTop << (uint8_t)scale;
 	retval = cntTop - timerSteps;
-	if (retval > 32767)
+	if (retval < -32768)
 	{
 		#if ATMIGHTY_MESSAGELOG_ENABLE
-		MessageLog<>::DefaultInstance().log<LogLevel::Error>(true, MessageLogPhrases::Text_PeriodicTriggerUnapproximatable, getMaxPeriod());
+		MessageLog<>::DefaultInstance().log<LogLevel::Error>(true,
+				MessageLogPhrases::Text_PeriodicTriggerUnapproximatable,
+				getMaxPeriod(),
+				MessageLogPhrases::Text_UnitTimerSteps);
 		#endif
-		retval = 32767;
+		retval = -32768;
+	}
+	else if ((int16_t)retval != 0)
+	{
+		#if ATMIGHTY_MESSAGELOG_ENABLE
+		MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
+				MessageLogPhrases::Text_PeriodicTriggerApproximated,
+				(int16_t)retval,
+				MessageLogPhrases::Text_UnitTimerSteps);
+		#endif
 	}
 
 	//reset timer-counter and start counting with correct prescalar
 	timer->setPrescalar(scale);
 	timer->setCounter(0);
-
-	//Message when retval != 0
-	#if ATMIGHTY_MESSAGELOG_ENABLE
-	if (retval != 0)
-	{
-		MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true, MessageLogPhrases::Text_PeriodicTriggerApproximated, retval);
-	}
-	#endif
 
 	//return
 	return retval;

@@ -35,14 +35,60 @@ template<class Timer = Timer16bit> class PeriodicTrigger
 		 * Sets the time-interval between each periodic triggering-event in terms of timer-steps.
 		 * Setting the period while the triggering is already enabled might cause some inconsistent trigger-interval in between, as
 		 * the timer-register responsible for that behavior is not double-buffered!
-		 * \param timerSteps The number of single timer-steps between each triggering event. The duration of one timer-step depends on the
-		 * specific timer used by this PeriodicTrigger, but will be equal to one cpu-cycle for non-virtual timers.
+		 * \param timerSteps The number of single timer-steps between each triggering event. (Must be > 0)
+		 * The duration of one timer-step depends on the specific timer used by this PeriodicTrigger,
+		 * but will be equal to one cpu-cycle for non-virtual timers.
 		 * \returns The precision which could be reached with the used timer in terms of timer-steps offset. A perfect period-configuration will
 		 * return 0, anything else will mean that the actual period will be shifted by the returned number of timer-steps.
-		 * A return-value of 32767 (max) will mean that the desired period could not be approximated and the offset could be
+		 * (negative = delay too short / positive = delay too long)
+		 * A return-value of -32768 (min) will mean that the desired period could not be approximated and the offset could be
 		 * anything.
 		 */
 		int16_t setPeriod(uint32_t timerSteps);
+
+		/*!
+		 * Sets the time-interval between each periodic triggering-event in terms of seconds.
+		 * Setting the period while the triggering is already enabled might cause some inconsistent trigger-interval in between, as
+		 * the timer-register responsible for that behavior is not double-buffered!
+		 * \param ms The number of seconds between each triggering event. (Must be > 0)
+		 * \returns The precision which could be reached with the used timer in terms of second offset. A perfect period-configuration will
+		 * return 0, anything else will mean that the actual period will be shifted by the returned number of seconds.
+		 * (negative = delay too short / positive = delay too long)
+		 */
+		int16_t setPeriodSeconds(uint16_t s);
+
+		/*!
+		 * Sets the time-interval between each periodic triggering-event in terms of milliseconds.
+		 * Setting the period while the triggering is already enabled might cause some inconsistent trigger-interval in between, as
+		 * the timer-register responsible for that behavior is not double-buffered!
+		 * \param ms The number of milliseconds between each triggering event. (Must be > 0)
+		 * \returns The precision which could be reached with the used timer in terms of millisecond offset. A perfect period-configuration will
+		 * return 0, anything else will mean that the actual period will be shifted by the returned number of milliseconds.
+		 * (negative = delay too short / positive = delay too long)
+		 */
+		int16_t setPeriodMilliseconds(uint16_t ms);
+
+		/*!
+		 * Sets the time-interval between each periodic triggering-event in terms of microseconds.
+		 * Setting the period while the triggering is already enabled might cause some inconsistent trigger-interval in between, as
+		 * the timer-register responsible for that behavior is not double-buffered!
+		 * \param ms The number of microseconds between each triggering event. (Must be > 0)
+		 * \returns The precision which could be reached with the used timer in terms of microsecond offset. A perfect period-configuration will
+		 * return 0, anything else will mean that the actual period will be shifted by the returned number of microseconds.
+		 * (negative = delay too short / positive = delay too long)
+		 */
+		int32_t setPeriodMicroseconds(uint32_t ms);
+
+		/*!
+		 * Sets the time-interval between each periodic triggering-event in terms of hertz. (triggers per second)
+		 * Setting the period while the triggering is already enabled might cause some inconsistent trigger-interval in between, as
+		 * the timer-register responsible for that behavior is not double-buffered!
+		 * \param ms The number of triggers per second (Must be > 0)
+		 * \returns The precision which could be reached with the used timer in terms of hertz offset. A perfect period-configuration will
+		 * return 0, anything else will mean that the actual period will be shifted by the returned number of triggers per second.
+		 * (negative = frequency too high / positive = frequency too low)
+		 */
+		int32_t setPeriodHertz(uint32_t hz);
 
 		/*!
 		 * Will calculate the maximal number of timerSteps which can be configured as one period with the specific used timer.
