@@ -33,6 +33,11 @@ namespace MessageLogPhrases
 
 	//Tool-Specific texts
 	static const char Text_StopwatchCalibration[] PROGMEM = "Calibrating Stopwatch: Offset ";
+
+	static const char Text_PeriodicTriggerValuesSet[] PROGMEM = "Periodic Trigger set Prescalar/CounterTop as: ";
+	static const char Text_PeriodicTriggerInvalidTimer[] PROGMEM = "Periodic Trigger given Timer not suitable!";
+	static const char Text_PeriodicTriggerApproximated[] PROGMEM = "Periodic Trigger interval-time was approximated: Offset ";
+	static const char Text_PeriodicTriggerUnapproximatable[] PROGMEM = "Periodic Trigger couldn't approximate interval-time: Maximum ";
 }
 
 #endif

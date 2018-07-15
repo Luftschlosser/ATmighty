@@ -18,19 +18,14 @@
 #include "ATmighty/Utilities/Logs/MessageLogWriter.h"
 
 #include <ATmighty/Tools/Timing/Stopwatch/Stopwatch.h>
-
+#include <ATmighty/Tools/Timing/PeriodicTrigger/PeriodicTrigger.h>
 
 
 IoPin* blinky;
 
-void blink(){
-	static uint8_t c(20);
-	c++;
-	if (c>=20)
-	{
-		c=0;
-		blinky->toggle();
-	}
+void blink()
+{
+	blinky->toggle();
 }
 
 int main( void )
@@ -43,11 +38,14 @@ int main( void )
 	blinky = abHw.allocIoPin<'B',7>();
 	blinky->setDirection(IoPin::DataDirection::Output);
 
-	Timer16bit* timer = abHw.allocTimer16bit<AbstractTimer3>();
-	timer->setTimerOverflowISR(&blink);
-	timer->enableTimerOverflowInterrupt(true);
-	timer->setPrescalar(Timer16bit::Prescale::Scale8);
 	sei();
+
+	Timer16bit* timer = abHw.allocTimer16bit<AbstractTimer3>();
+	PeriodicTrigger<> trigger = PeriodicTrigger<>(timer);
+	trigger.setPeriod(16000000);
+	trigger.setTriggerAction(&blink);
+	trigger.start();
+
 
 	//Stopwatch-tests
 	Stopwatch<AbstractTimer16bit> stopwatch = Stopwatch<AbstractTimer16bit>(abHw.allocTimer16bit<AbstractTimer4>());

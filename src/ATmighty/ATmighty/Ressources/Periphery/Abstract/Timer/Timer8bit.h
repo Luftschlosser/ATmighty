@@ -28,7 +28,7 @@ class Timer8bit
 			Scale32 = 5,
 			Scale64 = 6,
 			Scale128 = 7,
-			scale256 = 8,
+			Scale256 = 8,
 			Scale1024 = 10
 		};
 
@@ -53,7 +53,7 @@ class Timer8bit
 		 * Sets the prescale-factor of this timer in terms of potencys of two. Setting this value will start the timer.
 		 * \param potency the number of two-potencys which each half the clock-frequency to be used by this timer:
 		 * For example: potency 6 => 2^6 = 64 = prescalar. range 0-10.
-		 * All 8-bit timers will support potencys 0[1], 3[8], 6[64], 8[256], 10[1024]. Some timers support additionally 5[32] and 7[128].
+		 * All 8-bit timers will support potencys 0[1], 3[8], 6[64], 8[256], 10[1024]. Asynchronous timers support additionally 5[32] and 7[128].
 		 * You may use the predefined enum-values of type "Prescale" for easier usage.
 		 * \returns 0 on success, <0 if value was invalid.
 		 */
