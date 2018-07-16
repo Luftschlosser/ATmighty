@@ -19,6 +19,21 @@ class Listener;
  */
 namespace InterruptManager
 {
+	/*!
+	 * Returns true when called from inside a blocking ISR-Routine (nested interrupts currently disabled)
+	 * This function can be useful inside Listeners and callback-routines which might not know whether they are
+	 * executed from normal code or from an ISR. (For example a long callback-handler might want to enable
+	 * nested interrupts to not block any other operations, but only if he is called from an ISR)
+	 */
+	bool isInBlockingIsr();
+
+	/*!
+	 * Re-enables interrupts when called from inside a blocking ISR.
+	 * This can be useful for long callback-routines which would otherwise block interrupts for a long time.
+	 * Keep in mind that recursive calls to ISR's will crash the processor with an stack-overflow!
+	 */
+	void enableNesting();
+
 	#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV0
 	///Sets a Listener which gets triggered on a Timer0-Overflow-Interrupt
 	void setTOV0(Listener* listener);

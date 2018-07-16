@@ -29,12 +29,15 @@ namespace InterruptManager
 		uint8_t isr_type_42_49 = 0;
 		uint8_t isr_type_50_57 = 0;
 		
+		bool inIsr = false;
+
 	
 		//define individual ISR's
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF2A
 		isr_t Ocf2AIsr = {nullptr};
 		ISR(TIMER2_COMPA_vect) //#14
 		{
+			inIsr = true;
 			if (Ocf2AIsr.listener != nullptr)
 			{
 				if (isr_type_10_17 & (1 << 4)) //listener?
@@ -46,12 +49,14 @@ namespace InterruptManager
 					Ocf2AIsr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF2B
 		isr_t Ocf2BIsr = {nullptr};
 		ISR(TIMER2_COMPB_vect) //#15
 		{
+			inIsr = true;
 			if (Ocf2BIsr.listener != nullptr)
 			{
 				if (isr_type_10_17 & (1 << 5)) //listener?
@@ -63,12 +68,14 @@ namespace InterruptManager
 					Ocf2BIsr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV2
 		isr_t Tov2Isr = {nullptr};
 		ISR(TIMER2_OVF_vect) //#16
 		{
+			inIsr = true;
 			if (Tov2Isr.listener != nullptr)
 			{
 				if (isr_type_10_17 & (1 << 6)) //listener?
@@ -80,12 +87,14 @@ namespace InterruptManager
 					Tov2Isr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_ICF1
 		isr_t Icf1Isr = {nullptr};
 		ISR(TIMER1_CAPT_vect) //#17
 		{
+			inIsr = true;
 			if (Icf1Isr.listener != nullptr)
 			{
 				if (isr_type_10_17 & (1 << 7)) //listener?
@@ -97,12 +106,14 @@ namespace InterruptManager
 					Icf1Isr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF1A
 		isr_t Ocf1AIsr = {nullptr};
 		ISR(TIMER1_COMPA_vect) //#18
 		{
+			inIsr = true;
 			if (Ocf1AIsr.listener != nullptr)
 			{
 				if (isr_type_18_25 & (1 << 0)) //listener?
@@ -114,12 +125,14 @@ namespace InterruptManager
 					Ocf1AIsr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF1B
 		isr_t Ocf1BIsr = {nullptr};
 		ISR(TIMER1_COMPB_vect) //#19
 		{
+			inIsr = true;
 			if (Ocf1BIsr.listener != nullptr)
 			{
 				if (isr_type_18_25 & (1 << 1)) //listener?
@@ -131,12 +144,14 @@ namespace InterruptManager
 					Ocf1BIsr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF1C
 		isr_t Ocf1CIsr = {nullptr};
 		ISR(TIMER1_COMPC_vect) //#20
 		{
+			inIsr = true;
 			if (Ocf1CIsr.listener != nullptr)
 			{
 				if (isr_type_18_25 & (1 << 2)) //listener?
@@ -148,12 +163,14 @@ namespace InterruptManager
 					Ocf1CIsr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV1
 		isr_t Tov1Isr = {nullptr};
 		ISR(TIMER1_OVF_vect) //#21
 		{
+			inIsr = true;
 			if (Tov1Isr.listener != nullptr)
 			{
 				if (isr_type_18_25 & (1 << 3)) //listener?
@@ -165,12 +182,14 @@ namespace InterruptManager
 					Tov1Isr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF0A
 		isr_t Ocf0AIsr = {nullptr};
 		ISR(TIMER0_COMPA_vect) //#22
 		{
+			inIsr = true;
 			if (Ocf0AIsr.listener != nullptr)
 			{
 				if (isr_type_18_25 & (1 << 4)) //listener?
@@ -182,12 +201,14 @@ namespace InterruptManager
 					Ocf0AIsr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF0B
 		isr_t Ocf0BIsr = {nullptr};
 		ISR(TIMER0_COMPB_vect) //#23
 		{
+			inIsr = true;
 			if (Ocf0BIsr.listener != nullptr)
 			{
 				if (isr_type_18_25 & (1 << 5)) //listener?
@@ -199,12 +220,14 @@ namespace InterruptManager
 					Ocf0BIsr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV0
 		isr_t Tov0Isr = {nullptr};
 		ISR(TIMER0_OVF_vect) //#24
 		{
+			inIsr = true;
 			if (Tov0Isr.listener != nullptr)
 			{
 				if (isr_type_18_25 & (1 << 6)) //listener?
@@ -216,12 +239,14 @@ namespace InterruptManager
 					Tov0Isr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_ICF3
 		isr_t Icf3Isr = {nullptr};
 		ISR(TIMER3_CAPT_vect) //#32
 		{
+			inIsr = true;
 			if (Icf3Isr.listener != nullptr)
 			{
 				if (isr_type_26_33 & (1 << 6)) //listener?
@@ -233,12 +258,14 @@ namespace InterruptManager
 					Icf3Isr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF3A
 		isr_t Ocf3AIsr = {nullptr};
 		ISR(TIMER3_COMPA_vect) //#33
 		{
+			inIsr = true;
 			if (Ocf3AIsr.listener != nullptr)
 			{
 				if (isr_type_26_33 & (1 << 7)) //listener?
@@ -250,12 +277,14 @@ namespace InterruptManager
 					Ocf3AIsr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF3B
 		isr_t Ocf3BIsr = {nullptr};
 		ISR(TIMER3_COMPB_vect) //#34
 		{
+			inIsr = true;
 			if (Ocf3BIsr.listener != nullptr)
 			{
 				if (isr_type_34_41 & (1 << 0)) //listener?
@@ -267,12 +296,14 @@ namespace InterruptManager
 					Ocf3BIsr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF3C
 		isr_t Ocf3CIsr = {nullptr};
 		ISR(TIMER3_COMPC_vect) //#35
 		{
+			inIsr = true;
 			if (Ocf3CIsr.listener != nullptr)
 			{
 				if (isr_type_34_41 & (1 << 1)) //listener?
@@ -284,12 +315,14 @@ namespace InterruptManager
 					Ocf3CIsr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV3
 		isr_t Tov3Isr = {nullptr};
 		ISR(TIMER3_OVF_vect) //#36
 		{
+			inIsr = true;
 			if (Tov3Isr.listener != nullptr)
 			{
 				if (isr_type_34_41 & (1 << 2)) //listener?
@@ -301,12 +334,14 @@ namespace InterruptManager
 					Tov3Isr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_ICF4
 		isr_t Icf4Isr = {nullptr};
 		ISR(TIMER4_CAPT_vect) //#42
 		{
+			inIsr = true;
 			if (Icf4Isr.listener != nullptr)
 			{
 				if (isr_type_42_49 & (1 << 0)) //listener?
@@ -318,12 +353,14 @@ namespace InterruptManager
 					Icf4Isr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF4A
 		isr_t Ocf4AIsr = {nullptr};
 		ISR(TIMER4_COMPA_vect) //#43
 		{
+			inIsr = true;
 			if (Ocf4AIsr.listener != nullptr)
 			{
 				if (isr_type_42_49 & (1 << 1)) //listener?
@@ -335,12 +372,14 @@ namespace InterruptManager
 					Ocf4AIsr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF4B
 		isr_t Ocf4BIsr = {nullptr};
 		ISR(TIMER4_COMPB_vect) //#44
 		{
+			inIsr = true;
 			if (Ocf4BIsr.listener != nullptr)
 			{
 				if (isr_type_42_49 & (1 << 2)) //listener?
@@ -352,12 +391,14 @@ namespace InterruptManager
 					Ocf4BIsr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF4C
 		isr_t Ocf4CIsr = {nullptr};
 		ISR(TIMER4_COMPC_vect) //#45
 		{
+			inIsr = true;
 			if (Ocf4CIsr.listener != nullptr)
 			{
 				if (isr_type_42_49 & (1 << 3)) //listener?
@@ -369,12 +410,14 @@ namespace InterruptManager
 					Ocf4CIsr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV4
 		isr_t Tov4Isr = {nullptr};
 		ISR(TIMER4_OVF_vect) //#46
 		{
+			inIsr = true;
 			if (Tov4Isr.listener != nullptr)
 			{
 				if (isr_type_42_49 & (1 << 4)) //listener?
@@ -386,12 +429,14 @@ namespace InterruptManager
 					Tov4Isr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_ICF5
 		isr_t Icf5Isr = {nullptr};
 		ISR(TIMER5_CAPT_vect) //#47
 		{
+			inIsr = true;
 			if (Icf5Isr.listener != nullptr)
 			{
 				if (isr_type_42_49 & (1 << 5)) //listener?
@@ -403,12 +448,14 @@ namespace InterruptManager
 					Icf5Isr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF5A
 		isr_t Ocf5AIsr = {nullptr};
 		ISR(TIMER5_COMPA_vect) //#48
 		{
+			inIsr = true;
 			if (Ocf5AIsr.listener != nullptr)
 			{
 				if (isr_type_42_49 & (1 << 6)) //listener?
@@ -420,12 +467,14 @@ namespace InterruptManager
 					Ocf5AIsr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF5B
 		isr_t Ocf5BIsr = {nullptr};
 		ISR(TIMER5_COMPB_vect) //49
 		{
+			inIsr = true;
 			if (Ocf5BIsr.listener != nullptr)
 			{
 				if (isr_type_42_49 & (1 << 7)) //listener?
@@ -437,12 +486,14 @@ namespace InterruptManager
 					Ocf5BIsr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF5C
 		isr_t Ocf5CIsr = {nullptr};
 		ISR(TIMER5_COMPC_vect) //#50
 		{
+			inIsr = true;
 			if (Ocf5CIsr.listener != nullptr)
 			{
 				if (isr_type_50_57 & (1 << 0)) //listener?
@@ -454,12 +505,14 @@ namespace InterruptManager
 					Ocf5CIsr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV5
 		isr_t Tov5Isr = {nullptr};
 		ISR(TIMER5_OVF_vect) //#51
 		{
+			inIsr = true;
 			if (Tov5Isr.listener != nullptr)
 			{
 				if (isr_type_50_57 & (1 << 1)) //listener?
@@ -471,8 +524,24 @@ namespace InterruptManager
 					Tov5Isr.callback();
 				}
 			}
+			inIsr = false;
 		}
 		#endif
+	}
+
+
+	bool isInBlockingIsr()
+	{
+		return inIsr;
+	}
+
+	void enableNesting()
+	{
+		if (inIsr)
+		{
+			inIsr = false;
+			sei();
+		}
 	}
 
 
