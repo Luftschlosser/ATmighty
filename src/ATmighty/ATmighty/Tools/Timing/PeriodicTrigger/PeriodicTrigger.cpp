@@ -10,6 +10,12 @@
 #include "Config/MessageLogConfig.h"
 
 
+template <class Timer> PeriodicTrigger<Timer>::~PeriodicTrigger()
+{
+	stop();
+	setTriggerAction((Listener*)nullptr);
+}
+
 template <class Timer> int16_t PeriodicTrigger<Timer>::setPeriodSeconds(uint16_t s)
 {
 	uint32_t baseFrequency = timer->getBaseFrequency();

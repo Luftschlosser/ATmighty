@@ -38,6 +38,12 @@ template<class Timer> Stopwatch<Timer>::Stopwatch(Timer* timer) : timer(timer), 
 	#endif
 }
 
+template<class Timer> Stopwatch<Timer>::~Stopwatch()
+{
+	timer->enableTimerOverflowInterrupt(false);
+	timer->setTimerOverflowISR(nullptr);
+}
+
 template<class Timer> void Stopwatch<Timer>::start()
 {
 	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)

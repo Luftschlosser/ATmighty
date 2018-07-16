@@ -31,6 +31,9 @@ template<class Timer = Timer16bit> class PeriodicTrigger
 		 */
 		PeriodicTrigger(Timer* timer);
 
+		///Destructor
+		~PeriodicTrigger();
+
 		/*!
 		 * Sets the time-interval between each periodic triggering-event in terms of timer-steps.
 		 * Setting the period while the triggering is already enabled might cause some inconsistent trigger-interval in between, as

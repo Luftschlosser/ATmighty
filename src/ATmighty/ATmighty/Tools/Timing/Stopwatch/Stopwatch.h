@@ -75,6 +75,9 @@ template<class Timer = AbstractTimer16bit> class Stopwatch
 		 */
 		Stopwatch(Timer* timer);
 
+		//Destructor
+		~Stopwatch();
+
 		/// resets and starts this StopWatch
 		void start();
 
