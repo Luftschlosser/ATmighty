@@ -23,13 +23,16 @@
 
 
 IoPin* blinky;
+IoPin* virtualPwm;
+uint8_t i = 0;
 AbstractHardwareManager abHw = AbstractHardwareManager(42);
+VirtualTimer8bit* virtualTimer2;
 
 void blink()
 {
-	MessageLog<>::DefaultInstance().log<LogLevel::Debug>(false, "Blink");
-
+	i += (i / 12) + 1;
 	blinky->toggle();
+	virtualTimer2->setOCRx(i, 'A');
 }
 
 int main( void )
@@ -37,20 +40,28 @@ int main( void )
 	MessageLogWriter::Usart usbWriter;
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
 
-	blinky = abHw.allocIoPin<'B',7>();
+	virtualPwm = abHw.allocIoPin<'B',7>();
+	blinky = abHw.allocIoPin<'B', 2>();
 	blinky->setDirection(IoPin::DataDirection::Output);
 
 	sei();
 
 	Timer16bit* abstractTimer = abHw.allocTimer16bit<AbstractTimer3>();
-	VirtualTimerPool<> timerPool = VirtualTimerPool<>(100, abstractTimer, 2);
-	VirtualTimer8bit* virtualTimer = timerPool.allocTimer8bit(1);
-	PeriodicTrigger<VirtualTimer8bit> trigger = PeriodicTrigger<VirtualTimer8bit>(virtualTimer);
+	VirtualTimerPool<> timerPool = VirtualTimerPool<>(20000, abstractTimer, 2);
+
+	VirtualTimer8bit* virtualTimer1 = timerPool.allocTimer8bit(1);
+	PeriodicTrigger<VirtualTimer8bit> trigger = PeriodicTrigger<VirtualTimer8bit>(virtualTimer1);
+	virtualTimer2 = timerPool.allocTimer8bit(2, &virtualPwm);
+
+	virtualTimer2->setWGM(3);
+	virtualTimer2->setOCRx(i, 'A');
+	virtualTimer2->setCOMx(2, 'A');
+	virtualTimer2->setPrescalar(0);
+
 	timerPool.startAll();
 
-	trigger.setPeriodSeconds(2);
+	trigger.setPeriodMilliseconds(100);
 	trigger.setTriggerAction(&blink);
-
 	trigger.start();
 
 	//mainloop

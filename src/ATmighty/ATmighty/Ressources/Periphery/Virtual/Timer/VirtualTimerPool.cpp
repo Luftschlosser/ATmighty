@@ -21,7 +21,7 @@ template<class Timer> void VirtualTimerPool<Timer>::trigger()
 			}
 			else //timer8bit
 			{
-				vtimers[i].t8b.tick();
+				vtimers[i].t8b->tick();
 			}
 		}
 	}
@@ -35,7 +35,7 @@ template<class Timer> VirtualTimerPool<Timer>::VirtualTimerPool(uint16_t baseFre
   typeMap(0),
   poolsize(poolsize)
 {
-	vtimers = (vtimer*)malloc(poolsize*sizeof(vtimer));
+	vtimers = (vtimer*)malloc(poolsize * sizeof(vtimer));
 	if (vtimers != nullptr)
 	{
 		clock.setTriggerAction((Listener*)this);
@@ -51,6 +51,13 @@ template<class Timer> VirtualTimerPool<Timer>::~VirtualTimerPool()
 {
 	clock.stop();
 	clock.setTriggerAction((Listener*)nullptr);
+	for (uint8_t i = 0; i < poolsize; i++)
+	{
+		if (!(usageMap & (1 << i)))
+		{
+			delete (vtimers[i].t8b);
+		}
+	}
 	free(vtimers);
 }
 
@@ -64,9 +71,9 @@ template<class Timer> VirtualTimer8bit* VirtualTimerPool<Timer>::allocTimer8bit(
 			{
 				usageMap &= ~(1 << i);
 				typeMap &= ~(1 << i);
-				vtimers[i].t8b = VirtualTimer8bit(triggerFrequency, channels);
-				vtimers[i].t8b.setVirtualTimerPoolIndex(i);
-				return &(vtimers[i].t8b);
+				vtimers[i].t8b = new VirtualTimer8bit(triggerFrequency, channels);
+				vtimers[i].t8b->setVirtualTimerPoolIndex(i);
+				return (vtimers[i].t8b);
 			}
 		}
 	}
@@ -83,9 +90,9 @@ template<class Timer> VirtualTimer8bit* VirtualTimerPool<Timer>::allocTimer8bit(
 			{
 				usageMap &= ~(1 << i);
 				typeMap &= ~(1 << i);
-				vtimers[i].t8b = VirtualTimer8bit(triggerFrequency, outputPins, channels);
-				vtimers[i].t8b.setVirtualTimerPoolIndex(i);
-				return &(vtimers[i].t8b);
+				vtimers[i].t8b = new VirtualTimer8bit(triggerFrequency, outputPins, channels);
+				vtimers[i].t8b->setVirtualTimerPoolIndex(i);
+				return (vtimers[i].t8b);
 			}
 		}
 	}
@@ -98,9 +105,9 @@ template<class Timer> void VirtualTimerPool<Timer>::freeTimer(VirtualTimer8bit**
 	{
 		uint8_t index = (*timer)->getVirtualTimerPoolIndex();
 
-		if (&vtimers[index].t8b == (*timer)) //is timer actually the one from this pool?
+		if (vtimers[index].t8b == (*timer)) //is timer actually the one from this pool?
 		{
-			vtimers[index].t8b.~VirtualTimer8bit(); //destruct object manually.
+			delete (vtimers[index].t8b); //destruct object manually.
 			usageMap |= (1 << index);
 			(*timer) = nullptr;
 		}

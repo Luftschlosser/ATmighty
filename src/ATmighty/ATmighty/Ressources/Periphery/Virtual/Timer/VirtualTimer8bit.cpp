@@ -36,13 +36,14 @@ VirtualTimer8bit::VirtualTimer8bit(uint16_t baseFrequency, IoPin** outputs, uint
 		this->channels = 4;
 		//Todo log warning
 	}
-	ocrx = (uint8_t*)malloc(channels * sizeof(uint8_t));
-	ocrx = (uint8_t*)malloc(channels * sizeof(uint8_t));
-	outputCompareMatchISRs = (isr_t*)malloc(channels * sizeof(isr_t));
+	ocrx = (uint8_t*)malloc(this->channels * sizeof(uint8_t));
+	ocrxBuffers = (uint8_t*)malloc(this->channels * sizeof(uint8_t));
+	outputCompareMatchISRs = (isr_t*)malloc(this->channels * sizeof(isr_t));
 
-	if ((ocrx == nullptr) || (outputCompareMatchISRs == nullptr))
+	if ((ocrx == nullptr) || (ocrxBuffers == nullptr) || (outputCompareMatchISRs == nullptr))
 	{
-		//TODO log Fatal
+		//Todo: change implementation
+		MessageLog<>::DefaultInstance().log<LogLevel::Fatal>(false, "malloc failed!");
 	}
 }
 
@@ -95,6 +96,23 @@ void VirtualTimer8bit::tick()
 				skipNextCount = false;
 			}
 
+			//Fast-Pwm-Bottom events
+			if ((tcnt == 0) && ((wgm == 3) || (wgm == 7)))
+			{
+				for (uint8_t i = 0; i < channels; i++)
+				{
+					uint8_t com = ((comx >> (i * 2)) & 3);
+					if (com == 2)
+					{
+						outputPins[i]->set(true);
+					}
+					else if (com == 3)
+					{
+						outputPins[i]->set(false);
+					}
+				}
+			}
+
 			//TOV-Events
 			if (tcnt == 0 && ((wgm == 1) || (wgm == 5)))
 			{
@@ -125,7 +143,7 @@ void VirtualTimer8bit::tick()
 				}
 				else if (wgm == 5)
 				{
-					statusFlags |= (1 << 1); //switch to decrementing in Phase-correct PWM-Mode with Top=OCR0
+					statusFlags |= (1 << 1); //switch to decrement in Phase-correct PWM-Mode with Top=OCR0
 					updateOCRx(); //update OCRx for wgm5
 				}
 				else if (wgm == 7)
@@ -148,7 +166,7 @@ void VirtualTimer8bit::tick()
 void VirtualTimer8bit::compareMatchEvent(uint8_t channel)
 {
 	//Outputs
-	uint8_t com = (comx & (3 << channel));
+	uint8_t com = ((comx >> (channel * 2)) & 3);
 
 	if (com != 0)
 	{
@@ -294,7 +312,7 @@ int8_t VirtualTimer8bit::forceOutputCompare(char channel)
 	{
 		if ((wgm == 0) || (wgm == 2)) //non-PWM-mode?
 		{
-			uint8_t com = (comx & (3 << channelIndex));
+			uint8_t com = ((comx >> (channel * 2)) & 3);
 			if (outputPins != nullptr) //outputPins set?
 			{
 				if (com == 1)
@@ -334,7 +352,8 @@ int8_t VirtualTimer8bit::setCOMx(uint8_t value, char channel)
 			{
 				outputPins[channelIndex]->setDirection(IoPin::DataDirection::Output);
 				outputPins[channelIndex]->set(false);
-				comx = ((comx & ~(3 << channelIndex)) || (value << channelIndex));
+				channelIndex *= 2;
+				comx = ((comx & ~(3 << channelIndex)) | (value << channelIndex));
 				return 0;
 			}
 			else
