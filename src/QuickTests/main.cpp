@@ -13,6 +13,7 @@
 #include "ATmighty/Interfaces/Listener.h"
 
 #include "ATmighty/Ressources/Periphery/Abstract/AbstractHardwareManager.h"
+#include "ATmighty/Ressources/Periphery/Virtual/Timer/VirtualTimerPool.h"
 
 #include "ATmighty/Utilities/Logs/MessageLog.h"
 #include "ATmighty/Utilities/Logs/MessageLogWriter.h"
@@ -26,19 +27,9 @@ AbstractHardwareManager abHw = AbstractHardwareManager(42);
 
 void blink()
 {
-	static Stopwatch<AbstractTimer16bit> stopwatch = Stopwatch<AbstractTimer16bit>(abHw.allocTimer16bit<AbstractTimer1>());
-	static volatile uint32_t test;
+	MessageLog<>::DefaultInstance().log<LogLevel::Debug>(false, "Blink");
 
 	blinky->toggle();
-	if (!blinky->read())
-	{
-		stopwatch.start();
-	}
-	else
-	{
-		test = stopwatch.stop();
-		MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "time between triggers: ", test);
-	}
 }
 
 int main( void )
@@ -51,14 +42,13 @@ int main( void )
 
 	sei();
 
-	Timer16bit* timer = abHw.allocTimer16bit<AbstractTimer3>();
-	PeriodicTrigger<> trigger = PeriodicTrigger<>(timer);
+	Timer16bit* abstractTimer = abHw.allocTimer16bit<AbstractTimer3>();
+	VirtualTimerPool<> timerPool = VirtualTimerPool<>(100, abstractTimer, 2);
+	VirtualTimer8bit* virtualTimer = timerPool.allocTimer8bit(1);
+	PeriodicTrigger<VirtualTimer8bit> trigger = PeriodicTrigger<VirtualTimer8bit>(virtualTimer);
+	timerPool.startAll();
 
-	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false,trigger.setPeriodHertz(887623));
-	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false,trigger.setPeriodHertz(1510));
-	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false,trigger.setPeriodHertz(7));
-	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false,trigger.setPeriodSeconds(7));
-	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false,trigger.setPeriodSeconds(2));
+	trigger.setPeriodSeconds(2);
 	trigger.setTriggerAction(&blink);
 
 	trigger.start();

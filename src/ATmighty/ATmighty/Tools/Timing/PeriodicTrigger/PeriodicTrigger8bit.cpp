@@ -5,6 +5,7 @@
 
 #include <ATmighty/Tools/Timing/PeriodicTrigger/PeriodicTrigger.h>
 #include "ATmighty/Ressources/Periphery/Abstract/Timer.h"
+#include "ATmighty/Ressources/Periphery/Virtual/Timer/VirtualTimer8bit.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
 #include "ATmighty/Utilities/LUTs/MessageLogPhrases.h"
 #include "Config/MessageLogConfig.h"
@@ -117,6 +118,7 @@ template <class Timer> uint32_t PeriodicTrigger<Timer>::getMaxPeriod()
 //Explizit template instantiations for this µC
 template class PeriodicTrigger<Timer8bit>;
 template class PeriodicTrigger<AbstractTimer8bit>;
+template class PeriodicTrigger<VirtualTimer8bit>;
 #if defined (__AVR_ATmega2560__)
 template class PeriodicTrigger<AbstractTimer0>;
 #endif

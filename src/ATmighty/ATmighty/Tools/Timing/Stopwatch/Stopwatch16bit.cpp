@@ -41,7 +41,7 @@ template<class Timer> Stopwatch<Timer>::Stopwatch(Timer* timer) : timer(timer), 
 template<class Timer> Stopwatch<Timer>::~Stopwatch()
 {
 	timer->enableTimerOverflowInterrupt(false);
-	timer->setTimerOverflowISR(nullptr);
+	timer->setTimerOverflowISR((Listener*)nullptr);
 }
 
 template<class Timer> void Stopwatch<Timer>::start()
