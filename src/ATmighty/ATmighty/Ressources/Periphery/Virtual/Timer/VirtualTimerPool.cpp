@@ -6,6 +6,7 @@
 #include "VirtualTimerPool.h"
 #include <stdlib.h>
 #include "ATmighty/Ressources/Interrupts/InterruptManager.h"
+#include "ATmighty/Utilities/C++/FullCppSupport.h"
 
 
 template<class Timer> void VirtualTimerPool<Timer>::trigger()
@@ -21,7 +22,7 @@ template<class Timer> void VirtualTimerPool<Timer>::trigger()
 			}
 			else //timer8bit
 			{
-				vtimers[i].t8b->tick();
+				vtimers[i].t8b.tick();
 			}
 		}
 	}
@@ -53,9 +54,16 @@ template<class Timer> VirtualTimerPool<Timer>::~VirtualTimerPool()
 	clock.setTriggerAction((Listener*)nullptr);
 	for (uint8_t i = 0; i < poolsize; i++)
 	{
-		if (!(usageMap & (1 << i)))
+		if (usageMap & (1 << i))
 		{
-			delete (vtimers[i].t8b);
+			if (typeMap & (1 << i)) //16-bit timer
+			{
+
+			}
+			else //8-bit timer
+			{
+				vtimers[i].t8b.~VirtualTimer8bit(); //explicit destruction
+			}
 		}
 	}
 	free(vtimers);
@@ -67,13 +75,13 @@ template<class Timer> VirtualTimer8bit* VirtualTimerPool<Timer>::allocTimer8bit(
 	{
 		for (uint8_t i = 0; i < poolsize; i++)
 		{
-			if (usageMap & (1 << i))
+			if (usageMap & (1 << i)) //free place?
 			{
 				usageMap &= ~(1 << i);
 				typeMap &= ~(1 << i);
-				vtimers[i].t8b = new VirtualTimer8bit(triggerFrequency, channels);
-				vtimers[i].t8b->setVirtualTimerPoolIndex(i);
-				return (vtimers[i].t8b);
+				new (&(vtimers[i].t8b)) VirtualTimer8bit(triggerFrequency, channels); //Placement new
+				vtimers[i].t8b.setVirtualTimerPoolIndex(i);
+				return &(vtimers[i].t8b);
 			}
 		}
 	}
@@ -86,13 +94,13 @@ template<class Timer> VirtualTimer8bit* VirtualTimerPool<Timer>::allocTimer8bit(
 	{
 		for (uint8_t i = 0; i < poolsize; i++)
 		{
-			if (usageMap & (1 << i))
+			if (usageMap & (1 << i)) //free place?
 			{
 				usageMap &= ~(1 << i);
 				typeMap &= ~(1 << i);
-				vtimers[i].t8b = new VirtualTimer8bit(triggerFrequency, outputPins, channels);
-				vtimers[i].t8b->setVirtualTimerPoolIndex(i);
-				return (vtimers[i].t8b);
+				new (&(vtimers[i].t8b)) VirtualTimer8bit(triggerFrequency, outputPins, channels); //Placement new
+				vtimers[i].t8b.setVirtualTimerPoolIndex(i);
+				return &(vtimers[i].t8b);
 			}
 		}
 	}
@@ -105,9 +113,9 @@ template<class Timer> void VirtualTimerPool<Timer>::freeTimer(VirtualTimer8bit**
 	{
 		uint8_t index = (*timer)->getVirtualTimerPoolIndex();
 
-		if (vtimers[index].t8b == (*timer)) //is timer actually the one from this pool?
+		if (&vtimers[index].t8b == (*timer)) //is timer actually the one from this pool?
 		{
-			delete (vtimers[index].t8b); //destruct object manually.
+			vtimers[index].t8b.~VirtualTimer8bit(); //explicit destruction
 			usageMap |= (1 << index);
 			(*timer) = nullptr;
 		}

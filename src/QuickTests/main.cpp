@@ -30,7 +30,7 @@ VirtualTimer8bit* virtualTimer2;
 
 void blink()
 {
-	i += (i / 12) + 1;
+	i += (i / 10) + 1;
 	blinky->toggle();
 	virtualTimer2->setOCRx(i, 'A');
 }
@@ -41,7 +41,7 @@ int main( void )
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
 
 	virtualPwm = abHw.allocIoPin<'B',7>();
-	blinky = abHw.allocIoPin<'B', 2>();
+	blinky = abHw.allocIoPin<'B',2>();
 	blinky->setDirection(IoPin::DataDirection::Output);
 
 	sei();

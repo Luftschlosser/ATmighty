@@ -20,7 +20,7 @@ template<class Timer = Timer16bit> class VirtualTimerPool : private Listener
 		//type-defintion for a union which can either hold an 8bit or an 16bit virtual timer.
 		typedef union virtualTimerUnion
 		{
-			VirtualTimer8bit *t8b; //TODO: Change implementation to not use as much dynamically allocated memory!
+			VirtualTimer8bit t8b;
 			//VirtualTimer16bit t16b; //Todo: add virtual 16-bit timers
 		} vtimer;
 
