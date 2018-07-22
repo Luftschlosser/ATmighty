@@ -7,6 +7,9 @@
 #include <stdlib.h>
 #include "ATmighty/Ressources/Interrupts/InterruptManager.h"
 #include "ATmighty/Utilities/C++/FullCppSupport.h"
+#include "Config/MessageLogConfig.h"
+#include "ATmighty/Utilities/Logs/MessageLog.h"
+#include "ATmighty/Utilities/LUTs/MessageLogPhrases.h"
 
 
 template<class Timer> void VirtualTimerPool<Timer>::trigger()
@@ -41,10 +44,22 @@ template<class Timer> VirtualTimerPool<Timer>::VirtualTimerPool(uint16_t baseFre
 	{
 		clock.setTriggerAction((Listener*)this);
 		triggerFrequency -= clock.setPeriodHertz(baseFrequency);
+
+		#if ATMIGHTY_MESSAGELOG_ENABLE
+		MessageLog<>::DefaultInstance().log<LogLevel::Debug>(true,
+				MessageLogPhrases::Text_VirtualTimerPoolSetup1,
+				poolsize,
+				MessageLogPhrases::Text_VirtualTimerPoolSetup2,
+				triggerFrequency,
+				MessageLogPhrases::Text_UnitHertz);
+		#endif
 	}
 	else
 	{
-		//TODO log FATAL
+		#if ATMIGHTY_MESSAGELOG_ENABLE
+		MessageLog<>::DefaultInstance().log<LogLevel::Fatal>(true,
+				MessageLogPhrases::Text_VirtualTimerPoolSetupFail);
+		#endif
 	}
 }
 
@@ -81,10 +96,24 @@ template<class Timer> VirtualTimer8bit* VirtualTimerPool<Timer>::allocTimer8bit(
 				typeMap &= ~(1 << i);
 				new (&(vtimers[i].t8b)) VirtualTimer8bit(triggerFrequency, channels); //Placement new
 				vtimers[i].t8b.setVirtualTimerPoolIndex(i);
+
+				#if ATMIGHTY_MESSAGELOG_ENABLE
+				MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
+						MessageLogPhrases::Text_VirtualTimerPoolVirtualized8bit,
+						channels,
+						MessageLogPhrases::Text_UnitChannels);
+				#endif
+
 				return &(vtimers[i].t8b);
 			}
 		}
 	}
+
+	#if ATMIGHTY_MESSAGELOG_ENABLE
+	MessageLog<>::DefaultInstance().log<LogLevel::Error>(true,
+			MessageLogPhrases::Text_VirtualTimerPoolVirtualizationFail);
+	#endif
+
 	return nullptr;
 }
 
@@ -100,10 +129,24 @@ template<class Timer> VirtualTimer8bit* VirtualTimerPool<Timer>::allocTimer8bit(
 				typeMap &= ~(1 << i);
 				new (&(vtimers[i].t8b)) VirtualTimer8bit(triggerFrequency, outputPins, channels); //Placement new
 				vtimers[i].t8b.setVirtualTimerPoolIndex(i);
+
+				#if ATMIGHTY_MESSAGELOG_ENABLE
+				MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
+						MessageLogPhrases::Text_VirtualTimerPoolVirtualized8bit,
+						channels,
+						MessageLogPhrases::Text_UnitChannels);
+				#endif
+
 				return &(vtimers[i].t8b);
 			}
 		}
 	}
+
+	#if ATMIGHTY_MESSAGELOG_ENABLE
+	MessageLog<>::DefaultInstance().log<LogLevel::Error>(true,
+			MessageLogPhrases::Text_VirtualTimerPoolVirtualizationFail);
+	#endif
+
 	return nullptr;
 }
 
@@ -118,8 +161,19 @@ template<class Timer> void VirtualTimerPool<Timer>::freeTimer(VirtualTimer8bit**
 			vtimers[index].t8b.~VirtualTimer8bit(); //explicit destruction
 			usageMap |= (1 << index);
 			(*timer) = nullptr;
+
+			#if ATMIGHTY_MESSAGELOG_ENABLE
+			MessageLog<>::DefaultInstance().log<LogLevel::Info>(true,
+					MessageLogPhrases::Text_VirtualTimerPoolFreed8bit);
+			#endif
 		}
-		//Todo: else log error
+		else
+		{
+			#if ATMIGHTY_MESSAGELOG_ENABLE
+			MessageLog<>::DefaultInstance().log<LogLevel::Error>(true,
+					MessageLogPhrases::Text_VirtualTimerPoolFreeFail);
+			#endif
+		}
 	}
 }
 

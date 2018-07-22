@@ -30,7 +30,15 @@ VirtualTimer8bit* virtualTimer2;
 
 void blink()
 {
-	i += (i / 10) + 1;
+	uint8_t j = (i / 4) + 1;
+	if (j > (0xFF - i))
+	{
+		i = 0;
+	}
+	else
+	{
+		i += j;
+	}
 	blinky->toggle();
 	virtualTimer2->setOCRx(i, 'A');
 }

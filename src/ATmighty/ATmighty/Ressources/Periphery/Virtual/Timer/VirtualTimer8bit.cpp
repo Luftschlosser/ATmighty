@@ -7,22 +7,22 @@
 #include <stdlib.h>
 #include "ATmighty/Ressources/Periphery/Abstract/IoPins.h"
 #include "ATmighty/Interfaces/Listener.h"
+#include "Config/MessageLogConfig.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
+#include "ATmighty/Utilities/LUTs/MessageLogPhrases.h"
 
 
 VirtualTimer8bit::VirtualTimer8bit(uint16_t baseFrequency, IoPin** outputs, uint8_t channels)
-: baseFrequency(baseFrequency),
+: channelData(nullptr),
+  baseFrequency(baseFrequency),
   tcnt(0),
   wgm(0),
   prescalar(0),
   prescaleCounter(0),
-  ocrx(nullptr),
-  ocrxBuffers(nullptr),
   comx(0),
   channels(channels),
   interruptEnFlags(0),
   isrTypeMask(0),
-  outputCompareMatchISRs(nullptr),
   timerOverflowISR({nullptr}),
   outputPins(outputs),
   statusFlags(0)
@@ -34,16 +34,20 @@ VirtualTimer8bit::VirtualTimer8bit(uint16_t baseFrequency, IoPin** outputs, uint
 	else if (channels > 4)
 	{
 		this->channels = 4;
-		//Todo log warning
-	}
-	ocrx = (uint8_t*)malloc(this->channels * sizeof(uint8_t));
-	ocrxBuffers = (uint8_t*)malloc(this->channels * sizeof(uint8_t));
-	outputCompareMatchISRs = (isr_t*)malloc(this->channels * sizeof(isr_t));
 
-	if ((ocrx == nullptr) || (ocrxBuffers == nullptr) || (outputCompareMatchISRs == nullptr))
+		#if ATMIGHTY_MESSAGELOG_ENABLE
+		MessageLog<>::DefaultInstance().log<LogLevel::Warning>(true,
+				MessageLogPhrases::Text_VirtualTimerChannelMax);
+		#endif
+	}
+	channelData = (channelData_t*)malloc(this->channels * sizeof(channelData));
+
+	if (channelData == nullptr)
 	{
-		//Todo: change implementation
-		MessageLog<>::DefaultInstance().log<LogLevel::Fatal>(false, "malloc failed!");
+		#if ATMIGHTY_MESSAGELOG_ENABLE
+		MessageLog<>::DefaultInstance().log<LogLevel::Fatal>(true,
+				MessageLogPhrases::Text_VirtualTimerSetupFail);
+		#endif
 	}
 }
 
@@ -54,9 +58,7 @@ VirtualTimer8bit::VirtualTimer8bit(uint16_t baseFrequency, uint8_t channels)
 
 VirtualTimer8bit::~VirtualTimer8bit()
 {
-	free(ocrx);
-	free(ocrxBuffers);
-	free(outputCompareMatchISRs);
+	free(channelData);
 }
 
 void VirtualTimer8bit::tick()
@@ -126,14 +128,14 @@ void VirtualTimer8bit::tick()
 			//Compare-Match-Events 1-n
 			for (uint8_t i = 1; i < channels; i++)
 			{
-				if (tcnt == ocrx[i])
+				if (tcnt == channelData[i].ocrx)
 				{
 					compareMatchEvent(i);
 				}
 			}
 
 			//Compare-Match-Event 0
-			if (tcnt == ocrx[0])
+			if (tcnt == channelData[0].ocrx)
 			{
 				compareMatchEvent(0);
 				if (wgm == 2)
@@ -216,15 +218,15 @@ void VirtualTimer8bit::compareMatchEvent(uint8_t channel)
 	}
 
 	//Interrupts
-	if ((interruptEnFlags & (1 << channel)) && (outputCompareMatchISRs[channel].callback != nullptr))
+	if ((interruptEnFlags & (1 << channel)) && (channelData[channel].outputCompareMatchISR.callback != nullptr))
 	{
 		if (isrTypeMask & (1 << channel))
 		{
-			outputCompareMatchISRs[channel].listener->trigger();
+			channelData[channel].outputCompareMatchISR.listener->trigger();
 		}
 		else
 		{
-			outputCompareMatchISRs[channel].callback();
+			channelData[channel].outputCompareMatchISR.callback();
 		}
 	}
 }
@@ -250,7 +252,7 @@ void VirtualTimer8bit::updateOCRx()
 	{
 		for (uint8_t i = 0; i < channels; i++)
 		{
-			ocrx[i] = ocrxBuffers[i];
+			channelData[i].ocrx = channelData[i].ocrxBuffer;
 		}
 		statusFlags &= ~(1 << 2);
 	}
@@ -278,6 +280,21 @@ int8_t VirtualTimer8bit::setPrescalar(uint8_t potency)
 	else
 	{
 		prescalar = (1 << potency);
+
+		#if ATMIGHTY_MESSAGELOG_ENABLE
+		if (!(statusFlags & 1))
+		{
+			MessageLog<>::DefaultInstance().log<LogLevel::Debug>(true,
+					MessageLogPhrases::Text_VirtualTimerStarted1,
+					prescalar,
+					MessageLogPhrases::Text_VirtualTimerStarted2,
+					wgm,
+					MessageLogPhrases::Text_VirtualTimerStarted3,
+					baseFrequency,
+					MessageLogPhrases::Text_UnitHertz);
+		}
+		#endif
+
 		statusFlags |= 1; //Set timer-state "running"
 		return 0;
 	}
@@ -288,10 +305,10 @@ int8_t VirtualTimer8bit::setOCRx(uint8_t value, char channel)
 	uint8_t channelIndex = (uint8_t)(channel - 'A');
 	if (channelIndex < channels)
 	{
-		ocrxBuffers[channelIndex] = value;
+		channelData[channelIndex].ocrxBuffer = value;
 		if ((wgm == 0) || (wgm == 2)) //non-pwm-mode
 		{
-			ocrx[channelIndex] = value;
+			channelData[channelIndex].ocrx = value;
 		}
 		else //pwm-mode, buffer value to be set later
 		{
@@ -419,7 +436,7 @@ void VirtualTimer8bit::setOutputCompareISR(Listener* isr, char channel)
 	if (channelIndex < channels)
 	{
 		isrTypeMask |= (1 << channelIndex);
-		outputCompareMatchISRs[channelIndex].listener = isr;
+		channelData[channelIndex].outputCompareMatchISR.listener = isr;
 	}
 }
 
@@ -429,7 +446,7 @@ void VirtualTimer8bit::setOutputCompareISR(void (*isr)(), char channel)
 	if (channelIndex < channels)
 	{
 		isrTypeMask &= ~(1 << channelIndex);
-		outputCompareMatchISRs[channelIndex].callback = isr;
+		channelData[channelIndex].outputCompareMatchISR.callback = isr;
 	}
 }
 

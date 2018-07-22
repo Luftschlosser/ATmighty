@@ -34,16 +34,31 @@ namespace MessageLogPhrases
 	//Tool-Specific texts
 	static const char Text_StopwatchCalibration[] PROGMEM = "Calibrating Stopwatch: Offset ";
 
-	static const char Text_PeriodicTriggerValuesSet[] PROGMEM = "Periodic Trigger set Prescalar/CounterTop as: ";
-	static const char Text_PeriodicTriggerInvalidTimer[] PROGMEM = "Periodic Trigger given Timer not suitable!";
-	static const char Text_PeriodicTriggerApproximated[] PROGMEM = "Periodic Trigger interval-time was approximated: Offset ";
-	static const char Text_PeriodicTriggerUnapproximatable[] PROGMEM = "Periodic Trigger couldn't approximate interval-time: Maximum ";
+	static const char Text_PeriodicTriggerValuesSet[] PROGMEM = "PeriodicTrigger set Prescalar/CounterTop as: ";
+	static const char Text_PeriodicTriggerInvalidTimer[] PROGMEM = "PeriodicTrigger given Timer not suitable!";
+	static const char Text_PeriodicTriggerApproximated[] PROGMEM = "PeriodicTrigger interval-time was approximated: Offset ";
+	static const char Text_PeriodicTriggerUnapproximatable[] PROGMEM = "PeriodicTrigger couldn't approximate interval-time: Maximum ";
+
+	static const char Text_VirtualTimerPoolSetup1[] PROGMEM = "VirtualTimerPool [Size ";
+	static const char Text_VirtualTimerPoolSetup2[] PROGMEM = "] set up with counting-frequency: ";
+	static const char Text_VirtualTimerPoolSetupFail[] PROGMEM = "VirtualTimerPool setup failed: Out of memory!";
+	static const char Text_VirtualTimerPoolVirtualized8bit[] PROGMEM = "VirtualTimerPool virtualized new 8bit-Timer with ";
+	static const char Text_VirtualTimerPoolVirtualizationFail[] PROGMEM = "VirtualTimerPool cannot virtualize new 8bit-Timer: Pool full!";
+	static const char Text_VirtualTimerPoolFreed8bit[] PROGMEM = "VirtualTimerPool removed virtual 8bit-Timer.";
+	static const char Text_VirtualTimerPoolFreeFail[] PROGMEM = "VirtualTimerPool cannot remove virtual 8bit-Timer: Wrong reference!";
+
+	static const char Text_VirtualTimerSetupFail[] PROGMEM = "VirtualTimer setup failed: Out of memory!";
+	static const char Text_VirtualTimerChannelMax[] PROGMEM = "VirtualTimer maximally supports 4 channels!";
+	static const char Text_VirtualTimerStarted1[] PROGMEM = "VirtualTimer started with prescalar: ";
+	static const char Text_VirtualTimerStarted2[] PROGMEM = ", Mode: ";
+	static const char Text_VirtualTimerStarted3[] PROGMEM = ", Base-frequency: ";
 
 	static const char Text_UnitTimerSteps[] PROGMEM = " timersteps";
-	static const char Text_UnitSeconds[] PROGMEM = " seconds";
-	static const char Text_UnitMilliseconds[] PROGMEM = " milliseconds";
-	static const char Text_UnitMicroseconds[] PROGMEM = " microseconds";
-	static const char Text_UnitHertz[] PROGMEM = " hertz";
+	static const char Text_UnitSeconds[] PROGMEM = " s";
+	static const char Text_UnitMilliseconds[] PROGMEM = " ms";
+	static const char Text_UnitMicroseconds[] PROGMEM = " micros";
+	static const char Text_UnitHertz[] PROGMEM = " hz";
+	static const char Text_UnitChannels[] PROGMEM = " channels.";
 }
 
 #endif

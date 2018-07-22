@@ -21,6 +21,22 @@ class VirtualTimer8bit final : public Timer8bit
 			void (*callback)();	//Functionpointer to call back on interrupt
 		} isr_t;
 
+		//typedef for structure which holds all the per-channel-data (reduces dynamic memory allocation overhead)
+		typedef struct perChannel
+		{
+			///The virtual output-compare register for each channel
+			uint8_t ocrx;
+
+			///The virtual output-compare register for each channel
+			uint8_t ocrxBuffer;
+
+			///ISR (Listener or callback-function) for each channel
+			isr_t outputCompareMatchISR;
+		} channelData_t;
+
+		///An Array which hold the per-channel-data
+		channelData_t* channelData;
+
 		///the base-frequency this timer runs with in Hz (provided by Constructor)
 		uint16_t baseFrequency;
 
@@ -35,12 +51,6 @@ class VirtualTimer8bit final : public Timer8bit
 
 		///the counter which represents the actual prescaling
 		uint16_t prescaleCounter;
-
-		///a pointer to all the virtual output-compare registers for each channel
-		uint8_t* ocrx;
-
-		///a pointer to buffers for all the virtual output-compare registers for each channel
-		uint8_t* ocrxBuffers;
 
 		///the output-compare-modes for each channel. (2bits per channel)
 		uint8_t comx;
@@ -63,9 +73,6 @@ class VirtualTimer8bit final : public Timer8bit
 		 * 1 = Listener / 0 = function-pointer.
 		 */
 		uint8_t isrTypeMask;
-
-		///An array of ISR's (Listener or callback-function) for each channel
-		isr_t* outputCompareMatchISRs;
 
 		///The ISR for the timer-overflow event
 		isr_t timerOverflowISR;
