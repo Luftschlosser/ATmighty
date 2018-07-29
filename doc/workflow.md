@@ -1,6 +1,6 @@
 # ATmighty Workflow
 
-The ATmighty library is developed using Eclipse Oxygen (4.7.3a) under Ubuntu 16.04 (LTS), using the avr-eclipse plugin. In the current version an ArduinoMega2560 with an ATmega2560 microcontroller is used as a development board.
+The ATmighty library is developed using Eclipse Oxygen (4.7.3a) under Ubuntu 16.04 (LTS), using avr-gcc and the avr-eclipse plugin. In the current version an ArduinoMega2560 with an ATmega2560 microcontroller is used as a development board.
 
 ## Development Environment
 
@@ -14,6 +14,22 @@ The following programs/tools must be installed in order to set up the developmen
 * avr-libc: `sudo apt-get install avr-libc`
 * avrdude: `sudo apt-get install avrdude`
 * binutils-avr: `sudo apt-get install binutils-avr`
+
+#### Upgrading avr-gcc to Version 8.1.0
+At the time of writing this (07/2018) the newest avr-gcc-release (version 8.1.0) cannot be found in ubuntu's standard repositories. I tried to use it by compiling it myself from the sources and installed it to `/opt/avr/` using this instructions: https://thingsforhackers.com/post/installing-avr-libc/. (updated the commands to use version 8.1.0).
+The previously installed `avr-gcc-4.9.2` from the official repository and the manually installed `avr-gcc-8.1.0` can be configured as alternatives for quick-switching with the following commands:
+* Set up alternative 4.9.2: `sudo update-alternatives --install /usr/bin/avr-gcc avr-gcc /usr/bin/avr-gcc-4.9.2 100 --slave /usr/bin/avr-g++ avr-g++ /usr/bin/avr-g++-4.9.2`
+* Set up alternative 8.1.0: `sudo update-alternatives --install /usr/bin/avr-gcc avr-gcc /opt/avr/bin/avr-gcc-8.1.0 50 --slave /usr/bin/avr-g++ avr-g++ /opt/avr/bin/avr-g++-8.1.0`
+* Quick-switching: `sudo update-alternatives --config avr-gcc`
+
+The local paths might differ for your machine/OS.
+
+Keep in mind that different versions of avr-gcc/avr-g++ require different versions of plugins too (`avr-flash-vtble` plugin needs to be recompiled for each version of avr-gcc).
+After switching to 8.1.0 eclipse didn't find a `crtatmega2560.o`-file, I provided one by copying the 4.9.2's version of the file via `sudo cp -r /usr/lib/avr/lib/* /opt/avr/avr/lib/`. But this leads to an error where it can't find the atexit-dummy method, although complaining about a double-definition when providing my own. Seems that the compiler and linker use different stdlib's, one with an `atexit()`-declaration, one without a definition. I also tried renaming the
+`crtm2560.o` which comes natively with avr-gcc-8.1.0 to `crtatmage2560.o`, hoping that this objectfile contains the correct `atexit()`-definiton, but nothing changed.
+Please write a comment if you find a solution to that problem or if you used ATmighty sucessfully under a avr-gcc-8.1.0 or later -environment.
+
+So the library was developed using avr-gcc-4.9.2, but I really would like to try out the new version to compare the optimizations at some time.
 
 #### Installing the avr-eclipse-plugin
 
@@ -211,6 +227,7 @@ Beware! In order to program the board via it's Serial connection you must discon
 
 ## Sources (additional instruction sites)
 
+* Configuring update-alternatives for gcc: https://codeyarns.com/2015/02/26/how-to-switch-gcc-version-using-update-alternatives
 * Setting up Eclipse for AVR-Development: https://www.mikrocontroller.net/articles/AVR_Eclipse
 * Setting up Eclipse with avr-eclipse plugin: http://www.langeder.org/setup-eclipse-ide-for-avr-programming-on-ubuntu/
 * Using Eclipse for Arduino-Development: https://playground.arduino.cc/Code/Eclipse#YourFirstArduinoProject

@@ -1,5 +1,6 @@
 Source: https://github.com/jcmvbkbc/avr-flash-vtbl
 Dependency: libgmp3-dev (https://stackoverflow.com/questions/7351205/where-to-find-gmp-h)
+avr-flash-vtabl.so is currently built for avr-gcc 8.1.0
 
 This is a super minimalistic GCC plugin that makes avr-g++ put tables of
 vitual functions into the program memory saving RAM. It is meant to be

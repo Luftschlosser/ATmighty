@@ -46,6 +46,6 @@ extern "C" void __cxa_guard_release (__guard *g)
 }
 extern "C" void __cxa_guard_abort (__guard *) { }
 extern "C" void __cxa_pure_virtual(void) { }
-extern "C" void	atexit( void ) { } //µC will never "exit", so atexit can be dummy.
+extern "C" void atexit( void ) { } //µC will never "exit", so atexit can be dummy.
 
 
