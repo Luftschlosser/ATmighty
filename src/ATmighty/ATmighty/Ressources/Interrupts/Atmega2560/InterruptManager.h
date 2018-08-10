@@ -13,6 +13,13 @@
 //forward declaration of "Listener"
 class Listener;
 
+//typedef for universal pointer
+typedef union isr
+{
+	Listener* listener;	//Listener-object to trigger on interrupt
+	void (*callback)();	//Functionpointer to call back on interrupt
+} interruptHandler_t;
+
 /*!
  * This namespace includes functions to set Listeners/Callback functions for each managed Interrupt-source.
  * Which Interrupts get managed by this InterruptManager can be configured in "InterruptConfig.h"

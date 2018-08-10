@@ -7,6 +7,7 @@
 
 
 #include "ATmighty/Ressources/Periphery/Abstract/Timer.h"
+#include "ATmighty/Ressources/Interrupts/InterruptManager.h"
 
 
 class VirtualTimer8bit final : public Timer8bit
@@ -14,13 +15,6 @@ class VirtualTimer8bit final : public Timer8bit
 	template<class Timer> friend class VirtualTimerPool;
 
 	private:
-		//typedef for universal pointer
-		typedef union isr
-		{
-			Listener* listener;	//Listener-object to trigger on interrupt
-			void (*callback)();	//Functionpointer to call back on interrupt
-		} isr_t;
-
 		//typedef for structure which holds all the per-channel-data (reduces dynamic memory allocation overhead)
 		typedef struct perChannel
 		{
@@ -31,7 +25,7 @@ class VirtualTimer8bit final : public Timer8bit
 			uint8_t ocrxBuffer;
 
 			///ISR (Listener or callback-function) for each channel
-			isr_t outputCompareMatchISR;
+			interruptHandler_t outputCompareMatchISR;
 		} channelData_t;
 
 		///An Array which hold the per-channel-data
@@ -75,7 +69,7 @@ class VirtualTimer8bit final : public Timer8bit
 		uint8_t isrTypeMask;
 
 		///The ISR for the timer-overflow event
-		isr_t timerOverflowISR;
+		interruptHandler_t timerOverflowISR;
 
 		///An array of Output-Pins for each channel of this virtual timer. (All or none)
 		IoPin** outputPins;

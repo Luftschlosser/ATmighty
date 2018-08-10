@@ -39,6 +39,15 @@ template<class Timer> VirtualTimerPool<Timer>::VirtualTimerPool(uint16_t baseFre
   typeMap(0),
   poolsize(poolsize)
 {
+	if (poolsize < 1)
+	{
+		this->poolsize = 1;
+	}
+	else if (poolsize > 8)
+	{
+		this->poolsize = 8;
+	}
+
 	vtimers = (vtimer*)malloc(poolsize * sizeof(vtimer));
 	if (vtimers != nullptr)
 	{

@@ -12,14 +12,6 @@ namespace InterruptManager
 {
 	namespace //anonymous namespace for "private" members
 	{
-		//typedef for universal pointer
-		typedef union isr
-		{
-			Listener* listener;	//Listener-object to trigger on interrupt
-			void (*callback)();	//Functionpointer to call back on interrupt
-		} isr_t;
-		
-		
 		//define bitmasks to specify isr-type (listener = 1 / callback = 0)
 		//uint8_t isr_type_02_09 = 0;
 		uint8_t isr_type_10_17 = 0;
@@ -34,7 +26,7 @@ namespace InterruptManager
 	
 		//define individual ISR's
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF2A
-		isr_t Ocf2AIsr = {nullptr};
+		interruptHandler_t Ocf2AIsr = {nullptr};
 		ISR(TIMER2_COMPA_vect) //#14
 		{
 			inIsr = true;
@@ -53,7 +45,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF2B
-		isr_t Ocf2BIsr = {nullptr};
+		interruptHandler_t Ocf2BIsr = {nullptr};
 		ISR(TIMER2_COMPB_vect) //#15
 		{
 			inIsr = true;
@@ -72,7 +64,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV2
-		isr_t Tov2Isr = {nullptr};
+		interruptHandler_t Tov2Isr = {nullptr};
 		ISR(TIMER2_OVF_vect) //#16
 		{
 			inIsr = true;
@@ -91,7 +83,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_ICF1
-		isr_t Icf1Isr = {nullptr};
+		interruptHandler_t Icf1Isr = {nullptr};
 		ISR(TIMER1_CAPT_vect) //#17
 		{
 			inIsr = true;
@@ -110,7 +102,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF1A
-		isr_t Ocf1AIsr = {nullptr};
+		interruptHandler_t Ocf1AIsr = {nullptr};
 		ISR(TIMER1_COMPA_vect) //#18
 		{
 			inIsr = true;
@@ -129,7 +121,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF1B
-		isr_t Ocf1BIsr = {nullptr};
+		interruptHandler_t Ocf1BIsr = {nullptr};
 		ISR(TIMER1_COMPB_vect) //#19
 		{
 			inIsr = true;
@@ -148,7 +140,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF1C
-		isr_t Ocf1CIsr = {nullptr};
+		interruptHandler_t Ocf1CIsr = {nullptr};
 		ISR(TIMER1_COMPC_vect) //#20
 		{
 			inIsr = true;
@@ -167,7 +159,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV1
-		isr_t Tov1Isr = {nullptr};
+		interruptHandler_t Tov1Isr = {nullptr};
 		ISR(TIMER1_OVF_vect) //#21
 		{
 			inIsr = true;
@@ -186,7 +178,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF0A
-		isr_t Ocf0AIsr = {nullptr};
+		interruptHandler_t Ocf0AIsr = {nullptr};
 		ISR(TIMER0_COMPA_vect) //#22
 		{
 			inIsr = true;
@@ -205,7 +197,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF0B
-		isr_t Ocf0BIsr = {nullptr};
+		interruptHandler_t Ocf0BIsr = {nullptr};
 		ISR(TIMER0_COMPB_vect) //#23
 		{
 			inIsr = true;
@@ -224,7 +216,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV0
-		isr_t Tov0Isr = {nullptr};
+		interruptHandler_t Tov0Isr = {nullptr};
 		ISR(TIMER0_OVF_vect) //#24
 		{
 			inIsr = true;
@@ -243,7 +235,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_ICF3
-		isr_t Icf3Isr = {nullptr};
+		interruptHandler_t Icf3Isr = {nullptr};
 		ISR(TIMER3_CAPT_vect) //#32
 		{
 			inIsr = true;
@@ -262,7 +254,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF3A
-		isr_t Ocf3AIsr = {nullptr};
+		interruptHandler_t Ocf3AIsr = {nullptr};
 		ISR(TIMER3_COMPA_vect) //#33
 		{
 			inIsr = true;
@@ -281,7 +273,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF3B
-		isr_t Ocf3BIsr = {nullptr};
+		interruptHandler_t Ocf3BIsr = {nullptr};
 		ISR(TIMER3_COMPB_vect) //#34
 		{
 			inIsr = true;
@@ -300,7 +292,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF3C
-		isr_t Ocf3CIsr = {nullptr};
+		interruptHandler_t Ocf3CIsr = {nullptr};
 		ISR(TIMER3_COMPC_vect) //#35
 		{
 			inIsr = true;
@@ -319,7 +311,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV3
-		isr_t Tov3Isr = {nullptr};
+		interruptHandler_t Tov3Isr = {nullptr};
 		ISR(TIMER3_OVF_vect) //#36
 		{
 			inIsr = true;
@@ -338,7 +330,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_ICF4
-		isr_t Icf4Isr = {nullptr};
+		interruptHandler_t Icf4Isr = {nullptr};
 		ISR(TIMER4_CAPT_vect) //#42
 		{
 			inIsr = true;
@@ -357,7 +349,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF4A
-		isr_t Ocf4AIsr = {nullptr};
+		interruptHandler_t Ocf4AIsr = {nullptr};
 		ISR(TIMER4_COMPA_vect) //#43
 		{
 			inIsr = true;
@@ -376,7 +368,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF4B
-		isr_t Ocf4BIsr = {nullptr};
+		interruptHandler_t Ocf4BIsr = {nullptr};
 		ISR(TIMER4_COMPB_vect) //#44
 		{
 			inIsr = true;
@@ -395,7 +387,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF4C
-		isr_t Ocf4CIsr = {nullptr};
+		interruptHandler_t Ocf4CIsr = {nullptr};
 		ISR(TIMER4_COMPC_vect) //#45
 		{
 			inIsr = true;
@@ -414,7 +406,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV4
-		isr_t Tov4Isr = {nullptr};
+		interruptHandler_t Tov4Isr = {nullptr};
 		ISR(TIMER4_OVF_vect) //#46
 		{
 			inIsr = true;
@@ -433,7 +425,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_ICF5
-		isr_t Icf5Isr = {nullptr};
+		interruptHandler_t Icf5Isr = {nullptr};
 		ISR(TIMER5_CAPT_vect) //#47
 		{
 			inIsr = true;
@@ -452,7 +444,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF5A
-		isr_t Ocf5AIsr = {nullptr};
+		interruptHandler_t Ocf5AIsr = {nullptr};
 		ISR(TIMER5_COMPA_vect) //#48
 		{
 			inIsr = true;
@@ -471,7 +463,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF5B
-		isr_t Ocf5BIsr = {nullptr};
+		interruptHandler_t Ocf5BIsr = {nullptr};
 		ISR(TIMER5_COMPB_vect) //49
 		{
 			inIsr = true;
@@ -490,7 +482,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_OCF5C
-		isr_t Ocf5CIsr = {nullptr};
+		interruptHandler_t Ocf5CIsr = {nullptr};
 		ISR(TIMER5_COMPC_vect) //#50
 		{
 			inIsr = true;
@@ -509,7 +501,7 @@ namespace InterruptManager
 		}
 		#endif
 		#if ATMIGHTY_INTERRUPTCONFIG_MANAGE_TOV5
-		isr_t Tov5Isr = {nullptr};
+		interruptHandler_t Tov5Isr = {nullptr};
 		ISR(TIMER5_OVF_vect) //#51
 		{
 			inIsr = true;
