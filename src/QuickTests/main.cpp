@@ -1,46 +1,102 @@
-/*
- * main.cpp
- *
- *  Created on: 31.03.2018
- *      Author: valentin
- */
-
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
 
 #include "ATmighty/Utilities/C++/FullCppSupport.h"
 #include "ATmighty/Interfaces/Listener.h"
-
 #include "ATmighty/Ressources/Periphery/Abstract/AbstractHardwareManager.h"
-#include "ATmighty/Ressources/Periphery/Virtual/Timer/VirtualTimerPool.h"
-
+#include "ATmighty/Ressources/Periphery/Abstract/IoPins.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
 #include "ATmighty/Utilities/Logs/MessageLogWriter.h"
-
-#include <ATmighty/Tools/Timing/Stopwatch/Stopwatch.h>
-#include <ATmighty/Tools/Timing/PeriodicTrigger/PeriodicTrigger.h>
+#include "ATmighty/Tools/Common/FiniteStatemachine/FiniteStatemachine.h"
 
 
-IoPin* blinky;
-IoPin* virtualPwm;
-uint8_t i = 0;
-AbstractHardwareManager abHw = AbstractHardwareManager(42);
-VirtualTimer8bit* virtualTimer2;
+AbstractHardwareManager abHw(41);
+FiniteStatemachine ampel(4); //4 states in total
+IoPin *red, *green, *yellow, *signalChange;
+
+
+enum states : uint8_t
+{
+	Green,
+	YellowToGreen,
+	Red,
+	YellowToRed
+};
 
 void blink()
 {
-	uint8_t j = (i / 4) + 1;
-	if (j > (0xFF - i))
+	uint32_t i = 0;
+
+	signalChange->set(true);
+	for(uint16_t i = 1; i != 0; i++)
 	{
-		i = 0;
+		asm ( "nop \n" );
 	}
-	else
+	signalChange->set(false);
+
+	//state change
+	switch(ampel.getState())
 	{
-		i += j;
+	case states::Red:
+		ampel.changeState(states::YellowToGreen);
+		i = 30;
+		break;
+	case states::YellowToGreen:
+		ampel.changeState(states::Green);
+		i = 10;
+		break;
+	case states::Green:
+		ampel.changeState(states::YellowToRed);
+		i = 25;
+		break;
+	case states::YellowToRed:
+		ampel.changeState(states::Red);
+		i = 10;
+		break;
 	}
-	blinky->toggle();
-	virtualTimer2->setOCRx(i, 'A');
+
+	//delay
+	for(i *= 100000; i > 0; i--)
+	{
+		asm ( "nop \n" );
+	}
+}
+
+void greenOn()
+{
+	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "green on");
+	green->set(true);
+}
+
+void greenOff()
+{
+	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "green off");
+	green->set(false);
+}
+
+void redOn()
+{
+	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "red on");
+	red->set(true);
+}
+
+void redOff()
+{
+	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "red off");
+	red->set(false);
+}
+
+void yellowOn()
+{
+	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "yellow on");
+	yellow->set(true);
+}
+
+void yellowOff()
+{
+	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "yellow off");
+	yellow->set(false);
 }
 
 int main( void )
@@ -48,32 +104,33 @@ int main( void )
 	MessageLogWriter::Usart usbWriter;
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
 
-	virtualPwm = abHw.allocIoPin<'B',7>();
-	blinky = abHw.allocIoPin<'B',2>();
-	blinky->setDirection(IoPin::DataDirection::Output);
+	//Pin setup
+	signalChange = abHw.allocIoPin<'B',7>();
+	signalChange->setDirection(IoPin::DataDirection::Output);
+	red = abHw.allocIoPin<'L',1>();
+	red->setDirection(IoPin::DataDirection::Output);
+	yellow = abHw.allocIoPin<'L',3>();
+	yellow->setDirection(IoPin::DataDirection::Output);
+	green = abHw.allocIoPin<'L',5>();
+	green->setDirection(IoPin::DataDirection::Output);
 
 	sei();
 
-	Timer16bit* abstractTimer = abHw.allocTimer16bit<AbstractTimer3>();
-	VirtualTimerPool<> timerPool = VirtualTimerPool<>(20000, abstractTimer, 2);
+	ampel.setEnterAction(states::Green, &greenOn);
+	ampel.setEnterAction(states::Red, &redOn);
+	ampel.setEnterAction(states::YellowToGreen, &yellowOn);
+	ampel.setEnterAction(states::YellowToRed, &yellowOn);
+	ampel.setExitAction(states::Green, &greenOff);
+	ampel.setExitAction(states::Red, &redOff);
+	ampel.setExitAction(states::YellowToGreen, &yellowOff);
+	ampel.setExitAction(states::YellowToRed, &yellowOff);
+	ampel.setChangeAction(&blink);
 
-	VirtualTimer8bit* virtualTimer1 = timerPool.allocTimer8bit(1);
-	PeriodicTrigger<VirtualTimer8bit> trigger = PeriodicTrigger<VirtualTimer8bit>(virtualTimer1);
-	virtualTimer2 = timerPool.allocTimer8bit(2, &virtualPwm);
+	ampel.start(states::Red);
+	ampel.changeState(states::YellowToGreen);
 
-	virtualTimer2->setWGM(3);
-	virtualTimer2->setOCRx(i, 'A');
-	virtualTimer2->setCOMx(2, 'A');
-	virtualTimer2->setPrescalar(0);
-
-	timerPool.startAll();
-
-	trigger.setPeriodMilliseconds(100);
-	trigger.setTriggerAction(&blink);
-	trigger.start();
-
-	//mainloop
-	while(1){
+	while(1)
+	{
 		asm ( "nop \n" );
 	}
 }

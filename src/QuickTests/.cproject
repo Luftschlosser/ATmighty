@@ -79,7 +79,7 @@
                                 							
                             </tool>
                             							
-                            <tool id="de.innot.avreclipse.tool.cppcompiler.app.debug.1130583032" name="AVR C++ Compiler" superClass="de.innot.avreclipse.tool.cppcompiler.app.debug">
+                            <tool command="avr-g++" id="de.innot.avreclipse.tool.cppcompiler.app.debug.1130583032" name="AVR C++ Compiler" superClass="de.innot.avreclipse.tool.cppcompiler.app.debug">
                                 								
                                 <option id="de.innot.avreclipse.cppcompiler.option.debug.level.1635317683" name="Generate Debugging Info" superClass="de.innot.avreclipse.cppcompiler.option.debug.level" useByScannerDiscovery="false"/>
                                 								
@@ -120,6 +120,8 @@
                                     <listOptionValue builtIn="false" value="ATmighty"/>
                                     								
                                 </option>
+                                								
+                                <option id="de.innot.avreclipse.cpplinker.option.nostart.1373093656" name="No startup or default libs (-nostdlib)" superClass="de.innot.avreclipse.cpplinker.option.nostart" useByScannerDiscovery="false" value="false" valueType="boolean"/>
                                 								
                                 <inputType id="de.innot.avreclipse.tool.cpplinker.input.2135579088" name="OBJ Files" superClass="de.innot.avreclipse.tool.cpplinker.input">
                                     									
@@ -245,7 +247,7 @@
                                 								
                                 <option id="de.innot.avreclipse.cppcompiler.option.optimize.shortenums.1661561561" name="Short enums (-fshort-enums)" superClass="de.innot.avreclipse.cppcompiler.option.optimize.shortenums" useByScannerDiscovery="false" value="false" valueType="boolean"/>
                                 								
-                                <option id="de.innot.avreclipse.cppcompiler.option.otherflags.1040939364" name="Other flags" superClass="de.innot.avreclipse.cppcompiler.option.otherflags" useByScannerDiscovery="false" value="-std=c++11" valueType="string"/>
+                                <option id="de.innot.avreclipse.cppcompiler.option.otherflags.1040939364" name="Other flags" superClass="de.innot.avreclipse.cppcompiler.option.otherflags" useByScannerDiscovery="false" value="-std=c++11 -fplugin=${ATMIGHTY_ROOT}/doc/GCC-Plugins/Flash-VTable/avr-flash-vtbl.so" valueType="string"/>
                                 								
                                 <option id="de.innot.avreclipse.cppcompiler.option.incpath.803740035" name="Include Paths (-I)" superClass="de.innot.avreclipse.cppcompiler.option.incpath" useByScannerDiscovery="false" valueType="includePath">
                                     									
@@ -272,6 +274,8 @@
                                     <listOptionValue builtIn="false" value="ATmighty"/>
                                     								
                                 </option>
+                                								
+                                <option id="de.innot.avreclipse.cpplinker.option.nostart.1749918431" name="No startup or default libs (-nostdlib)" superClass="de.innot.avreclipse.cpplinker.option.nostart" value="true" valueType="boolean"/>
                                 								
                                 <inputType id="de.innot.avreclipse.tool.cpplinker.input.1090409066" name="OBJ Files" superClass="de.innot.avreclipse.tool.cpplinker.input">
                                     									
