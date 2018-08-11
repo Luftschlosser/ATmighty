@@ -100,10 +100,7 @@ template<class Timer = Timer16bit> class PeriodicTrigger
 		 */
 		uint32_t getMaxPeriod();
 
-		/*!
-		 * Will reset the used timer to start an new period. This may delay the next triggering event maximally by the duration of one period.
-		 * This function can be used to synchronize this PeriodicTrigger
-		 */
+		///Will reset the used timer to start an new period. This may delay the next triggering event maximally by the duration of one period.
 		inline void reset()
 		{
 			timer->setCounter(0);
@@ -114,6 +111,7 @@ template<class Timer = Timer16bit> class PeriodicTrigger
 		 */
 		inline void start()
 		{
+			timer->setCounter(0);
 			timer->enableOutputCompareInterrupt(true, 'A');
 		}
 

@@ -34,10 +34,15 @@ namespace MessageLogPhrases
 	//Tool-Specific texts
 	static const char Text_StopwatchCalibration[] PROGMEM = "Calibrating Stopwatch: Offset ";
 
-	static const char Text_PeriodicTriggerValuesSet[] PROGMEM = "PeriodicTrigger set Prescalar/CounterTop as: ";
-	static const char Text_PeriodicTriggerInvalidTimer[] PROGMEM = "PeriodicTrigger given Timer not suitable!";
-	static const char Text_PeriodicTriggerApproximated[] PROGMEM = "PeriodicTrigger interval-time was approximated: Offset ";
-	static const char Text_PeriodicTriggerUnapproximatable[] PROGMEM = "PeriodicTrigger couldn't approximate interval-time: Maximum ";
+	static const char Text_PeriodicTrigger[] PROGMEM = "PeriodicTrigger ";
+	static const char Text_TimeoutTrigger[] PROGMEM = "TimeoutTrigger ";
+
+	static const char Text_TriggerValuesSet[] PROGMEM = "set Prescalar/CounterTop as: ";
+	static const char Text_TriggerInvalidTimer[] PROGMEM = "given Timer not suitable!";
+	static const char Text_PeriodicTriggerApproximated[] PROGMEM = "interval-time was approximated: Offset ";
+	static const char Text_PeriodicTriggerUnapproximatable[] PROGMEM = "couldn't approximate interval-time: Maximum ";
+	static const char Text_TimeoutTriggerApproximated[] PROGMEM = "timespan was approximated: Offset ";
+	static const char Text_TimeoutTriggerUnapproximatable[] PROGMEM = "couldn't approximate timespan: Maximum ";
 
 	static const char Text_VirtualTimerPoolSetup1[] PROGMEM = "VirtualTimerPool [Size ";
 	static const char Text_VirtualTimerPoolSetup2[] PROGMEM = "] set up with counting-frequency: ";

@@ -24,6 +24,7 @@ FiniteStatemachine::FiniteStatemachine(uint8_t stateNumber)
 
 	if ((statedActions == nullptr) || (statedActionTypeMap == nullptr))
 	{
+		//todo implement properly
 		MessageLog<>::DefaultInstance().log<LogLevel::Fatal>(false, "malloc failed!");
 	}
 }

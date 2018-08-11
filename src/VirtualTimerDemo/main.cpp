@@ -21,7 +21,7 @@
 IoPin* blinky;
 IoPin* virtualPwm;
 uint8_t i = 0;
-AbstractHardwareManager abHw(41);
+AbstractHardwareManager abHw(42);
 VirtualTimer8bit* virtualTimer2;
 
 void blink()

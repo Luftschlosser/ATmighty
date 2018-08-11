@@ -3,7 +3,8 @@
  */
 
 
-#include <ATmighty/Tools/Timing/PeriodicTrigger/PeriodicTrigger.h>
+#include "PeriodicTrigger.h"
+#include "ATmighty/Tools/Timing/TimeUnitConverter/TimeUnitConverter.h"
 #include "ATmighty/Ressources/Periphery/Abstract/Timer.h"
 #include "ATmighty/Ressources/Periphery/Virtual/Timer/VirtualTimer8bit.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
@@ -13,32 +14,32 @@
 
 template <class Timer> PeriodicTrigger<Timer>::~PeriodicTrigger()
 {
+	timer->stop();
 	stop();
 	setTriggerAction((Listener*)nullptr);
 }
 
 template <class Timer> int16_t PeriodicTrigger<Timer>::setPeriodSeconds(uint16_t s)
 {
-	uint32_t baseFrequency = timer->getBaseFrequency();
+	TimeUnitConverter<uint32_t> converter(timer->getBaseFrequency());
 	uint32_t timerSteps;
 
 	//This function doesn't work for asynchronous timer-mode!
-	if (baseFrequency == 0)
+	if (converter.getBaseFrequency() == 0)
 	{
 		return -32768;
 	}
 
 	//Calculate needed number of timerSteps
-	timerSteps = (baseFrequency * s);
+	timerSteps = converter.secondsToCycles(s);
 
 	if (timerSteps > getMaxPeriod())
 	{
 		timerSteps = getMaxPeriod();
 		#if ATMIGHTY_MESSAGELOG_ENABLE
-		uint32_t maxMs = (timerSteps / baseFrequency);
 		MessageLog<>::DefaultInstance().log<LogLevel::Error>(true,
 				MessageLogPhrases::Text_PeriodicTriggerUnapproximatable,
-				maxMs,
+				converter.cyclesToSeconds(timerSteps),
 				MessageLogPhrases::Text_UnitSeconds);
 		#endif
 	}
@@ -46,32 +47,31 @@ template <class Timer> int16_t PeriodicTrigger<Timer>::setPeriodSeconds(uint16_t
 	//setting period
 	timerSteps -= setPeriod(timerSteps);
 
-	//calculate actual period time in milliseconds
-	return (int16_t)((int16_t)(timerSteps / baseFrequency) - s);
+	//calculate actual period time in seconds
+	return (int16_t)((int16_t)converter.cyclesToSeconds(timerSteps) - s);
 }
 
 template <class Timer> int16_t PeriodicTrigger<Timer>::setPeriodMilliseconds(uint16_t ms)
 {
-	uint32_t baseFrequency = timer->getBaseFrequency();
+	TimeUnitConverter<uint32_t> converter(timer->getBaseFrequency());
 	uint32_t timerSteps;
 
 	//This function doesn't work for asynchronous timer-mode!
-	if (baseFrequency == 0)
+	if (converter.getBaseFrequency() == 0)
 	{
 		return -32768;
 	}
 
 	//Calculate needed number of timerSteps
-	timerSteps = (((uint64_t)baseFrequency * ms) / 1000); //need temporary 64-bit for high precision
+	timerSteps = converter.millisecondsToCycles(ms);
 
 	if (timerSteps > getMaxPeriod())
 	{
 		timerSteps = getMaxPeriod();
 		#if ATMIGHTY_MESSAGELOG_ENABLE
-		uint32_t maxMs = (((uint64_t)timerSteps * 1000) / baseFrequency); //need temporary 64-bit for high precision
 		MessageLog<>::DefaultInstance().log<LogLevel::Error>(true,
 				MessageLogPhrases::Text_PeriodicTriggerUnapproximatable,
-				maxMs,
+				converter.cyclesToMilliseconds(timerSteps),
 				MessageLogPhrases::Text_UnitMilliseconds);
 		#endif
 	}
@@ -80,28 +80,28 @@ template <class Timer> int16_t PeriodicTrigger<Timer>::setPeriodMilliseconds(uin
 	timerSteps -= setPeriod(timerSteps);
 
 	//calculate actual period time in milliseconds
-	return (int16_t)((int16_t)(((uint64_t)timerSteps * 1000) / baseFrequency) - ms); //need temporary 64-bit for high precision
+	return (int16_t)((int16_t)converter.cyclesToMilliseconds(timerSteps) - ms);
 }
 
 template <class Timer> int32_t PeriodicTrigger<Timer>::setPeriodMicroseconds(uint32_t ms)
 {
-	uint32_t baseFrequency = timer->getBaseFrequency();
+	TimeUnitConverter<uint32_t> converter(timer->getBaseFrequency());
 	uint32_t timerSteps;
 
 	//This function doesn't work for asynchronous timer-mode!
-	if (baseFrequency == 0)
+	if (converter.getBaseFrequency() == 0)
 	{
 		return -2147483648;
 	}
 
 	//Calculate needed number of timerSteps
-	timerSteps = (((uint64_t)baseFrequency * ms) / 1000000); //need temporary 64-bit for high precision
+	timerSteps = converter.microsecondsToCycles(ms);
 
 	if (timerSteps > getMaxPeriod())
 	{
 		timerSteps = getMaxPeriod();
 		#if ATMIGHTY_MESSAGELOG_ENABLE
-		uint64_t maxMs = (((uint64_t)timerSteps * 1000000) / baseFrequency); //need 64-bit for high precision
+		uint64_t maxMs = converter.cyclesToMicroseconds(timerSteps);
 		if (maxMs > 0xFFFFFFFF)
 		{
 			MessageLog<>::DefaultInstance().log<LogLevel::Error>(true,
@@ -122,28 +122,28 @@ template <class Timer> int32_t PeriodicTrigger<Timer>::setPeriodMicroseconds(uin
 	//setting period
 	timerSteps -= setPeriod(timerSteps);
 
-	//calculate actual period time in milliseconds
-	return (int32_t)((int32_t)(((uint64_t)timerSteps * 1000000) / baseFrequency) - ms); //need temporary 64-bit for high precision
+	//calculate actual period time in microseconds
+	return (int32_t)((int32_t)converter.cyclesToMicroseconds(timerSteps) - ms); //need temporary 64-bit for high precision
 }
 
 template <class Timer> int32_t PeriodicTrigger<Timer>::setPeriodHertz(uint32_t hz)
 {
-	uint32_t baseFrequency = timer->getBaseFrequency();
+	TimeUnitConverter<uint32_t> converter(timer->getBaseFrequency());
 	uint32_t timerSteps;
 
 	//This function doesn't work for asynchronous timer-mode!
-	if (baseFrequency == 0 || hz == 0)
+	if (converter.getBaseFrequency() == 0 || hz == 0)
 	{
 		return -2147483648;
 	}
 
 	//Calculate needed number of timerSteps
-	timerSteps = (baseFrequency / hz);
+	timerSteps = converter.hertzToCycles(hz);
 	if (timerSteps > getMaxPeriod()) //Will only happen on 8bit-Timers, so max-interval in terms of timersteps is known.
 	{
 		timerSteps = getMaxPeriod();
 		#if ATMIGHTY_MESSAGELOG_ENABLE
-		uint32_t maxHz = (baseFrequency / ((uint32_t)255 * 1024)) + 1;
+		uint32_t maxHz = converter.cyclesToHertz((uint32_t)255 * 1024) + 1;
 		MessageLog<>::DefaultInstance().log<LogLevel::Error>(true,
 				MessageLogPhrases::Text_PeriodicTriggerUnapproximatable,
 				maxHz,
@@ -154,8 +154,8 @@ template <class Timer> int32_t PeriodicTrigger<Timer>::setPeriodHertz(uint32_t h
 	//setting period
 	timerSteps -= setPeriod(timerSteps);
 
-	//calculate actual period time in milliseconds
-	return (hz - (baseFrequency / timerSteps));
+	//calculate actual period time in hertz
+	return (hz - converter.cyclesToHertz(timerSteps));
 }
 
 

@@ -1,5 +1,5 @@
 /*
- * This headerfile is µC-independent.
+ * This headerfile defines a finite Statemachine with n states represented as integers and provides Enter-, Exit- and Change-Events.
  */
 
 #ifndef ATMIGHTY_TOOLS_COMMON_FINITESTATEMACHINE_FINITESTATEMACHINE_H_
