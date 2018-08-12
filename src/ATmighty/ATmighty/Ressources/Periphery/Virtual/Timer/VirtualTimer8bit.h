@@ -79,6 +79,8 @@ class VirtualTimer8bit final : public Timer8bit
 		 * Bit0 - Running: 1 = this timer is running (acts on calls to "tick()"), 0 = this timer is stopped.
 		 * Bit1 - PWM-CountDirection: 1 = The counter is decrementing (in Phase-correct-PWM-Mode), 0 = normal incrementing counter.
 		 * Bit2 - Need to update OCRx-registers at next update-condition for current wgm-mode.
+		 * Bit3 - skipNextCount: Don't count at the next execution of "tick()".
+		 * Bit4 - BypassPrescalar: set this Bit 1 to execute a tick()-Method immediately without waiting for the next prescalar-match
 		 * Bit5-7 - VirtualTimerPool-Index: The index of this virtual timer within the corresponding VirtualTimerPool.
 		 */
 		uint8_t statusFlags;
@@ -161,7 +163,8 @@ class VirtualTimer8bit final : public Timer8bit
 		/// Sets the current value of the timer-counter.
 		inline void setCounter(uint8_t value)
 		{
-			tcnt = value - 1;
+			tcnt = value;
+			statusFlags |= (3 << 3); //skipNextCount & BypassPrescalar
 			tick();
 		}
 

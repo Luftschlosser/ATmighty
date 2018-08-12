@@ -205,4 +205,6 @@ template class PeriodicTrigger<AbstractTimer8bit>;
 template class PeriodicTrigger<VirtualTimer8bit>;
 #if defined (__AVR_ATmega2560__)
 template class PeriodicTrigger<AbstractTimer0>;
+#else
+#  warning "No specialized PeriodicTriggers defined for this µC's 8-bit timers."
 #endif

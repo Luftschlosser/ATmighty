@@ -5,6 +5,7 @@
 #include <ATmighty/Tools/Timing/Stopwatch/Stopwatch.h>
 #include <util/atomic.h>
 #include "ATmighty/Ressources/Periphery/Abstract/Timer.h"
+#include "ATmighty/Ressources/Periphery/Virtual/Timer/VirtualTimer8bit.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
 #include "ATmighty/Utilities/LUTs/MessageLogPhrases.h"
 #include "Config/MessageLogConfig.h"
@@ -69,7 +70,9 @@ template<class Timer> uint32_t Stopwatch<Timer>::stop()
 }
 
 //Explizit template instantiations for this µC
+template class Stopwatch<Timer8bit>;
 template class Stopwatch<AbstractTimer8bit>;
+template class Stopwatch<VirtualTimer8bit>;
 #if defined (__AVR_ATmega2560__)
 template class Stopwatch<AbstractTimer0>;
 template class Stopwatch<AbstractTimer2>;

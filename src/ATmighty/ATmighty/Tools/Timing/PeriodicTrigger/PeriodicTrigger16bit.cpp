@@ -124,4 +124,6 @@ template class PeriodicTrigger<AbstractTimer1>;
 template class PeriodicTrigger<AbstractTimer3>;
 template class PeriodicTrigger<AbstractTimer4>;
 template class PeriodicTrigger<AbstractTimer5>;
+#else
+#  warning "No specialized PeriodicTriggers defined for this µC's 16-bit timers."
 #endif

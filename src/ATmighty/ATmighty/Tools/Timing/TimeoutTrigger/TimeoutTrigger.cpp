@@ -213,4 +213,6 @@ template class TimeoutTrigger<AbstractTimer2>;
 template class TimeoutTrigger<AbstractTimer3>;
 template class TimeoutTrigger<AbstractTimer4>;
 template class TimeoutTrigger<AbstractTimer5>;
+#else
+#  warning "No specialized TimeoutTriggers defined for this µC."
 #endif

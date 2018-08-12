@@ -12,6 +12,7 @@
 
 //forward-declare dependencies
 class Timer16bit;
+class AbstractTimer8bit;
 
 
 /*!
@@ -25,6 +26,8 @@ template<class Timer = Timer16bit> class TimeoutTrigger final : private Listener
 		Timer* timer;
 
 		interruptHandler_t triggerAction;
+
+		uint16_t calibrationOffset;
 
 		/*!
 		 * Bitmask for multiple values:
@@ -64,6 +67,9 @@ template<class Timer = Timer16bit> class TimeoutTrigger final : private Listener
 
 		///Destructor
 		~TimeoutTrigger();
+
+		///Run self-test to calculate an approximate offset value for timespans. This will increase the precision from + ~250cycles to +/- ~20cycles.
+		void calibrate();
 
 		/*!
 		 * Sets the timespan between starting this TimeoutTrigger and the triggering-event in terms of timer-steps.

@@ -69,7 +69,9 @@ template<class Timer> uint32_t Stopwatch<Timer>::stop()
 }
 
 //Explizit template instantiations for this µC
+template class Stopwatch<Timer16bit>;
 template class Stopwatch<AbstractTimer16bit>;
+//template class Stopwatch<VirtualTimer16bit>;
 #if defined (__AVR_ATmega2560__)
 template class Stopwatch<AbstractTimer1>;
 template class Stopwatch<AbstractTimer3>;

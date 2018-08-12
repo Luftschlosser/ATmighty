@@ -16,6 +16,8 @@ class Timer16bit;
 /*!
  * This class represents a trigger source which can be configured to trigger either a Listener or a callback-function in equal time-intervals periodically.
  * The optional template parameter can be used to specify the specific type of Timer to be used for the periodic triggering. (default is any 16bit-Timer)
+ * Because the Prescale-unit of the µC is running asynchronously, the first trigger might occur too early, but the interval between individual
+ * triggering events will be precise.
  */
 template<class Timer = Timer16bit> class PeriodicTrigger
 {

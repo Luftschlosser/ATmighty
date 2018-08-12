@@ -9,13 +9,13 @@
 #include "ATmighty/Utilities/Logs/MessageLog.h"
 #include "ATmighty/Utilities/Logs/MessageLogWriter.h"
 #include "ATmighty/Tools/Common/FiniteStatemachine/FiniteStatemachine.h"
-#include "ATmighty/Tools/Timing/TimeoutTrigger/TimeoutTrigger.h"
 #include "ATmighty/Ressources/Periphery/Virtual/Timer/VirtualTimerPool.h"
+#include "ATmighty/Tools/Timing/TimeoutTrigger/TimeoutTrigger.h"
 
 
-AbstractHardwareManager abHw(41);
+AbstractHardwareManager abHw(42);
 FiniteStatemachine ampel(4); //4 states in total
-TimeoutTrigger<VirtualTimer8bit> *timeout;
+TimeoutTrigger<Timer8bit> *timeout;
 IoPin *red, *green, *yellow, *signalChange;
 
 
@@ -115,8 +115,8 @@ int main( void )
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
 
 	//Timer Setup
-	VirtualTimerPool<Timer8bit> vtPool(1000, abHw.allocTimer8bit<AbstractTimer0>(), 1);
-	timeout = new TimeoutTrigger<VirtualTimer8bit>(vtPool.allocTimer8bit(1));
+	VirtualTimerPool<Timer16bit> vtPool(100, abHw.allocTimer16bit<AbstractTimer5>(), 1);
+	timeout = new TimeoutTrigger<Timer8bit>(vtPool.allocTimer8bit(1));
 	vtPool.startAll();
 
 	//Pin setup
@@ -131,6 +131,7 @@ int main( void )
 
 	sei();
 
+	//Statemachine Setup
 	ampel.setEnterAction(states::Green, &greenOn);
 	ampel.setEnterAction(states::Red, &redOn);
 	ampel.setEnterAction(states::YellowToGreen, &yellowOn);
@@ -141,6 +142,10 @@ int main( void )
 	ampel.setExitAction(states::YellowToRed, &yellowOff);
 	ampel.setChangeAction(&blink);
 
+	//TimeoutTrigger calibration
+	timeout->calibrate();
+
+	//start main
 	ampel.start(states::Red);
 
 	while(1)

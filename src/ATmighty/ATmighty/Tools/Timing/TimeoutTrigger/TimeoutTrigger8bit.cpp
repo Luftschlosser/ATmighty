@@ -10,7 +10,7 @@
 #include "ATmighty/Utilities/LUTs/MessageLogPhrases.h"
 
 
-template <class Timer> TimeoutTrigger<Timer>::TimeoutTrigger(Timer* timer) : timer(timer), triggerAction({nullptr}), statusFlags(0)
+template <class Timer> TimeoutTrigger<Timer>::TimeoutTrigger(Timer* timer) : timer(timer), triggerAction({nullptr}), calibrationOffset(0), statusFlags(0)
 {
 	if ((timer != nullptr) && (timer->getNumberOfChannels() > 0) && (timer->setWGM(2)/*CTC*/ == 0))
 	{
@@ -24,6 +24,47 @@ template <class Timer> TimeoutTrigger<Timer>::TimeoutTrigger(Timer* timer) : tim
 }
 
 //General Implementation for normal 8bit-Timers
+template <class Timer> void TimeoutTrigger<Timer>::calibrate()
+{
+	if (!isRunning())
+	{
+		static volatile uint16_t result;
+		static volatile uint8_t i;
+		static Timer *timer;
+
+		timer = this->timer;
+		result = 0;
+		i = 1;
+
+		//save environment
+		interruptHandler_t triggerAction = this->triggerAction;
+
+		//set up dummy triggerAction with lambda that measures passed time
+		this->setTriggerAction([](){
+			for (i = 1; i > 0; i--)
+			{
+				asm volatile ("nop \n");
+			}
+			result = timer->getCounter();
+		});
+
+		//dummy timeoutTrigger-run (without actual timer)
+		this->setTimespan(255);
+		this->start();
+		timer->setCounter(255);
+
+		//use result as calibrationOffset
+		while(i > 0);
+		calibrationOffset = (result >= 0xFF) ? 0 : result;
+		MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "Calibrated to : ", calibrationOffset);
+		//Todo set up real message
+
+		//restore environment
+		this->triggerAction = triggerAction;
+	}
+}
+
+//General Implementation for normal 8bit-Timers
 template <class Timer> int16_t TimeoutTrigger<Timer>::setTimespan(uint32_t timerSteps)
 {
 	if(!isRunning())
@@ -33,7 +74,14 @@ template <class Timer> int16_t TimeoutTrigger<Timer>::setTimespan(uint32_t timer
 		uint32_t cntTop;
 		int32_t retval;
 
-		//TODO: subtract constant from timersteps to correct for time needed to execute isr and invoke handler...
+		if (timerSteps > calibrationOffset)
+		{
+			timerSteps -= calibrationOffset;
+		}
+		else
+		{
+			timerSteps = 1;
+		}
 
 		//find correct prescalar for the desired range
 		if (timerSteps <= (uint32_t)0xFF)
@@ -74,11 +122,11 @@ template <class Timer> int16_t TimeoutTrigger<Timer>::setTimespan(uint32_t timer
 		//round counter down to maximal 8bit-value
 		if (cntTop > 0xFF)
 		{
-			cntTop = 0x100;
+			cntTop = 0xFF;
 		}
 
 		//set counter-top in timer
-		timer->setOCRx((uint8_t)((uint16_t)cntTop - 1), 'A');
+		timer->setOCRx((uint8_t)((uint16_t)cntTop), 'A');
 		#if ATMIGHTY_MESSAGELOG_ENABLE
 		MessageLog<>::DefaultInstance().log<LogLevel::Debug>(true,
 				MessageLogPhrases::Text_TimeoutTrigger,
@@ -131,7 +179,14 @@ template <> int16_t TimeoutTrigger<VirtualTimer8bit>::setTimespan(uint32_t timer
 		uint32_t cntTop;
 		int32_t retval;
 
-		//TODO: subtract constant from timersteps to correct for time needed to execute isr and invoke handler...
+		if (timerSteps > calibrationOffset)
+		{
+			timerSteps -= calibrationOffset;
+		}
+		else
+		{
+			timerSteps = 1;
+		}
 
 		//find correct prescalar for the desired range
 		for (scale = 0; scale < 16; scale++)
@@ -159,11 +214,11 @@ template <> int16_t TimeoutTrigger<VirtualTimer8bit>::setTimespan(uint32_t timer
 		//round counter down to maximal 8bit-value
 		if (cntTop > 0xFF)
 		{
-			cntTop = 0x100;
+			cntTop = 0xFF;
 		}
 
 		//set counter-top in timer
-		timer->setOCRx((uint8_t)((uint16_t)cntTop - 1), 'A');
+		timer->setOCRx((uint8_t)((uint16_t)cntTop), 'A');
 		#if ATMIGHTY_MESSAGELOG_ENABLE
 		MessageLog<>::DefaultInstance().log<LogLevel::Debug>(true,
 				MessageLogPhrases::Text_TimeoutTrigger,
@@ -218,4 +273,6 @@ template class TimeoutTrigger<AbstractTimer8bit>;
 template class TimeoutTrigger<VirtualTimer8bit>;
 #if defined (__AVR_ATmega2560__)
 template class TimeoutTrigger<AbstractTimer0>;
+#else
+#  warning "No specialized TimeoutTriggers defined for this µC's 8-bit timers."
 #endif

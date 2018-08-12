@@ -66,15 +66,20 @@ void VirtualTimer8bit::tick()
 	if (statusFlags & 1) //timer running?
 	{
 		prescaleCounter++;
-		if (prescaleCounter >= prescalar) //actual prescaled tick?
+		if ((prescaleCounter >= prescalar) || (statusFlags & (1 << 4))) //actual prescaled tick? or BypassPrescalar?
 		{
-			static bool skipNextCount = false;
-
-			//resetting prescaleCounter
-			prescaleCounter = 0;
+			//resetting prescaleCounter XOR clearing BypassPrescalar bit
+			if (statusFlags & (1 << 4))
+			{
+				statusFlags &= ~(1 << 4);
+			}
+			else
+			{
+				prescaleCounter = 0;
+			}
 
 			//counting
-			if (!skipNextCount)
+			if (!(statusFlags & (1 << 3))) //not skipNextCount?
 			{
 				if (statusFlags & (1 << 1)) //decrementing?
 				{
@@ -95,7 +100,7 @@ void VirtualTimer8bit::tick()
 			}
 			else
 			{
-				skipNextCount = false;
+				statusFlags &= ~(1 << 3); // clear bit skipNextCount
 			}
 
 			//Fast-Pwm-Bottom events
@@ -137,11 +142,10 @@ void VirtualTimer8bit::tick()
 			//Compare-Match-Event 0
 			if (tcnt == channelData[0].ocrx)
 			{
-				compareMatchEvent(0);
 				if (wgm == 2)
 				{
 					tcnt = 0;
-					skipNextCount = true;
+					statusFlags |= (1 << 3); //skipNextCount
 				}
 				else if (wgm == 5)
 				{
@@ -152,8 +156,9 @@ void VirtualTimer8bit::tick()
 				{
 					tcnt = 0;
 					timerOverflowEvent();
-					skipNextCount = true;
+					statusFlags |= (1 << 3); //skipNextCount
 				}
+				compareMatchEvent(0);
 			}
 
 			//Other OCRx-Update events

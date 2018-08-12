@@ -16,11 +16,11 @@ class AbstractTimer16bit;
 
 /*!
  * This class represents a stop-watch which can be used to measure cycle-precise delays between the call to start() and the call to stop().
- * The template-parameter "Timer" defines the type of timer to be used for measurement. This must be an abstract Timer, as virtual ones will
- * not be fast enough for cycle-precise measurements. It is recommended to provide a specific timer-type if it is known at compiletime, as this
+ * The template-parameter "Timer" defines the type of timer to be used for measurement. For real cycle-precise measurement,
+ * this must be an abstract Timer, as virtual ones will not be fast enough for cycle-precise measurements. Virtual timers can be used, but they
+ * will only measure in terms of their internal base-Frequency, not absolute cpu-cycles!
+ * It is recommended to provide a specific timer-type if it is known at compiletime, as this
  * will reduce the time needed to call the timer-methods significantly because no vtable-entries will need to be dereferenced.
- * Possible values are:
- * AbstractTimer16bit [default], AbtractTimer8bit, and all specific AbstractTimerN's of this µC.
  * For the Stopwatch to be able to measure consistently precise values, it is recommended to not use any interrupts which might occur during
  * measurement. But Interrupts need to stay enabled, as the Stopwatch itself does need timer-interrupts to work correctly.
  */
