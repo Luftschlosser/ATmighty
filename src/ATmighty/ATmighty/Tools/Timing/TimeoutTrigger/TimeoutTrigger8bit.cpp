@@ -23,8 +23,7 @@ template <class Timer> TimeoutTrigger<Timer>::TimeoutTrigger(Timer* timer) : tim
 	}
 }
 
-//General Implementation for normal 8bit-Timers
-template <class Timer> void TimeoutTrigger<Timer>::calibrate()
+template <class Timer> uint16_t TimeoutTrigger<Timer>::calibrate()
 {
 	if (!isRunning())
 	{
@@ -62,6 +61,7 @@ template <class Timer> void TimeoutTrigger<Timer>::calibrate()
 		//restore environment
 		this->triggerAction = triggerAction;
 	}
+	return calibrationOffset;
 }
 
 //General Implementation for normal 8bit-Timers
@@ -126,7 +126,7 @@ template <class Timer> int16_t TimeoutTrigger<Timer>::setTimespan(uint32_t timer
 		}
 
 		//set counter-top in timer
-		timer->setOCRx((uint8_t)((uint16_t)cntTop), 'A');
+		timer->setOCRx((uint8_t)cntTop, 'A');
 		#if ATMIGHTY_MESSAGELOG_ENABLE
 		MessageLog<>::DefaultInstance().log<LogLevel::Debug>(true,
 				MessageLogPhrases::Text_TimeoutTrigger,
@@ -218,7 +218,7 @@ template <> int16_t TimeoutTrigger<VirtualTimer8bit>::setTimespan(uint32_t timer
 		}
 
 		//set counter-top in timer
-		timer->setOCRx((uint8_t)((uint16_t)cntTop), 'A');
+		timer->setOCRx((uint8_t)cntTop, 'A');
 		#if ATMIGHTY_MESSAGELOG_ENABLE
 		MessageLog<>::DefaultInstance().log<LogLevel::Debug>(true,
 				MessageLogPhrases::Text_TimeoutTrigger,

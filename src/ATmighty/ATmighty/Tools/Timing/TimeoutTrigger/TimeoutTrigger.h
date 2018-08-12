@@ -68,8 +68,18 @@ template<class Timer = Timer16bit> class TimeoutTrigger final : private Listener
 		///Destructor
 		~TimeoutTrigger();
 
-		///Run self-test to calculate an approximate offset value for timespans. This will increase the precision from + ~250cycles to +/- ~20cycles.
-		void calibrate();
+		/*!
+		 * Run self-test to calculate an approximate offset value for timespans. This will increase the precision from + ~250cycles to +/- ~20cycles.
+		 * \returns the measured offset in cycles.
+		 * (value will be constant in statically initialized environment, so it can be used directly to set the offset, rather than measuring every time)
+		 */
+		uint16_t calibrate();
+
+		/*!
+		 * Directly sets an offset value (Can be used in static environment after obtaining the measured value with the other "calibrate()"-method)
+		 * \param offset The offset in cpu-cycles.
+		 */
+		inline void calibrate(uint16_t offset) { calibrationOffset = offset; }
 
 		/*!
 		 * Sets the timespan between starting this TimeoutTrigger and the triggering-event in terms of timer-steps.
