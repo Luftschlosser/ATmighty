@@ -22,6 +22,8 @@
  */
 class FiniteStatemachine
 {
+	template<class Timer> friend class TimedStatemachine;
+
 	private:
 		///The number of the current state
 		uint8_t state;

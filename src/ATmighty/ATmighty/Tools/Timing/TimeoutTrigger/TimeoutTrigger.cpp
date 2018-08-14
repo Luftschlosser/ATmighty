@@ -202,6 +202,7 @@ template <class Timer> int32_t TimeoutTrigger<Timer>::setTimespanMicroseconds(ui
 //Explizit template instantiations for this µC
 template class TimeoutTrigger<Timer16bit>;
 template class TimeoutTrigger<AbstractTimer16bit>;
+//template class TimeoutTrigger<VirtualTimer16bit>;
 template class TimeoutTrigger<Timer8bit>;
 template class TimeoutTrigger<AbstractTimer8bit>;
 template class TimeoutTrigger<AbstractTimer8bitAsync>;

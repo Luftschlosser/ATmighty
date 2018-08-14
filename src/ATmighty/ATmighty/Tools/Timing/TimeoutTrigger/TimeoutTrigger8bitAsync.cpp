@@ -22,11 +22,11 @@ template <class Timer> TimeoutTrigger<Timer>::TimeoutTrigger(Timer* timer) : tim
 	}
 }
 
-template <class Timer> uint16_t TimeoutTrigger<Timer>::calibrate()
+template <class Timer> uint8_t TimeoutTrigger<Timer>::calibrate()
 {
 	if (!isRunning())
 	{
-		static volatile uint16_t result;
+		static volatile uint8_t result;
 		static volatile uint8_t i;
 		static Timer *timer;
 
@@ -36,6 +36,7 @@ template <class Timer> uint16_t TimeoutTrigger<Timer>::calibrate()
 
 		//save environment
 		interruptHandler_t triggerAction = this->triggerAction;
+		uint8_t statusFlags = this->statusFlags;
 
 		//set up dummy triggerAction with lambda that measures passed time
 		this->setTriggerAction([](){
@@ -59,6 +60,7 @@ template <class Timer> uint16_t TimeoutTrigger<Timer>::calibrate()
 
 		//restore environment
 		this->triggerAction = triggerAction;
+		this->statusFlags = statusFlags;
 	}
 	return calibrationOffset;
 }

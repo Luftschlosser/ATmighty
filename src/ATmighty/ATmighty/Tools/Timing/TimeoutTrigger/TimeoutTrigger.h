@@ -12,7 +12,6 @@
 
 //forward-declare dependencies
 class Timer16bit;
-class AbstractTimer8bit;
 
 
 /*!
@@ -27,7 +26,7 @@ template<class Timer = Timer16bit> class TimeoutTrigger final : private Listener
 
 		interruptHandler_t triggerAction;
 
-		uint16_t calibrationOffset;
+		uint8_t calibrationOffset;
 
 		/*!
 		 * Bitmask for multiple values:
@@ -73,13 +72,13 @@ template<class Timer = Timer16bit> class TimeoutTrigger final : private Listener
 		 * \returns the measured offset in cycles.
 		 * (value will be constant in statically initialized environment, so it can be used directly to set the offset, rather than measuring every time)
 		 */
-		uint16_t calibrate();
+		uint8_t calibrate();
 
 		/*!
 		 * Directly sets an offset value (Can be used in static environment after obtaining the measured value with the other "calibrate()"-method)
 		 * \param offset The offset in cpu-cycles.
 		 */
-		inline void calibrate(uint16_t offset) { calibrationOffset = offset; }
+		inline void calibrate(uint8_t offset) { calibrationOffset = offset; }
 
 		/*!
 		 * Sets the timespan between starting this TimeoutTrigger and the triggering-event in terms of timer-steps.

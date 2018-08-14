@@ -8,14 +8,12 @@
 #include "ATmighty/Ressources/Periphery/Abstract/IoPins.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
 #include "ATmighty/Utilities/Logs/MessageLogWriter.h"
-#include "ATmighty/Tools/Common/FiniteStatemachine/FiniteStatemachine.h"
+#include "ATmighty/Tools/Timing/TimedStatemachine/TimedStatemachine.h"
 #include "ATmighty/Ressources/Periphery/Virtual/Timer/VirtualTimerPool.h"
-#include "ATmighty/Tools/Timing/TimeoutTrigger/TimeoutTrigger.h"
 
 
 AbstractHardwareManager abHw(42);
-FiniteStatemachine ampel(4); //4 states in total
-TimeoutTrigger<Timer8bit> *timeout;
+TimedStatemachine<Timer8bit> *ampel;
 IoPin *red, *green, *yellow, *signalChange;
 
 
@@ -37,33 +35,10 @@ void blink()
 	signalChange->set(false);
 }
 
-void changeToGreen()
-{
-	ampel.changeState(states::Green);
-}
-
-void changeToYellowtogreen()
-{
-	ampel.changeState(states::YellowToGreen);
-}
-
-void changeToRed()
-{
-	ampel.changeState(states::Red);
-}
-
-void changeToYellowtored()
-{
-	ampel.changeState(states::YellowToRed);
-}
-
 void greenOn()
 {
 	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "green on");
 	green->set(true);
-	timeout->setTimespanSeconds(4);
-	timeout->setTriggerAction(&changeToYellowtored);
-	timeout->start();
 }
 
 void greenOff()
@@ -76,9 +51,6 @@ void redOn()
 {
 	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "red on");
 	red->set(true);
-	timeout->setTimespanSeconds(5);
-	timeout->setTriggerAction(&changeToYellowtogreen);
-	timeout->start();
 }
 
 void redOff()
@@ -91,16 +63,6 @@ void yellowOn()
 {
 	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "yellow on");
 	yellow->set(true);
-	timeout->setTimespanMilliseconds(500);
-	if (ampel.getState() == states::YellowToGreen)
-	{
-		timeout->setTriggerAction(&changeToGreen);
-	}
-	else
-	{
-		timeout->setTriggerAction(&changeToRed);
-	}
-	timeout->start();
 }
 
 void yellowOff()
@@ -115,8 +77,8 @@ int main( void )
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
 
 	//Timer Setup
-	VirtualTimerPool<Timer16bit> vtPool(100, abHw.allocTimer16bit<AbstractTimer5>(), 1);
-	timeout = new TimeoutTrigger<Timer8bit>(vtPool.allocTimer8bit(1));
+	VirtualTimerPool<Timer16bit> vtPool(10, abHw.allocTimer16bit<AbstractTimer5>(), 1);
+	VirtualTimer8bit *statemachineTimer = vtPool.allocTimer8bit(1);
 	vtPool.startAll();
 
 	//Pin setup
@@ -132,21 +94,27 @@ int main( void )
 	sei();
 
 	//Statemachine Setup
-	ampel.setEnterAction(states::Green, &greenOn);
-	ampel.setEnterAction(states::Red, &redOn);
-	ampel.setEnterAction(states::YellowToGreen, &yellowOn);
-	ampel.setEnterAction(states::YellowToRed, &yellowOn);
-	ampel.setExitAction(states::Green, &greenOff);
-	ampel.setExitAction(states::Red, &redOff);
-	ampel.setExitAction(states::YellowToGreen, &yellowOff);
-	ampel.setExitAction(states::YellowToRed, &yellowOff);
-	ampel.setChangeAction(&blink);
+	ampel = new TimedStatemachine<Timer8bit>(4, statemachineTimer);
+	ampel->setEnterAction(states::Green, &greenOn);
+	ampel->setEnterAction(states::Red, &redOn);
+	ampel->setEnterAction(states::YellowToGreen, &yellowOn);
+	ampel->setEnterAction(states::YellowToRed, &yellowOn);
+	ampel->setExitAction(states::Green, &greenOff);
+	ampel->setExitAction(states::Red, &redOff);
+	ampel->setExitAction(states::YellowToGreen, &yellowOff);
+	ampel->setExitAction(states::YellowToRed, &yellowOff);
+	ampel->setChangeAction(&blink);
+
+	ampel->setTimedStatechange(states::Green, states::YellowToRed, 40);
+	ampel->setTimedStatechange(states::YellowToRed, states::Red, 5);
+	ampel->setTimedStatechange(states::Red, states::YellowToGreen, 50);
+	ampel->setTimedStatechange(states::YellowToGreen, states::Green, 5);
 
 	//TimeoutTrigger calibration
-	timeout->calibrate();
+	ampel->calibrate();
 
 	//start main
-	ampel.start(states::Red);
+	ampel->start(states::Green);
 
 	while(1)
 	{
