@@ -23,49 +23,6 @@ template <class Timer> TimeoutTrigger<Timer>::TimeoutTrigger(Timer* timer) : tim
 	}
 }
 
-template <class Timer> uint8_t TimeoutTrigger<Timer>::calibrate()
-{
-	if (!isRunning())
-	{
-		static volatile uint16_t result;
-		static volatile uint8_t i;
-		static Timer *timer;
-
-		timer = this->timer;
-		result = 0;
-		i = 1;
-
-		//save environment
-		interruptHandler_t triggerAction = this->triggerAction;
-		uint8_t statusFlags = this->statusFlags;
-
-		//set up dummy triggerAction with lambda that measures passed time
-		this->setTriggerAction([](){
-			for (i = 1; i > 0; i--)
-			{
-				asm volatile ("nop \n");
-			}
-			result = timer->getCounter();
-		});
-
-		//dummy timeoutTrigger-run (without actual timer)
-		this->setTimespan(0xFFFF);
-		this->start();
-		timer->setCounter(0xFFFF);
-
-		//use result as calibrationOffset
-		while(i > 0);
-		calibrationOffset = (result >= 0xFFFF) ? 0 : (result >= 0xFF ? 0xFF : (uint8_t)result);
-		MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "Calibrated to : ", calibrationOffset);
-		//Todo set up real message
-
-		//restore environment
-		this->triggerAction = triggerAction;
-		this->statusFlags = statusFlags;
-	}
-	return calibrationOffset;
-}
-
 template <class Timer> int16_t TimeoutTrigger<Timer>::setTimespan(uint32_t timerSteps)
 {
 	if(!isRunning())
@@ -75,13 +32,13 @@ template <class Timer> int16_t TimeoutTrigger<Timer>::setTimespan(uint32_t timer
 		uint32_t cntTop;
 		int32_t retval;
 
-		if (timerSteps > calibrationOffset)
+		if (timerSteps < (calibrationOffset + 30))
 		{
-			timerSteps -= calibrationOffset;
+			timerSteps = 30; //use this as arbitrary minimum
 		}
 		else
 		{
-			timerSteps = 1;
+			timerSteps -= calibrationOffset;
 		}
 
 		//find correct prescalar for the desired range

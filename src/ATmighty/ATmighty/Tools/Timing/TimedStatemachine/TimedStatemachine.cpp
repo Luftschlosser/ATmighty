@@ -21,7 +21,7 @@ template<class Timer> TimedStatemachine<Timer>::TimedStatemachine(uint8_t stateN
 	}
 	else
 	{
-		//error
+		//Todo:error
 	}
 }
 
@@ -63,20 +63,20 @@ template<class Timer> void TimedStatemachine<Timer>::setTimedStatechange(uint8_t
 
 
 //Explizit template instantiations for this µC
-template class TimeoutTrigger<Timer16bit>;
-template class TimeoutTrigger<AbstractTimer16bit>;
-//template class TimeoutTrigger<VirtualTimer16bit>;
-template class TimeoutTrigger<Timer8bit>;
-template class TimeoutTrigger<AbstractTimer8bit>;
-template class TimeoutTrigger<AbstractTimer8bitAsync>;
-template class TimeoutTrigger<VirtualTimer8bit>;
+template class TimedStatemachine<Timer16bit>;
+template class TimedStatemachine<AbstractTimer16bit>;
+//template class TimedStatemachine<VirtualTimer16bit>;
+template class TimedStatemachine<Timer8bit>;
+template class TimedStatemachine<AbstractTimer8bit>;
+template class TimedStatemachine<AbstractTimer8bitAsync>;
+template class TimedStatemachine<VirtualTimer8bit>;
 #if defined (__AVR_ATmega2560__)
-template class TimeoutTrigger<AbstractTimer0>;
-template class TimeoutTrigger<AbstractTimer1>;
-template class TimeoutTrigger<AbstractTimer2>;
-template class TimeoutTrigger<AbstractTimer3>;
-template class TimeoutTrigger<AbstractTimer4>;
-template class TimeoutTrigger<AbstractTimer5>;
+template class TimedStatemachine<AbstractTimer0>;
+template class TimedStatemachine<AbstractTimer1>;
+template class TimedStatemachine<AbstractTimer2>;
+template class TimedStatemachine<AbstractTimer3>;
+template class TimedStatemachine<AbstractTimer4>;
+template class TimedStatemachine<AbstractTimer5>;
 #else
 #  warning "No specialized TimedStatemachines defined for this µC."
 #endif

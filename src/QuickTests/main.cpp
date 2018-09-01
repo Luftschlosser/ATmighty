@@ -110,9 +110,6 @@ int main( void )
 	ampel->setTimedStatechange(states::Red, states::YellowToGreen, 50);
 	ampel->setTimedStatechange(states::YellowToGreen, states::Green, 5);
 
-	//TimeoutTrigger calibration
-	ampel->calibrate();
-
 	//start main
 	ampel->start(states::Green);
 

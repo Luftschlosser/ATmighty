@@ -78,12 +78,9 @@ template<class Timer = Timer16bit> class TimedStatemachine final : private Liste
 		inline ~TimedStatemachine() { free(stateChanges); }
 
 		/*!
-		 * Use to calibrate the internally used \see TimeoutTrigger using an internal selftest.
-		 * (But the trigger will be started AFTER the last statechange is executed completely, so there might be an delay/inaccuracy anyway)
-		 * \returns the measured offset in cycles.
-		 * (value will be constant in statically initialized environment, so it can be used directly to set the offset, rather than measuring every time)
+		 * Use to calibrate the internally used \see TimeoutTrigger using a constant offset.
 		 */
-		inline uint8_t calibrate() { return timeoutTrigger.calibrate(); }
+		inline void calibrate(int16_t offset) { timeoutTrigger.calibrate(offset); }
 
 		/*!
 		 * Directly calibrates the internally used \see TimeoutTrigger by setting an offset value directly
@@ -123,6 +120,7 @@ template<class Timer = Timer16bit> class TimedStatemachine final : private Liste
 		 * \param delayCycles the number of timer-cycles which define the delay from entering the \ref fromState until the change is executed.
 		 */
 		void setTimedStatechange(uint8_t fromState, uint8_t toState, uint32_t delayCycles);
+		//Todo: Add more overloads to set statechange delay in s,ms,µs...
 
 		/*!
 		 * Sets a Listener to be triggered on entering a specified state
