@@ -80,7 +80,7 @@ template<class Timer = Timer16bit> class TimedStatemachine final : private Liste
 		/*!
 		 * Use to calibrate the internally used \see TimeoutTrigger using a constant offset.
 		 */
-		inline void calibrate(int16_t offset) { timeoutTrigger.calibrate(offset); }
+		inline void calibrate(uint16_t offset) { timeoutTrigger.calibrate(offset); }
 
 		/*!
 		 * Directly calibrates the internally used \see TimeoutTrigger by setting an offset value directly

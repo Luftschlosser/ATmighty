@@ -33,9 +33,9 @@ template <class Timer> int16_t TimeoutTrigger<Timer>::setTimespan(uint32_t timer
 		uint32_t cntTop;
 		int32_t retval;
 
-		if (timerSteps < (calibrationOffset + 30))
+		if (timerSteps <= calibrationOffset)
 		{
-			timerSteps = 30; //use this as arbitrary minimum
+			timerSteps = 1;
 		}
 		else
 		{
@@ -138,9 +138,9 @@ template <> int16_t TimeoutTrigger<VirtualTimer8bit>::setTimespan(uint32_t timer
 		uint32_t cntTop;
 		int32_t retval;
 
-		if (timerSteps < (calibrationOffset + 30))
+		if (timerSteps <= calibrationOffset)
 		{
-			timerSteps = 30; //use this as arbitrary minimum
+			timerSteps = 1;
 		}
 		else
 		{
