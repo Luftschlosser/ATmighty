@@ -1,120 +1,59 @@
 #include <avr/io.h>
-#include <avr/interrupt.h>
 #include <stdlib.h>
 
 #include "ATmighty/Utilities/C++/FullCppSupport.h"
-#include "ATmighty/Interfaces/Listener.h"
 #include "ATmighty/Ressources/Periphery/Abstract/AbstractHardwareManager.h"
-#include "ATmighty/Ressources/Periphery/Abstract/IoPins.h"
+#include "ATmighty/Tools/Timing/Stopwatch/Stopwatch.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
 #include "ATmighty/Utilities/Logs/MessageLogWriter.h"
-#include "ATmighty/Tools/Timing/TimedStatemachine/TimedStatemachine.h"
-#include "ATmighty/Ressources/Periphery/Virtual/Timer/VirtualTimerPool.h"
 
 
+/*
+ * This project currently implements a setup to test for ram-usage
+ */
+
+
+//Global Variables
 AbstractHardwareManager abHw(42);
-TimedStatemachine<Timer8bit> *ampel;
-IoPin *red, *green, *yellow, *signalChange;
 
 
-enum states : uint8_t
-{
-	Green,
-	YellowToGreen,
-	Red,
-	YellowToRed
-};
-
-void blink()
-{
-	signalChange->set(true);
-	for(uint16_t i = 1; i != 0; i++)
-	{
-		asm ( "nop \n" );
-	}
-	signalChange->set(false);
+//return the amount of currently free ram in bytes
+int freeRam () {
+  extern int __heap_start, *__brkval;
+  int v;
+  return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
 }
 
-void greenOn()
-{
-	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "green on");
-	green->set(true);
+//returns the current size of the stack in bytes
+int stackSize(){
+	int v;
+	return 8703 - (int)&v;
 }
 
-void greenOff()
-{
-	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "green off");
-	green->set(false);
+//returns the size of the statically used ram in bytes
+int staticSize(){
+	extern int __heap_start;
+	return (int)&__heap_start - 0x1FF;
 }
 
-void redOn()
-{
-	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "red on");
-	red->set(true);
+//returns the current size of the dynamically allocated ram
+int heapSize(){
+	extern int __heap_start, *__brkval;
+	return (__brkval == 0 ? 0 : (int)__brkval - (int)&__heap_start);
 }
 
-void redOff()
-{
-	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "red off");
-	red->set(false);
-}
-
-void yellowOn()
-{
-	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "yellow on");
-	yellow->set(true);
-}
-
-void yellowOff()
-{
-	MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "yellow off");
-	yellow->set(false);
-}
-
+//The test-routine without anything to test
 int main( void )
 {
 	MessageLogWriter::Usart usbWriter;
 	MessageLog<>::DefaultInstance().setWriter(&usbWriter);
-
-	//Timer Setup
-	VirtualTimerPool<Timer16bit> vtPool(10, abHw.allocTimer16bit<AbstractTimer5>(), 1);
-	VirtualTimer8bit *statemachineTimer = vtPool.allocTimer8bit(1);
-	vtPool.startAll();
-
-	//Pin setup
-	signalChange = abHw.allocIoPin<'B',7>();
-	signalChange->setDirection(IoPin::DataDirection::Output);
-	red = abHw.allocIoPin<'L',1>();
-	red->setDirection(IoPin::DataDirection::Output);
-	yellow = abHw.allocIoPin<'L',3>();
-	yellow->setDirection(IoPin::DataDirection::Output);
-	green = abHw.allocIoPin<'L',5>();
-	green->setDirection(IoPin::DataDirection::Output);
-
 	sei();
 
-	//Statemachine Setup
-	ampel = new TimedStatemachine<Timer8bit>(4, statemachineTimer);
-	ampel->setEnterAction(states::Green, &greenOn);
-	ampel->setEnterAction(states::Red, &redOn);
-	ampel->setEnterAction(states::YellowToGreen, &yellowOn);
-	ampel->setEnterAction(states::YellowToRed, &yellowOn);
-	ampel->setExitAction(states::Green, &greenOff);
-	ampel->setExitAction(states::Red, &redOff);
-	ampel->setExitAction(states::YellowToGreen, &yellowOff);
-	ampel->setExitAction(states::YellowToRed, &yellowOff);
-	ampel->setChangeAction(&blink);
+	//Set up Test-environment here
 
-	ampel->setTimedStatechange(states::Green, states::YellowToRed, 40);
-	ampel->setTimedStatechange(states::YellowToRed, states::Red, 5);
-	ampel->setTimedStatechange(states::Red, states::YellowToGreen, 50);
-	ampel->setTimedStatechange(states::YellowToGreen, states::Green, 5);
-
-	//start main
-	ampel->start(states::Green);
-
+	MessageLog<>::DefaultInstance().log<LogLevel::Fatal>(false, "Static: ", staticSize(), ",  Stack: ", stackSize(), ",  Heap: ", heapSize(), ",  Free: ", freeRam());
 	while(1)
 	{
-		asm ( "nop \n" );
+		asm ("nop\n");
 	}
 }

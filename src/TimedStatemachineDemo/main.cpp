@@ -123,7 +123,7 @@ int main( void )
 		bool buf = emergencyButton->read();
 		if (!buf && val && (ampel->getState() == states::Red))
 		{
-			MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "Instant Green!");
+			MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "Emergency!");
 			ampel->changeState(states::Yellow2Green);
 		}
 		val = buf;
