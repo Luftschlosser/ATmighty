@@ -8,7 +8,7 @@
 
 
 ///Boolean switch to enable/disable logging within ATmighty
-#define ATMIGHTY_MESSAGELOG_ENABLE true
+#define ATMIGHTY_MESSAGELOG_ENABLE false
 
 ///Defines the LogLevel used within ATmighty. Possible values are [NoLog/Fatal/Error/Warning/Info/Debug]
 #define ATMIGHTY_MESSAGELOG_LEVEL Debug

@@ -6,6 +6,8 @@
 #include "TimedStatemachine.h"
 #include "ATmighty/Ressources/Periphery/Abstract/Timer.h"
 #include "ATmighty/Ressources/Periphery/Virtual/Timer/VirtualTimer8bit.h"
+#include "ATmighty/Utilities/Logs/MessageLog.h"
+#include "ATmighty/Utilities/LUTs/MessageLogPhrases.h"
 
 
 template<class Timer> TimedStatemachine<Timer>::TimedStatemachine(uint8_t stateNumber, Timer *timer) :
@@ -21,7 +23,10 @@ template<class Timer> TimedStatemachine<Timer>::TimedStatemachine(uint8_t stateN
 	}
 	else
 	{
-		//Todo:error
+		#if ATMIGHTY_MESSAGELOG_ENABLE
+		MessageLog<>::DefaultInstance().log<LogLevel::Fatal>(true,
+				MessageLogPhrases::Text_TimedStatemachineSetupFail);
+		#endif
 	}
 }
 

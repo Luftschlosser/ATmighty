@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "ATmighty/Interfaces/Listener.h"
 #include "ATmighty/Utilities/Logs/MessageLog.h"
+#include "ATmighty/Utilities/LUTs/MessageLogPhrases.h"
 #include <util/atomic.h>
 
 
@@ -16,6 +17,7 @@ FiniteStatemachine::FiniteStatemachine(uint8_t stateNumber)
 	  stateNumber(stateNumber),
 	  statedActions(nullptr),
 	  statedActionTypeMap(nullptr),
+	  changeAction({nullptr}),
 	  stateFlags(0)
 {
 	statedActions = (interruptHandler_t*)calloc(stateNumber * 2, sizeof(interruptHandler_t));
@@ -24,8 +26,10 @@ FiniteStatemachine::FiniteStatemachine(uint8_t stateNumber)
 
 	if ((statedActions == nullptr) || (statedActionTypeMap == nullptr))
 	{
-		//todo implement properly
-		MessageLog<>::DefaultInstance().log<LogLevel::Fatal>(false, "malloc failed!");
+		#if ATMIGHTY_MESSAGELOG_ENABLE
+		MessageLog<>::DefaultInstance().log<LogLevel::Fatal>(true,
+				MessageLogPhrases::Text_FiniteStatemachineSetupFail);
+		#endif
 	}
 }
 

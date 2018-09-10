@@ -64,7 +64,6 @@ template<class ToFree> void AbstractHardwareManager::Free(ToFree **hardware, int
 {
 	if (hardware != nullptr && (*hardware) != nullptr)
 	{
-		//TODO make freeing of abstract hardware only possible via the AbstractHardwareManager-instance which allocated the HW by comparing the owner-Id's.
 		(*hardware)->exit();
 
 		//Success-Message

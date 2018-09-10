@@ -58,6 +58,9 @@ namespace MessageLogPhrases
 	static const char Text_VirtualTimerStarted2[] PROGMEM = ", Mode: ";
 	static const char Text_VirtualTimerStarted3[] PROGMEM = ", Base-frequency: ";
 
+	static const char Text_FiniteStatemachineSetupFail[] PROGMEM = "FiniteStatemachine setup failed: Out of memory!";
+	static const char Text_TimedStatemachineSetupFail[] PROGMEM = "TimedStatemachine setup failed: Out of memory!";
+
 	static const char Text_UnitTimerSteps[] PROGMEM = " timersteps";
 	static const char Text_UnitSeconds[] PROGMEM = " s";
 	static const char Text_UnitMilliseconds[] PROGMEM = " ms";

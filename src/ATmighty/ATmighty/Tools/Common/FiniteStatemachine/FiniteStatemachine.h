@@ -92,6 +92,8 @@ class FiniteStatemachine
 		inline bool areActionhandlersLocked() {return stateFlags & (1 << 3);}
 
 	public:
+		//TODO: overload ==-operator to be able to use statemachine like state-datatype
+
 		/*!
 		 * Contructor, allocates memory for the desired number of states
 		 * \param stateNumber the total number of states.

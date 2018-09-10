@@ -55,7 +55,7 @@ template<class Timer = Timer16bit> class PeriodicTrigger
 		 * Sets the time-interval between each periodic triggering-event in terms of seconds.
 		 * Setting the period while the triggering is already enabled might cause some inconsistent trigger-interval in between, as
 		 * the timer-register responsible for that behavior is not double-buffered!
-		 * \param ms The number of seconds between each triggering event. (Must be > 0)
+		 * \param s The number of seconds between each triggering event. (Must be > 0)
 		 * \returns The precision which could be reached with the used timer in terms of second offset. A perfect period-configuration will
 		 * return 0, anything else will mean that the actual period will be shifted by the returned number of seconds.
 		 * (negative = delay too short / positive = delay too long)
@@ -109,7 +109,7 @@ template<class Timer = Timer16bit> class PeriodicTrigger
 		}
 
 		/*!
-		 * Enables triggering. This will NOT reset the internal timer, the first triggering-event might occur at any time within the next period.
+		 * Enables triggering.
 		 */
 		inline void start()
 		{

@@ -83,13 +83,6 @@ template<class Timer = Timer16bit> class TimedStatemachine final : private Liste
 		inline void calibrate(uint16_t offset) { timeoutTrigger.calibrate(offset); }
 
 		/*!
-		 * Directly calibrates the internally used \see TimeoutTrigger by setting an offset value directly
-		 * (Can be used in static environment after obtaining the measured value with the other "calibrate()"-method)
-		 * \param offset The offset in cpu-cycles.
-		 */
-		inline void calibrate(uint8_t offset) { timeoutTrigger.calibrate(offset); }
-
-		/*!
 		 * Call this after the setup of all Action-Handlers and timed state-changes is completed. It will enter the initial state.
 		 * \param initialState the initial State to start the statemachine in: Value 0 to stateNumber-1.
 		 */
@@ -120,7 +113,42 @@ template<class Timer = Timer16bit> class TimedStatemachine final : private Liste
 		 * \param delayCycles the number of timer-cycles which define the delay from entering the \ref fromState until the change is executed.
 		 */
 		void setTimedStatechange(uint8_t fromState, uint8_t toState, uint32_t delayCycles);
-		//Todo: Add more overloads to set statechange delay in s,ms,µs...
+
+		/*!
+		 * Sets up statechanges which will be automatically executed with a given delay in seconds.
+		 * This is part of the setup-routine and can only be configured before "start()" is called.
+		 * \param fromState the state from which this specific statechange starts
+		 * \param toState the state which will come next
+		 * \param s The number of seconds of the statechange-delay. (Must be > 0)
+		 */
+		inline void setTimedStatechangeSeconds(uint8_t fromState, uint8_t toState, uint16_t s)
+		{
+			setTimedStatechange(fromState, toState, this->converter.secondsToCycles(s));
+		}
+
+		/*!
+		 * Sets up statechanges which will be automatically executed with a given delay in milliseconds.
+		 * This is part of the setup-routine and can only be configured before "start()" is called.
+		 * \param fromState the state from which this specific statechange starts
+		 * \param toState the state which will come next
+		 * \param ms The number of milliseconds of the statechange-delay. (Must be > 0)
+		 */
+		inline void setTimedStatechangeMilliseconds(uint8_t fromState, uint8_t toState, uint16_t ms)
+		{
+			setTimedStatechange(fromState, toState, this->converter.millisecondsToCycles(ms));
+		}
+
+		/*!
+		 * Sets up statechanges which will be automatically executed with a given delay in microseconds.
+		 * This is part of the setup-routine and can only be configured before "start()" is called.
+		 * \param fromState the state from which this specific statechange starts
+		 * \param toState the state which will come next
+		 * \param ms The number of microseconds of the statechange-delay. (Must be > 0)
+		 */
+		inline void setTimedStatechangeMicroseconds(uint8_t fromState, uint8_t toState, uint32_t ms)
+		{
+			setTimedStatechange(fromState, toState, this->converter.microsecondsToCycles(ms));
+		}
 
 		/*!
 		 * Sets a Listener to be triggered on entering a specified state

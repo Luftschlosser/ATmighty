@@ -131,7 +131,7 @@ template<class Timer = Timer16bit> class TimeoutTrigger final : private Listener
 		 * If the TimeoutTrigger is currently running, this will reset the Trigger by waiting again the entire configured timespan before triggering.
 		 * If the TimeoutTrigger is currently not running, it will start running with the preconfigured timespan and timeout-action.
 		 */
-		void start();
+		void start(); //TODO: Make atomic and define sensefull minimal dalay-value based on the duration of the interrupt-enabling-method
 
 		///Disables triggering when this TimeoutTrigger is currently running.
 		void cancel();

@@ -18,8 +18,11 @@ template <class Timer> TimeoutTrigger<Timer>::TimeoutTrigger(Timer* timer) : tim
 	}
 	else
 	{
-		//todo error
-		MessageLog<>::DefaultInstance().log<LogLevel::Fatal>(false, "Timer setup failed!!!");
+		#if ATMIGHTY_MESSAGELOG_ENABLE
+		MessageLog<>::DefaultInstance().log<LogLevel::Fatal>(true,
+				MessageLogPhrases::Text_TimeoutTrigger,
+				MessageLogPhrases::Text_TriggerInvalidTimer);
+		#endif
 	}
 }
 

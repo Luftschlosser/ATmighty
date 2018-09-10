@@ -15,14 +15,15 @@
 AbstractHardwareManager abHw(42);
 TimedStatemachine<Timer8bit> *ampel;
 IoPin *red, *green, *yellow, *signalChange;
+IoPin *emergencyButton;
 
 
 enum states : uint8_t
 {
 	Green,
-	YellowToGreen,
+	Yellow2Green,
 	Red,
-	YellowToRed
+	Yellow2Red
 };
 
 void blink()
@@ -90,6 +91,8 @@ int main( void )
 	yellow->setDirection(IoPin::DataDirection::Output);
 	green = abHw.allocIoPin<'L',5>();
 	green->setDirection(IoPin::DataDirection::Output);
+	emergencyButton = abHw.allocIoPin<'L',7>();
+	emergencyButton->setDirection(IoPin::DataDirection::Input);
 
 	//Enable global Interrupts
 	sei();
@@ -98,24 +101,31 @@ int main( void )
 	ampel = new TimedStatemachine<Timer8bit>(4, statemachineTimer);
 	ampel->setEnterAction(states::Green, &greenOn);
 	ampel->setEnterAction(states::Red, &redOn);
-	ampel->setEnterAction(states::YellowToGreen, &yellowOn);
-	ampel->setEnterAction(states::YellowToRed, &yellowOn);
+	ampel->setEnterAction(states::Yellow2Green, &yellowOn);
+	ampel->setEnterAction(states::Yellow2Red, &yellowOn);
 	ampel->setExitAction(states::Green, &greenOff);
 	ampel->setExitAction(states::Red, &redOff);
-	ampel->setExitAction(states::YellowToGreen, &yellowOff);
-	ampel->setExitAction(states::YellowToRed, &yellowOff);
+	ampel->setExitAction(states::Yellow2Green, &yellowOff);
+	ampel->setExitAction(states::Yellow2Red, &yellowOff);
 	ampel->setChangeAction(&blink);
 
-	ampel->setTimedStatechange(states::Green, states::YellowToRed, 40); //4 seconds at 10Hz
-	ampel->setTimedStatechange(states::YellowToRed, states::Red, 5);	//half a second at 10Hz
-	ampel->setTimedStatechange(states::Red, states::YellowToGreen, 50);	// 5 seconds at 10Hz
-	ampel->setTimedStatechange(states::YellowToGreen, states::Green, 5);//half a second at 10Hz
+	ampel->setTimedStatechange(states::Green, states::Yellow2Red, 20);
+	ampel->setTimedStatechange(states::Yellow2Red, states::Red, 10);
+	ampel->setTimedStatechange(states::Red, states::Yellow2Green, 30);
+	ampel->setTimedStatechange(states::Yellow2Green, states::Green, 10);
 
 	//start main
 	ampel->start(states::Green);
 
+	bool val = false;
 	while(1)
 	{
-		asm ( "nop \n" );
+		bool buf = emergencyButton->read();
+		if (!buf && val && (ampel->getState() == states::Red))
+		{
+			MessageLog<>::DefaultInstance().log<LogLevel::Info>(false, "Instant Green!");
+			ampel->changeState(states::Yellow2Green);
+		}
+		val = buf;
 	}
 }
